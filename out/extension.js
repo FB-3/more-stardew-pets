@@ -28,10 +28,11 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 //Extension
 let config = vscode.workspace.getConfiguration('stardew-pets');
-let extensionPath;
 let webview;
+let extensionStorageFolder = '';
 //Pets (species & names)
 const species = {
     cat: ['black', 'gray', 'orange', 'white', 'yellow', 'purple'],
@@ -39,6 +40,7 @@ const species = {
     dino: [],
     turtle: ['green', 'purple'],
     raccoon: [],
+    duck: [],
     goat: ['adult', 'baby'],
     sheep: ['adult', 'baby'],
     ostrich: ['adult', 'baby'],
@@ -49,7 +51,7 @@ const species = {
     junimo: ['white', 'black', 'gray', 'pink', 'red', 'orange', 'yellow', 'green', 'cyan', 'purple', 'brown'],
 };
 const names = [
-    'Alex', 'lau',
+    'Alex', 'laura',
     'Ángela', 'Raúl',
     'Álvaro', 'Victor',
     'Aitor', 'Chao',
@@ -59,7 +61,7 @@ const names = [
     'David', 'Unai',
     'Nadia', 'Miriam',
     'Irene', 'Diana',
-    'Aitana',
+    'Aitana', 'Lucia',
 ];
 //Pets
 let petsPath;
@@ -76,6 +78,10 @@ class PetItem {
 }
 //Save & load pets
 function loadPetsFile() {
+    //Storage folder does not exist
+    if (!fs.existsSync(extensionStorageFolder))
+        fs.mkdirSync(extensionStorageFolder);
+    //Read pets file
     if (fs.existsSync(petsPath)) {
         //Read pets from pets.json
         try {
@@ -143,10 +149,10 @@ function activate(context) {
    /$$  \ $$ | $$ /$$ /$$__  $$| $$        | $$ /$$
   |  $$$$$$/ |  $$$$/|  $$$$$$$| $$        |  $$$$/
    \______/   \___/   \_______/|__/         \__*/
-    console.log('My pets is now active 😽');
+    console.log('Stardew Pets is now active 😽');
     //Get extension folder & pets file path
-    extensionPath = context.extensionPath;
-    petsPath = extensionPath + '/pets.json';
+    extensionStorageFolder = context.globalStorageUri.path.substring(1);
+    petsPath = path.join(extensionStorageFolder, 'pets.json');
     //Load pets array
     loadPetsFile();
     /*$      /$$           /$$       /$$    /$$ /$$
@@ -289,7 +295,7 @@ function activate(context) {
 | $$$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$  |  $$$$/| $$   \  $/  |  $$$$$$$  |  $$$$/|  $$$$$$$
 |_______/  \_______/ \_______/ \_______/   \___/  |__/    \_/    \_______/   \___/   \______*/
 function deactivate() {
-    console.log('My pets is now deactivated 😿');
+    console.log('Stardew Pets is now deactivated 😿');
 }
 /*$      /$$           /$$       /$$    /$$ /$$
 | $$  /$ | $$          | $$      | $$   | $$|__/

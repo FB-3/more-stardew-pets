@@ -70,6 +70,11 @@ window.addEventListener('message', event => {
           new Dino(message.name, message.color);
           break;
 
+        //Create a duck
+        case 'duck':
+          new Duck(message.name, message.color);
+          break;
+
         //Create a turtle
         case 'turtle':
           new Turtle(message.name, message.color);

@@ -129,9 +129,10 @@ class AI {
   #movePos = new Vec2();
 
   //Moods
-  static #moods = ['gigachad', 'happy', 'mad', 'alien', 'pledge'];
+  static #moods = ['gigachad', 'happy', 'mad', 'alien', 'pledge', 'blush'];
   #mood = 'gigachad';
-  #moodTimeout;
+  #moodAppearTimeout;
+  #moodHeartTimeout;
 
   //Options (idle)
   #idleDurationBase = 2 * game.fps;       //Minimum duration of idle (in frames)
@@ -155,7 +156,7 @@ class AI {
     this.#pet = pet;
 
     //Random mood
-    this.#mood = AI.#moods[Math.floor(Math.random() * AI.#moods.length)];
+    this.#setRandomMood()
 
     //Check options
     if (typeof options == 'object') {
@@ -214,12 +215,24 @@ class AI {
   }
 
   click() {
+    //Play special animation
     this.setState(AI.SPECIAL);
+
+    //Has gift?
     if (game.gifting) {
+      //Consume gift
       game.gifting = false;
       showMouse(false);
+
+      //Change mood to heart
       this.#mood = 'heart';
+
+      //Clear heart mood timeout & start a new one
+      if (this.#moodHeartTimeout != undefined) clearTimeout(this.#moodHeartTimeout)
+      this.#moodHeartTimeout = setTimeout(() => { this.#setRandomMood() }, 10 * 60 * 1000); //Heart stays for 10 minutes
     }
+
+    //Show mood
     this.showMood();
   }
 
@@ -228,11 +241,13 @@ class AI {
     //Show mood
     this.#pet.element.setAttribute('mood', this.#mood);
 
-    //Clear hide mood timeouts & start a new one
-    if (this.#moodTimeout != undefined) clearTimeout(this.#moodTimeout)
-    this.#moodTimeout = setTimeout(() => {
-      this.#pet.element.removeAttribute('mood');
-    }, 2000);
+    //Clear hide mood timeout & start a new one
+    if (this.#moodAppearTimeout != undefined) clearTimeout(this.#moodAppearTimeout)
+    this.#moodAppearTimeout = setTimeout(() => { this.#pet.element.removeAttribute('mood') }, 2000);
+  }
+
+  #setRandomMood() {
+    this.#mood = AI.#moods[Math.floor(Math.random() * AI.#moods.length)];
   }
   
   //States
@@ -694,6 +709,51 @@ class Dino extends Pet {
   constructor(name, color) {
     super(name, color);
     this.init('dino');
+  }
+}
+
+//Pets (duck)
+class Duck extends Pet {
+
+  //Pet data
+  size = new Vec2(16);
+
+  //Animations
+  anims = {
+    'moveDown': new Animation(
+      [[0, 0], [1, 0], [2, 0], [3, 0]], 
+      5
+    ),
+    'moveRight': new Animation(
+      [[0, 1], [1, 1], [2, 1], [3, 1]], 
+      5
+    ),
+    'moveUp': new Animation(
+      [[0, 2], [1, 2], [2, 2], [3, 2]], 
+      5
+    ),
+    'moveLeft': new Animation(
+      [[0, 3], [1, 3], [2, 3], [3, 3]], 
+      5
+    ),
+    'idle': new Animation(
+      [[0, 0]], 
+      5
+    ),
+    'special': new Animation(
+      [[0, 6], [1, 6], [2, 6], [3, 6], [2, 6], [3, 6], [2, 6], [1, 6], [0, 6]], 
+      5, 
+      { loop: false }
+    ),
+    'sleep': new Animation(
+      [[0, 7], [1, 7]], 
+      30
+    ),
+  };
+  
+  constructor(name, color) {
+    super(name, color);
+    this.init('duck');
   }
 }
 

@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 
 
 
 //Extension
 let config = vscode.workspace.getConfiguration('stardew-pets');
-let extensionPath: string;
 let webview: WebViewProvider;
+let extensionStorageFolder: string = '';
 
 
 
@@ -17,6 +18,7 @@ const species: { [key: string]: string[] } = {
   dino: [],
   turtle: ['green', 'purple'],
   raccoon: [],
+  duck: [],
   goat: ['adult', 'baby'],
   sheep: ['adult', 'baby'],
   ostrich: ['adult', 'baby'],
@@ -27,7 +29,7 @@ const species: { [key: string]: string[] } = {
   junimo: ['white', 'black', 'gray', 'pink', 'red', 'orange', 'yellow', 'green', 'cyan', 'purple', 'brown'],
 }
 const names: string[] = [
-  'Alex',     'lau', 
+  'Alex',     'laura', 
   'Ángela',   'Raúl', 
   'Álvaro',   'Victor', 
   'Aitor',    'Chao', 
@@ -37,15 +39,21 @@ const names: string[] = [
   'David',    'Unai', 
   'Nadia',    'Miriam',
   'Irene',    'Diana',
-  'Aitana',   
+  'Aitana',   'Lucia',
 ]
 
 
 
 //Pets
 let petsPath: string;
-type Pet = { specie: string; name: string; color: string; }
+
+type Pet = { 
+  specie: string; 
+  name: string; 
+  color: string; 
+}
 let pets = new Array<Pet>();
+
 class PetItem implements vscode.QuickPickItem {
   public index: number;
   public label: string;
@@ -62,6 +70,10 @@ class PetItem implements vscode.QuickPickItem {
 
 //Save & load pets
 function loadPetsFile() {
+  //Storage folder does not exist
+  if (!fs.existsSync(extensionStorageFolder)) fs.mkdirSync(extensionStorageFolder);
+
+  //Read pets file
   if (fs.existsSync(petsPath)) {
     //Read pets from pets.json
     try {
@@ -138,11 +150,11 @@ export function activate(context: vscode.ExtensionContext) {
   |  $$$$$$/ |  $$$$/|  $$$$$$$| $$        |  $$$$/
    \______/   \___/   \_______/|__/         \__*/  
 
-	console.log('My pets is now active 😽');
+	console.log('Stardew Pets is now active 😽');
 
   //Get extension folder & pets file path
-  extensionPath = context.extensionPath;
-  petsPath = extensionPath + '/pets.json';
+  extensionStorageFolder = context.globalStorageUri.path.substring(1);
+  petsPath = path.join(extensionStorageFolder, 'pets.json');
 
   //Load pets array
   loadPetsFile();
@@ -319,7 +331,7 @@ export function activate(context: vscode.ExtensionContext) {
 |_______/  \_______/ \_______/ \_______/   \___/  |__/    \_/    \_______/   \___/   \______*/
 
 export function deactivate() {
-  console.log('My pets is now deactivated 😿')
+  console.log('Stardew Pets is now deactivated 😿')
 }
 
 

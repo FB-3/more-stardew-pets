@@ -1,9 +1,13 @@
 # Change Log
 
-All notable changes to the "pets" extension will be documented in this file.
+## [v1.1.0]
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Fixed purple turtles
+- Added ducks
+- Updated moods system to reset heart after 10 minutes
+- Changed where pets.json is stored to prevent deleting it with updates
 
-## [Unreleased]
+## [v1.0.0]
 
 - Initial release
+

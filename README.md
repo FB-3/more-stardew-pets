@@ -14,7 +14,7 @@ In case it does not appear, try right clicking in the "EXPLORER" title on top an
 ## Pets
 
 Stardew Pets currently has:  
-cats, dogs, dinos, turtles, raccoons, goats, sheeps, ostrichs, pigs, rabbits, chicken, cows and junimos!
+cats, dogs, dinos, turtles, raccoons, ducks, goats, sheeps, ostrichs, pigs, rabbits, chicken, cows and junimos!
 
 ## Store
 
