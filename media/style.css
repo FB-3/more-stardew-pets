@@ -246,7 +246,7 @@ html, body {
   --image: url(./turtle/green.png);
 }
 
-.turtle[color="brown"] {
+.turtle[color="purple"] {
   --image: url(./turtle/purple.png);
 }
 
