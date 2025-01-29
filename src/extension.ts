@@ -71,7 +71,7 @@ class PetItem implements vscode.QuickPickItem {
 //Save & load pets
 function loadPetsFile() {
   //Storage folder does not exist
-  if (!fs.existsSync(extensionStorageFolder)) fs.mkdirSync(extensionStorageFolder);
+  if (!fs.existsSync(extensionStorageFolder)) fs.mkdirSync(extensionStorageFolder, { recursive: true });
 
   //Read pets file
   if (fs.existsSync(petsPath)) {

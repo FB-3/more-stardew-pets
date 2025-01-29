@@ -1,5 +1,9 @@
 # Change Log
 
+## [v1.1.1]
+
+- Posible fix for extension not loading due to a folder not existing (linux users)
+
 ## [v1.1.0]
 
 - Fixed purple turtles
