@@ -26,6 +26,42 @@ class Vec2 {
     this.x = typeof x == 'number' ? x : 0;
     this.y = typeof y == 'number' ? y : this.x;
   }
+
+  clone() {
+    return new Vec2(this.x, this.y)
+  }
+
+  add(n) {
+    if (typeof n === 'object')
+      return new Vec2(this.x + n.x, this.y + n.x)
+    else
+      return new Vec2(this.x + n, this.y + n)
+  }
+
+  sub(n) {
+    if (typeof n === 'object')
+      return new Vec2(this.x - n.x, this.y - n.x)
+    else
+      return new Vec2(this.x - n, this.y - n)
+  }
+
+  mult(n) {
+    if (typeof n === 'object')
+      return new Vec2(this.x * n.x, this.y * n.x)
+    else
+      return new Vec2(this.x * n, this.y * n)
+  }
+
+  div(n) {
+    if (typeof n === 'object')
+      return new Vec2(this.x / n.x, this.y / n.x)
+    else
+      return new Vec2(this.x / n, this.y / n)
+  }
+
+  toInt() {
+    return new Vec2(Math.floor(this.x), Math.floor(this.y))
+  }
 }
 
 class Timer {
@@ -118,6 +154,7 @@ class AI {
   static get MOVING() { return 0 };
   static get IDLE() { return 1 };
   static get SPECIAL() { return 2 };
+  static get MOVING_BALL() { return 3 };
 
   //AI info
   #pet;
@@ -184,7 +221,8 @@ class AI {
     //State machine
     switch (this.#state) {
       //Moving
-      case AI.MOVING: {
+      case AI.MOVING: 
+      case AI.MOVING_BALL: {
         //Move position out of bounds -> Create a new one
         if (this.#movePos.x > pet.maxX || this.#movePos.y > pet.maxY) this.moveTowards(pet.randomPoint);
 
@@ -194,9 +232,9 @@ class AI {
         else if (this.#movePos.x > pet.pos.x)
           this.moveRight();
         else if (this.#movePos.y < pet.pos.y)
-          this.moveDown();
-        else if (this.#movePos.y > pet.pos.y)
           this.moveUp();
+        else if (this.#movePos.y > pet.pos.y)
+          this.moveDown();
         else 
           this.onMovingEnd();
         break;
@@ -215,28 +253,37 @@ class AI {
   }
 
   click() {
-    //Play special animation
-    this.setState(AI.SPECIAL);
-
     //Has gift?
-    if (game.gifting) {
+    if (game.mouse.hasGift) {
       //Consume gift
-      game.gifting = false;
-      showMouse(false);
+      game.mouse.hasGift = false;
+      setMouseType(MouseTypes.none);
 
-      //Change mood to heart
-      this.#mood = 'heart';
-
-      //Clear heart mood timeout & start a new one
-      if (this.#moodHeartTimeout != undefined) clearTimeout(this.#moodHeartTimeout)
-      this.#moodHeartTimeout = setTimeout(() => { this.#setRandomMood() }, 10 * 60 * 1000); //Heart stays for 10 minutes
+      //Set mood to heart
+      this.#setHeartMood()
     }
 
     //Show mood
     this.showMood();
+
+    //Play special animation
+    this.setState(AI.SPECIAL);
   }
 
   //Mood
+  #setHeartMood() {
+    //Change mood to heart
+    this.#mood = 'heart';
+
+    //Clear heart mood timeout & start a new one
+    if (this.#moodHeartTimeout != undefined) clearTimeout(this.#moodHeartTimeout)
+    this.#moodHeartTimeout = setTimeout(() => { this.#setRandomMood() }, 10 * 60 * 1000); //Heart stays for 10 minutes
+  }
+
+  #setRandomMood() {
+    this.#mood = AI.#moods[Math.floor(Math.random() * AI.#moods.length)];
+  }
+
   showMood() {
     //Show mood
     this.#pet.element.setAttribute('mood', this.#mood);
@@ -244,10 +291,6 @@ class AI {
     //Clear hide mood timeout & start a new one
     if (this.#moodAppearTimeout != undefined) clearTimeout(this.#moodAppearTimeout)
     this.#moodAppearTimeout = setTimeout(() => { this.#pet.element.removeAttribute('mood') }, 2000);
-  }
-
-  #setRandomMood() {
-    this.#mood = AI.#moods[Math.floor(Math.random() * AI.#moods.length)];
   }
   
   //States
@@ -327,19 +370,35 @@ class AI {
     this.moveTowardsRandom();
   }
 
-  //State: MOVING
+  //State: MOVING or MOVING_BALL
   onMovingEnd() {
-    //Finished moving -> Go idle
-    this.setState(AI.IDLE);
+    //Moving towards ball?
+    if (this.#state == AI.MOVING_BALL) {
+      //Notify game that the ball was reached
+      onBallReached()
+
+      //Set mood to heart & show mood
+      this.#setHeartMood()
+      this.showMood();
+
+      //Play special animation
+      this.setState(AI.SPECIAL);
+    } else {
+      //Play idle
+      this.setState(AI.IDLE);
+    }
   }
 
   //Movement
-  moveTowards(point) {
+  moveTowards(point, towardsBall=false) {
+    //Fix var
+    if (typeof towardsBall !== 'boolean') towardsBall = false
+
     //Change move point
     this.#movePos = point;
 
     //Set state to moving
-    this.setState(AI.MOVING);
+    this.setState(towardsBall ? AI.MOVING_BALL : AI.MOVING);
   }
 
   moveTowardsRandom() {
@@ -361,13 +420,13 @@ class AI {
 
   moveUp() { 
     const pet = this.pet;
-    pet.moveTo(pet.pos.x, pet.pos.y + 1); 
+    pet.moveTo(pet.pos.x, pet.pos.y - 1); 
     pet.animate('moveUp');
   }
 
   moveDown() { 
     const pet = this.pet;
-    pet.moveTo(pet.pos.x, pet.pos.y - 1); 
+    pet.moveTo(pet.pos.x, pet.pos.y + 1); 
     pet.animate('moveDown');
   }
 }
@@ -522,12 +581,31 @@ class Pet {
     //Move element
     this.#element.style.setProperty('--position-x', x + 'px');
     this.#element.style.setProperty('--position-y', y + 'px');
-    this.#element.style.zIndex = 99999 - y;
+    this.#element.style.zIndex = y + this.size.y;
+  }
+
+  moveTowardsBall(pos) {
+    //Clamp new position
+    pos.x = clamp(pos.x, 0, this.maxX);
+    pos.y = clamp(pos.y, 0, this.maxY);
+
+    //Update position
+    this.#ai.moveTowards(pos, true)
   }
 
   respawn() {
     //Move to random point
     this.moveTo(this.randomPoint);
+  }
+}
+
+class PetSmall extends Pet {
+  
+  //Pet data
+  size = new Vec2(16);
+
+  constructor(name, color) {
+    super(name, color);
   }
 }
 
@@ -668,10 +746,7 @@ class Turtle extends Pet {
 }
 
 //Pets (dino)
-class Dino extends Pet {
-
-  //Pet data
-  size = new Vec2(16);
+class Dino extends PetSmall {
 
   //Animations
   anims = {
@@ -713,10 +788,7 @@ class Dino extends Pet {
 }
 
 //Pets (duck)
-class Duck extends Pet {
-
-  //Pet data
-  size = new Vec2(16);
+class Duck extends PetSmall {
 
   //Animations
   anims = {
@@ -830,10 +902,7 @@ class Pig extends Pet {
 }
 
 //Pets (rabbit)
-class Rabbit extends Pet {
-
-  //Pet data
-  size = new Vec2(16);
+class Rabbit extends PetSmall {
 
   //Animations
   anims = {
@@ -877,10 +946,7 @@ class Rabbit extends Pet {
 }
 
 //Pets (chicken)
-class Chicken extends Pet {
-
-  //Pet data
-  size = new Vec2(16);
+class Chicken extends PetSmall {
 
   //Animations
   anims = {
@@ -968,10 +1034,7 @@ class Cow extends Pet {
 }
 
 //Pets (junimo)
-class Junimo extends Pet {
-
-  //Pet data
-  size = new Vec2(16);
+class Junimo extends PetSmall {
 
   //Animations
   anims = {

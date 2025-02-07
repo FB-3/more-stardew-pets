@@ -2,7 +2,7 @@
   "name": "stardew-pets",
   "displayName": "Stardew Pets",
   "description": "Stardew Valley pets for VSCode 😸",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "publisher": "Botpa",
   "author": {
     "name": "Botpa"
@@ -91,6 +91,14 @@
         }
       },
       {
+        "command": "stardew-pets.ball",
+        "title": "Give ball",
+        "icon": {
+          "light": "media/icons/light/ball.svg",
+          "dark": "media/icons/dark/ball.svg"
+        }
+      },
+      {
         "command": "stardew-pets.gift",
         "title": "Give gift",
         "icon": {
@@ -126,6 +134,11 @@
           "command": "stardew-pets.removePet",
           "when": "view == stardew-pets",
           "group": "navigation@1"
+        },
+        {
+          "command": "stardew-pets.ball",
+          "when": "view == stardew-pets",
+          "group": "navigation@2"
         },
         {
           "command": "stardew-pets.gift",

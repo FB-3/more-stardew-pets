@@ -262,6 +262,9 @@ function activate(context) {
         //Bye pet!
         vscode.window.showInformationMessage('Bye ' + pet.label + '!');
     });
+    const commandBall = vscode.commands.registerCommand('stardew-pets.ball', async () => {
+        webview.postMessage({ type: 'ball' });
+    });
     const commandGift = vscode.commands.registerCommand('stardew-pets.gift', async () => {
         webview.postMessage({ type: 'gift' });
     });
@@ -284,7 +287,7 @@ function activate(context) {
         for (let i = 0; i < pets.length; i++)
             loadPet(pets[i]);
     });
-    context.subscriptions.push(commandAddPet, commandRemovePet, commandGift, commandSettings, commandOpenPetsFile, commandReloadPetsFile);
+    context.subscriptions.push(commandAddPet, commandRemovePet, commandBall, commandGift, commandSettings, commandOpenPetsFile, commandReloadPetsFile);
 }
 /*$$$$$$                                  /$$     /$$                       /$$
 | $$__  $$                                | $$    |__/                      | $$
@@ -369,7 +372,9 @@ class WebViewProvider {
         <title>stardew pets 😸</title>
       </head>
       <body>
-        <div id="pets" background="${config.get('background')}"></div>
+        <div id="pets" background="${config.get('background')}">
+          <div id="ball"></div>
+        </div>
         <div id="mouse"></div>
         <script src="${petsJS}"></script>
         <script src="${mainJS}"></script>

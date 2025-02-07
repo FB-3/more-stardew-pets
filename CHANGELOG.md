@@ -1,5 +1,9 @@
 # Change Log
 
+## [v1.2.0]
+
+- Added a ball to play with your pets :D
+
 ## [v1.1.1]
 
 - Posible fix for extension not loading due to a folder not existing (linux users)

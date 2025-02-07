@@ -37,9 +37,12 @@ html, body {
 
 
 
-/* mouse */
+/* mouse & ball */
 #mouse {
   --size: 9px;
+  --bg-pos-x: 0;
+  --bg-pos-y: 0;
+  
   width: var(--size);
   height: var(--size);
   
@@ -48,17 +51,84 @@ html, body {
   left: 0;
 
   background-image: url(./emotes/emotes.png);
-  --pos-x: calc(-12 * var(--size));
-  --pos-y: calc(-10 * var(--size));
-  background-position-x: var(--pos-x);
-  background-position-y: var(--pos-y);
+  background-position-x: var(--bg-pos-x);
+  background-position-y: var(--bg-pos-y);
 
-  transform: scale(var(--scale)) translateX(-2px) translateY(-2px);
+  transform: scale(var(--scale)) translateX(calc(-0.25 * var(--size))) translateY(calc(-0.25 * var(--size)));
 
   pointer-events: none;
   opacity: 0;
 }
 
+#mouse[type="gift"] {
+  --bg-pos-x: calc(-12 * var(--size));
+  --bg-pos-y: calc(-10 * var(--size));
+  opacity: 1;
+}
+
+#mouse[type="ball"] {
+  --bg-pos-x: calc(-3 * var(--size));
+  --bg-pos-y: calc(-9 * var(--size));
+  opacity: 1;
+}
+
+#ball {
+  --size: 9px;
+  --position-x: 0px;
+  --position-y: 0px;
+  
+  width: var(--size);
+  height: var(--size);
+  
+  position: absolute;
+  left: var(--position-x);
+  top: calc(var(--position-y));
+
+  background-image: url(./emotes/emotes.png);
+  background-position-x: calc(-3 * var(--size));
+  background-position-y: calc(-9 * var(--size));
+
+  transform: translateX(calc(-0.5 * var(--size))) translateY(calc(-0.5 * var(--size)));
+
+  pointer-events: none;
+  opacity: 0;
+}
+
+#ball[visible] {
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  opacity: 1;
+}
+
+@keyframes bounce {
+  0% {
+    top: calc(var(--position-y) - 0px);
+  }
+
+  20% {
+    top: calc(var(--position-y) - 10px);
+  }
+
+  40% {
+    top: calc(var(--position-y) - 0px);
+  }
+
+  60% {
+    top: calc(var(--position-y) - 5px);
+  }
+
+  80% {
+    top: calc(var(--position-y) - 0px);
+  }
+
+  90% {
+    top: calc(var(--position-y) - 2px);
+  }
+
+  100% {
+    top: calc(var(--position-y) - 0px);
+  }
+}
 
 
 /* base class for pets */
@@ -71,7 +141,7 @@ html, body {
   --position-x: 0px; 
   --position-y: 0px; 
   left: var(--position-x);
-  bottom: var(--position-y);
+  top: var(--position-y);
 
   --image: url(./animals/cat/black.png);
   background-image: var(--image);

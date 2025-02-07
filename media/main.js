@@ -9,10 +9,14 @@ const game = {
   height: window.innerHeight,
   scale: 2,
   mouse: {
-    div: document.getElementById('mouse'),
+    element: document.getElementById('mouse'),
     pos: new Vec2(),
+    hasGift: false,
+    hasBall: false,
   },
-  gifting: false,
+  ball: {
+    element: document.getElementById('ball'),
+  },
 
   //Frames & framerate
   frames: 0,  //Frames since game start
@@ -20,7 +24,13 @@ const game = {
   
   //List with all the pets
   pets: []
-};
+}
+
+const MouseTypes = {
+  none: '',
+  gift: 'gift',
+  ball: 'ball',
+}
 
 
 
@@ -42,9 +52,19 @@ window.addEventListener('message', event => {
 
   //Check message type
   switch (message.type.toLowerCase()) {
+    //Update ball
+    case 'ball':
+      //Remove ball
+      if (game.ball.element.hasAttribute('visible')) onBallReached()
+      //Toggle grabbing ball & disable gift
+      game.mouse.hasBall = !game.mouse.hasBall;
+      game.mouse.hasGift = false;
+      break;
+
     //Update gift
     case 'gift':
-      game.gifting = !game.gifting;
+      game.mouse.hasBall = false;
+      game.mouse.hasGift = !game.mouse.hasGift;
       break;
 
     //Create a pet
@@ -154,29 +174,51 @@ window.addEventListener('message', event => {
   }
 });
 
-//Mouse
-function showMouse(show) {
-  if (typeof show != 'boolean') show = false;
-  game.mouse.div.style.opacity = show ? 1 : 0;
+//Mouse (ball & gift)
+function setMouseType(type) {
+  if (typeof type != 'string') type = MouseTypes.none
+  game.mouse.element.setAttribute('type', type)
+}
+
+function onBallReached() {
+  game.pets.forEach((pet) => { if (pet.ai.state == AI.MOVING_BALL) pet.ai.setState(AI.IDLE) })
+  game.ball.element.removeAttribute('visible')
 }
 
 game.div.onclick = (event) => {
-  game.gifting = false;
-  showMouse(false);
+  //Move ball
+  if (game.mouse.hasBall) {
+    //Get ball position
+    const ballPos = game.mouse.pos.div(game.scale).toInt()
+
+    //Move ball
+    game.ball.element.style.setProperty('--position-x', ballPos.x + 'px');
+    game.ball.element.style.setProperty('--position-y', ballPos.y + 'px');
+    game.ball.element.style.zIndex = ballPos.y
+    game.ball.element.setAttribute('visible', '')
+    
+    //Move all pets towards ball
+    game.pets.forEach((pet) => pet.moveTowardsBall(ballPos.sub(pet.size.div(2).toInt())))
+  }
+
+  //Hide mouse
+  game.mouse.hasBall = false
+  game.mouse.hasGift = false
+  setMouseType(MouseTypes.none)
 }
 
 game.div.onmousemove = (event) => {
-  game.mouse.pos = new Vec2(event.clientX, event.clientY);
-  game.mouse.div.style.left = game.mouse.pos.x + 'px';
-  game.mouse.div.style.top = game.mouse.pos.y + 'px';
+  game.mouse.pos = new Vec2(event.clientX, event.clientY)
+  game.mouse.element.style.left = game.mouse.pos.x + 'px'
+  game.mouse.element.style.top = game.mouse.pos.y + 'px'
 }
 
 game.div.onmouseenter = (event) => {
-  showMouse(game.gifting);
+  setMouseType(game.mouse.hasBall ? MouseTypes.ball : game.mouse.hasGift ? MouseTypes.gift : MouseTypes.none)
 }
 
 game.div.onmouseleave = (event) => {
-  showMouse(false);
+  setMouseType(MouseTypes.none)
 }
 
 //Resize window
@@ -186,7 +228,7 @@ function onResize() {
   game.height = window.innerHeight;
 
   //Fit all pets on screen
-  game.pets.forEach((pet) => pet.moveTo(pet.pos));
+  game.pets.forEach((pet) => pet.moveTo(pet.pos))
 }
 
 
@@ -207,13 +249,13 @@ function onResize() {
 
 function update() {
   //Window size changed
-  if (game.width != window.innerWidth || game.height != window.innerHeight) onResize();
+  if (game.width != window.innerWidth || game.height != window.innerHeight) onResize()
 
   //Next frame
-  game.frames++;
+  game.frames++
 
   //Update pets
-  game.pets.forEach((pet) => pet.update());
+  game.pets.forEach((pet) => pet.update())
 }
 
 
@@ -236,6 +278,4 @@ function update() {
 const timer = setInterval(update, 1000 / game.fps)
 
 //Tell vscode game loaded
-vscode.postMessage({ type: 'init' });
-//vscode.postMessage({ type: 'error', text: 'bomba' });
-//vscode.postMessage({ type: 'info', text: 'bomba' });
+vscode.postMessage({ type: 'init' })
