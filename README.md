@@ -20,4 +20,8 @@ cats, dogs, dinos, turtles, raccoons, ducks, goats, sheeps, ostrichs, pigs, rabb
 
 Now available on the [VSCode Store](https://marketplace.visualstudio.com/items?itemName=botpa.stardew-pets)!
 
+## Dev
+
+If you have time, you can also check my [portfolio](https://botpa.vercel.app) out :)
+
 </div>

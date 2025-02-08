@@ -1,5 +1,9 @@
 # Change Log
 
+## [v1.2.1]
+
+- Updated ball pet move point to feel better
+
 ## [v1.2.0]
 
 - Added a ball to play with your pets :D
