@@ -413,6 +413,7 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
   private getHtmlContent(webview: vscode.Webview): string {
     //You can reference local files (like CSS or JS) via vscode-resource URIs
     const style = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'style.css'));
+    const utilJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'util.js'));
     const petsJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'pets.js'));
     const mainJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.js'));
 
@@ -431,6 +432,7 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
           <div id="ball"></div>
         </div>
         <div id="mouse"></div>
+        <script src="${utilJS}"></script>
         <script src="${petsJS}"></script>
         <script src="${mainJS}"></script>
       </body>

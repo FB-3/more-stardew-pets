@@ -198,7 +198,7 @@ game.div.onclick = (event) => {
     game.ball.element.setAttribute('visible', '')
     
     //Move all pets towards ball
-    game.pets.forEach((pet) => pet.moveTowardsBall(ballPos.sub(pet.size.div(2).toInt())))
+    game.pets.forEach((pet) => pet.moveTowardsBall(ballPos.sub(pet.size.mult(new Vec2(0.5, 0.8)).toInt())))
   }
 
   //Hide mouse
