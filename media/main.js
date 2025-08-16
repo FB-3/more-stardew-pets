@@ -1,7 +1,7 @@
-const vscode = acquireVsCodeApi();
+const vscode = acquireVsCodeApi()
 
-//Cursor types
-const Cursors = {
+//Actions
+const Action = {
     none: '',
     gift: 'gift',
     ball: 'ball',
@@ -9,21 +9,55 @@ const Cursors = {
 
 //Game info
 const Game = {
-    //Div where the pets are stored
-    element: document.getElementById('pets'),
-
     //Window
     width: window.innerWidth,
     height: window.innerHeight,
     scale: 2,
+
+    //Element where the pets are stored
+    element: document.getElementById('pets'),
+
+    //Action being performed
+    action: Action.none,
+    isAction: (action) => { return Game.action == action },
+    setAction: (action) => { 
+        Game.action = action
+        Game.cursor.setIcon(action)
+    },
+
+    //Cursor
     cursor: {
         element: document.getElementById('cursor'),
+        setIcon: (icon) => { 
+            Game.cursor.element.setAttribute('icon', icon) 
+        },
         pos: new Vec2(),
-        hasGift: false,
-        hasBall: false,
+        moveTo: (pos) => {
+            Game.cursor.pos = pos
+            Game.cursor.element.style.left = pos.x + 'px'
+            Game.cursor.element.style.top = pos.y + 'px'
+        },
     },
+
+    //Ball
     ball: {
         element: document.getElementById('ball'),
+        isVisible: false,
+        setVisible: (visible) => {
+            if (typeof visible !== 'boolean') visible = true
+            if (visible)
+                Game.ball.element.setAttribute('visible', '')
+            else
+                Game.ball.element.removeAttribute('visible')
+            Game.ball.isVisible = visible
+        },
+        pos: new Vec2(),
+        moveTo: (pos) => {
+            Game.ball.pos = pos
+            Game.ball.element.style.zIndex = pos.y
+            Game.ball.element.style.setProperty('--position-x', pos.x + 'px');
+            Game.ball.element.style.setProperty('--position-y', pos.y + 'px');
+        },
     },
 
     //Frames & framerate
@@ -32,6 +66,59 @@ const Game = {
 
     //List with all the pets
     pets: []
+}
+
+
+ /*$$$$$$$                              /$$     /$$
+| $$_____/                             | $$    |__/
+| $$    /$$   /$$ /$$$$$$$   /$$$$$$$ /$$$$$$   /$$  /$$$$$$  /$$$$$$$   /$$$$$$$
+| $$$$$| $$  | $$| $$__  $$ /$$_____/|_  $$_/  | $$ /$$__  $$| $$__  $$ /$$_____/
+| $$__/| $$  | $$| $$  \ $$| $$        | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$
+| $$   | $$  | $$| $$  | $$| $$        | $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
+| $$   |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
+|__/    \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|______*/
+
+//Cursor icon
+function setCursorIcon(icon) {
+    //Fix invalid type
+    if (typeof icon != 'string') icon = Action.none
+
+    //Set cursor type
+    Game.cursor.setIcon(icon)
+}
+
+//Actions menu
+const actionsMenu = document.getElementById('actions')
+
+function toggleActionsMenu(open) {
+    //Fix args
+    if (typeof open !== 'boolean') 
+        open = !actionsMenu.hasAttribute('open')
+
+    //Toggle menu
+    if (open) 
+        actions.setAttribute('open', '')
+    else 
+        actions.removeAttribute('open')
+}
+
+function toggleActionBall(event) {
+    //Ball is visible -> Remove it
+    if (Game.ball.isVisible) onBallReached()
+    
+    //Toggle ball action
+    Game.setAction(Game.isAction(Action.ball) ? Action.none : Action.ball)
+
+    //Hide actions menu
+    toggleActionsMenu(false)
+}
+
+function toggleActionGift(event) {
+    //Toggle gift action
+    Game.setAction(Game.isAction(Action.gift) ? Action.none : Action.gift)
+
+    //Hide actions menu
+    toggleActionsMenu(false)
 }
 
 
@@ -51,21 +138,9 @@ window.addEventListener('message', event => {
 
     //Check message type
     switch (message.type.toLowerCase()) {
-        //Update ball
-        case 'ball':
-            //Remove ball
-            if (Game.ball.element.hasAttribute('visible')) onBallReached()
-            
-            //Toggle grabbing ball & disable gift
-            Game.cursor.hasBall = !Game.cursor.hasBall;
-            Game.cursor.hasGift = false;
-            break;
-
-        //Update gift
-        case 'gift':
-            //Toggle gift & disable grabbing ball
-            Game.cursor.hasBall = false;
-            Game.cursor.hasGift = !Game.cursor.hasGift;
+        //Toggle actions menu
+        case 'actions':
+            toggleActionsMenu()
             break;
 
         //Create a pet
@@ -173,54 +248,43 @@ window.addEventListener('message', event => {
             onResize();
             break;
     }
-});
+})
 
-//Cursor (ball & gift)
-function setCursorType(type) {
-    //Fix invalid type
-    if (typeof type != 'string') type = Cursors.none
+//Cursor info
+document.onclick = event => {
+    //No action
+    if (Game.isAction(Action.none)) return
 
-    //Set cursor type
-    Game.cursor.element.setAttribute('type', type)
-}
-
-Game.element.onclick = event => {
-    //Move ball
-    if (Game.cursor.hasBall) {
+    //Place ball
+    if (Game.isAction(Action.ball)) {
         //Get ball position
-        const ballPos = Game.cursor.pos.div(Game.scale).toInt()
+        const pos = Game.cursor.pos.div(Game.scale).toInt()
 
         //Move ball
-        Game.ball.element.style.zIndex = ballPos.y
-        Game.ball.element.style.setProperty('--position-x', ballPos.x + 'px');
-        Game.ball.element.style.setProperty('--position-y', ballPos.y + 'px');
-        Game.ball.element.setAttribute('visible', '')
+        Game.ball.moveTo(pos)
+        Game.ball.setVisible(true)
 
         //Move all pets towards ball
-        Game.pets.forEach(pet => pet.moveTowardsBall(ballPos.sub(pet.size.mult(new Vec2(0.5, 0.8)).toInt())))
+        Game.pets.forEach(pet => pet.moveTowardsBall(pos))
     }
 
-    //Hide cursor
-    Game.cursor.hasBall = false
-    Game.cursor.hasGift = false
-    setCursorType(Cursors.none)
+    //Clear current action
+    Game.setAction(Action.none)
 }
 
-Game.element.onmousemove = event => {
+document.onmousemove = event => {
     //Mouse moved -> Update cursor position
-    Game.cursor.pos = new Vec2(event.clientX, event.clientY)
-    Game.cursor.element.style.left = Game.cursor.pos.x + 'px'
-    Game.cursor.element.style.top = Game.cursor.pos.y + 'px'
+    Game.cursor.moveTo(new Vec2(event.clientX, event.clientY))
 }
 
-Game.element.onmouseenter = event => {
-    //Mouse entered screen -> Show cursor if needed
-    setCursorType(Game.cursor.hasBall ? Cursors.ball : Game.cursor.hasGift ? Cursors.gift : Cursors.none)
+document.onmouseenter = event => {
+    //Mouse entered screen -> Show cursor
+    Game.cursor.setIcon(Game.action)
 }
 
-Game.element.onmouseleave = event => {
+document.onmouseleave = event => {
     //Mouse left screen -> Hide cursor
-    setCursorType(Cursors.none)
+    Game.cursor.setIcon(Action.none)
 }
 
 //Ballin ⛹🏾
@@ -229,7 +293,7 @@ function onBallReached() {
     Game.pets.forEach(pet => { if (pet.ai.state == AI.MOVING_BALL) pet.ai.setState(AI.IDLE) })
 
     //Hide ball
-    Game.ball.element.removeAttribute('visible')
+    Game.ball.setVisible(false)
 }
 
 //Window resize
@@ -255,7 +319,7 @@ function onResize() {
                               | $$
                               |_*/
 
-//Main loop
+//Main loop function
 function update() {
     //Check if window size changed
     if (Game.width != window.innerWidth || Game.height != window.innerHeight) onResize()
@@ -267,21 +331,8 @@ function update() {
     Game.pets.forEach(pet => pet.update())
 }
 
-
- /*$                           /$$
-| $$                          |__/
-| $$        /$$$$$$   /$$$$$$  /$$  /$$$$$$$
-| $$       /$$__  $$ /$$__  $$| $$ /$$_____/
-| $$      | $$  \ $$| $$  \ $$| $$| $$
-| $$      | $$  | $$| $$  | $$| $$| $$
-| $$$$$$$$|  $$$$$$/|  $$$$$$$| $$|  $$$$$$$
-|________/ \______/  \____  $$|__/ \_______/
-                     /$$  \ $$ 
-                    |  $$$$$$/
-                     \_____*/
-
 //Start loop
 const timer = setInterval(update, 1000 / Game.fps)
 
-//Tell vscode game loaded
+//Tell VSCode the game was loaded
 vscode.postMessage({ type: 'init' })

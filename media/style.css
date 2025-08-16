@@ -1,3 +1,5 @@
+@font-face { font-family: stardew; src: url('./fonts/StardewValley.ttf'); }
+
 /* HTML */
 html,
 body {
@@ -9,7 +11,74 @@ body {
     overflow: hidden;
     image-rendering: pixelated;
 
+    font-family: stardew;
+    color: #551215;
+    font-size: 18px;
+    user-select: none;
+
     --scale: 1;
+}
+
+img[filter] {
+    filter: brightness(0) saturate(100%) invert(8%) sepia(49%) saturate(4766%) hue-rotate(344deg) brightness(85%) contrast(94%);
+}
+
+
+/* Actions menu */
+#actions {
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+#actions[open] {
+    display: flex;
+}
+
+#actions > div {
+    padding: 5px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    background-color: #f8ba6f;
+    outline: solid 4px #b24e03;
+
+    border-radius: 10px;
+}
+
+.actionButton {
+    padding: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+    transition: background-color .2s;
+}
+
+.actionButton:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.actionButton > img {
+    width: 20px;
+    height: 20px;
+
+    border-radius: 5px;
 }
 
 
@@ -60,13 +129,13 @@ body {
     opacity: 0;
 }
 
-#cursor[type="gift"] {
+#cursor[icon="gift"] {
     --bg-pos-x: calc(-12 * var(--size));
     --bg-pos-y: calc(-10 * var(--size));
     opacity: 1;
 }
 
-#cursor[type="ball"] {
+#cursor[icon="ball"] {
     --bg-pos-x: calc(-3 * var(--size));
     --bg-pos-y: calc(-9 * var(--size));
     opacity: 1;

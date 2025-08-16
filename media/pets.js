@@ -172,10 +172,9 @@ class AI {
 
     click() {
         //Has gift?
-        if (Game.cursor.hasGift) {
+        if (Game.isAction(Action.gift)) {
             //Consume gift
-            Game.cursor.hasGift = false;
-            setCursorType(Cursors.none);
+            Game.setAction(Action.none);
 
             //Set mood to heart
             this.#setHeartMood()
@@ -505,6 +504,9 @@ class Pet {
     }
 
     moveTowardsBall(pos) {
+        //Fix position
+        pos = pos.sub(this.size.mult(new Vec2(0.5, 0.8)).toInt())
+
         //Clamp new position
         pos.x = clamp(pos.x, 0, this.maxX);
         pos.y = clamp(pos.y, 0, this.maxY);

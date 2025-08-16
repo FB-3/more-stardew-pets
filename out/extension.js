@@ -264,13 +264,9 @@ function activate(context) {
         //Bye pet!
         vscode.window.showInformationMessage('Bye ' + pet.label + '!');
     });
-    //Use ball
-    const commandBall = vscode.commands.registerCommand('stardew-pets.ball', async () => {
-        webview.postMessage({ type: 'ball' });
-    });
-    //Use gift
-    const commandGift = vscode.commands.registerCommand('stardew-pets.gift', async () => {
-        webview.postMessage({ type: 'gift' });
+    //Actions
+    const commandAction = vscode.commands.registerCommand('stardew-pets.actions', async () => {
+        webview.postMessage({ type: 'actions' });
     });
     //Open settings
     const commandSettings = vscode.commands.registerCommand('stardew-pets.settings', async () => {
@@ -294,7 +290,7 @@ function activate(context) {
             loadPet(pets[i]);
     });
     //Add commands
-    context.subscriptions.push(commandAddPet, commandRemovePet, commandBall, commandGift, commandSettings, commandOpenPetsFile, commandReloadPetsFile);
+    context.subscriptions.push(commandAddPet, commandRemovePet, commandAction, commandSettings, commandOpenPetsFile, commandReloadPetsFile);
 }
 /*$$$$$$                                  /$$     /$$                       /$$
 | $$__  $$                                | $$    |__/                      | $$
@@ -363,30 +359,46 @@ class WebViewProvider {
             }
         });
     }
+    getUri(webview, path) {
+        return webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', path));
+    }
     getHtmlContent(webview) {
-        //You can reference local files (like CSS or JS) via vscode-resource URIs
-        const style = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'style.css'));
-        const utilJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'util.js'));
-        const petsJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'pets.js'));
-        const mainJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.js'));
-        //HTML
         return `
             <!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="${style}" rel="stylesheet">
-                <title>stardew pets 😸</title>
+                <link href="${this.getUri(webview, 'style.css')}" rel="stylesheet">
+                <title>Stardew Pets 😸</title>
             </head>
             <body>
+                <!-- Pets & toys -->
                 <div id="pets" background="${config.get('background')}">
-                <div id="ball"></div>
+                    <div id="ball"></div>
                 </div>
+
+                <!-- Actions menu -->
+                <div id="actions" onclick="toggleActionsMenu(false)">
+                    <div onclick="event.stopPropagation()">
+                        <div class="actionButton" onclick="toggleActionBall()">
+                            <img filter src="${this.getUri(webview, 'icons/dark/ball.svg')}">
+                            <span>Play with Ball</span>
+                        </div>
+                        <div class="actionButton" onclick="toggleActionGift()">
+                            <img filter src="${this.getUri(webview, 'icons/dark/gift.svg')}">
+                            <span>Give a Gift</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cursor -->
                 <div id="cursor"></div>
-                <script src="${utilJS}"></script>
-                <script src="${petsJS}"></script>
-                <script src="${mainJS}"></script>
+
+                <!-- Scripts -->
+                <script src="${this.getUri(webview, 'util.js')}"></script>
+                <script src="${this.getUri(webview, 'pets.js')}"></script>
+                <script src="${this.getUri(webview, 'main.js')}"></script>
             </body>
             </html>
         `;

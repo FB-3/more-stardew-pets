@@ -1,8 +1,13 @@
 # Change Log
 
+## [v1.2.3]
+
+- Moved "Play with Ball" and "Give a Gift" buttons into a new "Actions" menu
+- Changed how actions are handled internally
+
 ## [v1.2.1]
 
-- Updated ball pet move point to feel better
+- Updated where pets move when going after the ball so it feels better
 
 ## [v1.2.0]
 
@@ -10,14 +15,14 @@
 
 ## [v1.1.1]
 
-- Posible fix for extension not loading due to a folder not existing (linux users)
+- Fixed extension not loading due to a folder not existing (linux only)
 
 ## [v1.1.0]
 
 - Fixed purple turtles
 - Added ducks
 - Updated moods system to reset heart after 10 minutes
-- Changed where pets.json is stored to prevent deleting it with updates
+- Changed where "pets.json" is stored to prevent deleting it with updates
 
 ## [v1.0.0]
 
