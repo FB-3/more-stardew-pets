@@ -1,0 +1,9 @@
+# Node.js modules
+node_modules/
+
+# VS Code specific files
+.vscode-test/
+.vscode-test-web/
+.vscode/extensions.json
+.vscode/launch.json
+.vscode/tasks.json

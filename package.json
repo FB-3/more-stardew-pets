@@ -1,184 +1,182 @@
 {
-  "name": "stardew-pets",
-  "displayName": "Stardew Pets",
-  "description": "Stardew Valley pets for VSCode 😸",
-  "version": "1.2.1",
-  "publisher": "Botpa",
-  "author": {
-    "name": "Botpa"
-  },
-
-  "icon": "media/icons/icon.png",
-  "galleryBanner": {
-    "color": "#45a319",
-    "theme": "dark"
-  },
-  "pricing": "Free",
-  "keywords": [
-    "stardew",
-    "valley",
-    "stardew valley",
-    "pets",
-    "cat",
-    "cog",
-    "dino",
-    "duck",
-    "turtle",
-    "raccoon",
-    "goat",
-    "sheep",
-    "ostrich",
-    "pig",
-    "rabbit",
-    "chicken",
-    "cow",
-    "junimo"
-  ],
-  "categories": [
-    "Other"
-  ],
-  "repository": {
-    "type": "github",
-    "url": "https://github.com/BOTPanzer/Stardew-Pets"
-  },
-  "engines": {
-    "vscode": "^1.92.0"
-  },
-
-  "activationEvents": [],
-  "main": "./out/extension.js",
-  "contributes": {
-    "configuration": {
-      "title": "StardewPets",
-      "properties": {
-        "stardew-pets.background": {
-          "type": "string",
-          "default": "Grass",
-          "enum": [
-            "Grass",
-            "Dirt",
-            "Sand"
-          ],
-          "description": "The background theme for the window."
-        },
-        "stardew-pets.scale": {
-          "type": "string",
-          "default": "Medium",
-          "enum": [
-            "Small",
-            "Medium",
-            "Big"
-          ],
-          "description": "The scale of the pets."
-        }
-      }
+    "name": "stardew-pets",
+    "displayName": "Stardew Pets",
+    "description": "Stardew Valley pets for VSCode 😸",
+    "version": "1.2.1",
+    "publisher": "Botpa",
+    "author": {
+        "name": "Botpa"
     },
-    "commands": [
-      {
-        "command": "stardew-pets.addPet",
-        "title": "Add",
-        "icon": {
-          "light": "media/icons/light/add.svg",
-          "dark": "media/icons/dark/add.svg"
-        }
-      },
-      {
-        "command": "stardew-pets.removePet",
-        "title": "Remove",
-        "icon": {
-          "light": "media/icons/light/remove.svg",
-          "dark": "media/icons/dark/remove.svg"
-        }
-      },
-      {
-        "command": "stardew-pets.ball",
-        "title": "Give ball",
-        "icon": {
-          "light": "media/icons/light/ball.svg",
-          "dark": "media/icons/dark/ball.svg"
-        }
-      },
-      {
-        "command": "stardew-pets.gift",
-        "title": "Give gift",
-        "icon": {
-          "light": "media/icons/light/gift.svg",
-          "dark": "media/icons/dark/gift.svg"
-        }
-      },
-      {
-        "command": "stardew-pets.settings",
-        "title": "Settings",
-        "icon": {
-          "light": "media/icons//light/settings.svg",
-          "dark": "media/icons/dark/settings.svg"
-        }
-      },
-      {
-        "command": "stardew-pets.openPetsFile",
-        "title": "Stardew Pets: Open pets file (JSON)"
-      },
-      {
-        "command": "stardew-pets.reloadPetsFile",
-        "title": "Stardew Pets: Reload pets file"
-      }
+    "icon": "media/icons/icon.png",
+    "galleryBanner": {
+        "color": "#45a319",
+        "theme": "dark"
+    },
+    "pricing": "Free",
+    "keywords": [
+        "stardew",
+        "valley",
+        "stardew valley",
+        "pets",
+        "cat",
+        "cog",
+        "dino",
+        "duck",
+        "turtle",
+        "raccoon",
+        "goat",
+        "sheep",
+        "ostrich",
+        "pig",
+        "rabbit",
+        "chicken",
+        "cow",
+        "junimo"
     ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "stardew-pets.addPet",
-          "when": "view == stardew-pets",
-          "group": "navigation@0"
-        },
-        {
-          "command": "stardew-pets.removePet",
-          "when": "view == stardew-pets",
-          "group": "navigation@1"
-        },
-        {
-          "command": "stardew-pets.ball",
-          "when": "view == stardew-pets",
-          "group": "navigation@2"
-        },
-        {
-          "command": "stardew-pets.gift",
-          "when": "view == stardew-pets",
-          "group": "navigation@2"
-        },
-        {
-          "command": "stardew-pets.settings",
-          "when": "view == stardew-pets",
-          "group": "navigation@3"
-        }
-      ]
+    "categories": [
+        "Other"
+    ],
+    "repository": {
+        "type": "github",
+        "url": "https://github.com/BOTPanzer/Stardew-Pets"
     },
-    "views": {
-      "explorer": [
-        {
-          "id": "stardew-pets",
-          "name": "Stardew Pets 😸",
-          "contextualTitle": "Stardew Valley pets for VSCode 😸",
-          "type": "webview"
+    "engines": {
+        "vscode": "^1.92.0"
+    },
+    "activationEvents": [],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "title": "StardewPets",
+            "properties": {
+                "stardew-pets.background": {
+                    "type": "string",
+                    "default": "Grass",
+                    "enum": [
+                        "Grass",
+                        "Dirt",
+                        "Sand"
+                    ],
+                    "description": "The background theme for the window."
+                },
+                "stardew-pets.scale": {
+                    "type": "string",
+                    "default": "Medium",
+                    "enum": [
+                        "Small",
+                        "Medium",
+                        "Big"
+                    ],
+                    "description": "The scale of the pets."
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "stardew-pets.addPet",
+                "title": "Add",
+                "icon": {
+                    "light": "media/icons/light/add.svg",
+                    "dark": "media/icons/dark/add.svg"
+                }
+            },
+            {
+                "command": "stardew-pets.removePet",
+                "title": "Remove",
+                "icon": {
+                    "light": "media/icons/light/remove.svg",
+                    "dark": "media/icons/dark/remove.svg"
+                }
+            },
+            {
+                "command": "stardew-pets.ball",
+                "title": "Give ball",
+                "icon": {
+                    "light": "media/icons/light/ball.svg",
+                    "dark": "media/icons/dark/ball.svg"
+                }
+            },
+            {
+                "command": "stardew-pets.gift",
+                "title": "Give gift",
+                "icon": {
+                    "light": "media/icons/light/gift.svg",
+                    "dark": "media/icons/dark/gift.svg"
+                }
+            },
+            {
+                "command": "stardew-pets.settings",
+                "title": "Settings",
+                "icon": {
+                    "light": "media/icons//light/settings.svg",
+                    "dark": "media/icons/dark/settings.svg"
+                }
+            },
+            {
+                "command": "stardew-pets.openPetsFile",
+                "title": "Stardew Pets: Open pets file (JSON)"
+            },
+            {
+                "command": "stardew-pets.reloadPetsFile",
+                "title": "Stardew Pets: Reload pets file"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "stardew-pets.addPet",
+                    "when": "view == stardew-pets",
+                    "group": "navigation@0"
+                },
+                {
+                    "command": "stardew-pets.removePet",
+                    "when": "view == stardew-pets",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "stardew-pets.ball",
+                    "when": "view == stardew-pets",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "stardew-pets.gift",
+                    "when": "view == stardew-pets",
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "stardew-pets.settings",
+                    "when": "view == stardew-pets",
+                    "group": "navigation@3"
+                }
+            ]
+        },
+        "views": {
+            "explorer": [
+                {
+                    "id": "stardew-pets",
+                    "name": "Stardew Pets 😸",
+                    "contextualTitle": "Stardew Valley pets for VSCode 😸",
+                    "type": "webview"
+                }
+            ]
         }
-      ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/mocha": "^10.0.7",
+        "@types/node": "20.x",
+        "@types/vscode": "^1.92.0",
+        "@typescript-eslint/eslint-plugin": "^7.14.1",
+        "@typescript-eslint/parser": "^7.11.0",
+        "@vscode/test-cli": "^0.0.9",
+        "@vscode/test-electron": "^2.4.0",
+        "eslint": "^8.57.0",
+        "typescript": "^5.4.5"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts"
-  },
-  "devDependencies": {
-    "@types/mocha": "^10.0.7",
-    "@types/node": "20.x",
-    "@types/vscode": "^1.92.0",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
-    "@typescript-eslint/parser": "^7.11.0",
-    "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5"
-  }
 }

@@ -27,14 +27,14 @@ exports.WebViewProvider = void 0;
 exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
-const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 //Extension
 let config = vscode.workspace.getConfiguration('stardew-pets');
 let webview;
 let extensionStorageFolder = '';
-//Pets (species & names)
-const species = {
+//Pet enums (species & names)
+const Species = {
     cat: ['black', 'gray', 'orange', 'white', 'yellow', 'purple'],
     dog: ['blonde', 'gray', 'brown', 'dark brown', 'light brown', 'purple'],
     dino: [],
@@ -50,9 +50,9 @@ const species = {
     cow: ['white adult', 'brown adult', 'white baby', 'brown baby'],
     junimo: ['white', 'black', 'gray', 'pink', 'red', 'orange', 'yellow', 'green', 'cyan', 'purple', 'brown'],
 };
-const names = [
-    'Alex', 'laura',
-    'Ángela', 'Raúl',
+const Names = [
+    'Alex', 'Laura',
+    'Raúl', 'Ángela',
     'Álvaro', 'Victor',
     'Aitor', 'Chao',
     'Rodri', 'Adri',
@@ -192,9 +192,10 @@ function activate(context) {
   |  $$$$$$/|  $$$$$$/| $$ | $$ | $$| $$ | $$ | $$|  $$$$$$$| $$  | $$|  $$$$$$$ /$$$$$$$/
    \______/  \______/ |__/ |__/ |__/|__/ |__/ |__/ \_______/|__/  |__/ \_______/|______*/
     //The commands have to be defined in package.json in order to be added here
+    //Add pet
     const commandAddPet = vscode.commands.registerCommand('stardew-pets.addPet', async () => {
         //Ask for a specie
-        const specie = await vscode.window.showQuickPick(Object.keys(species), {
+        const specie = await vscode.window.showQuickPick(Object.keys(Species), {
             title: 'Select a pet',
             placeHolder: 'pet',
         });
@@ -202,8 +203,8 @@ function activate(context) {
             return;
         //Ask for a variant
         let variants = Array();
-        for (let i = 0; i < species[specie].length; i++) {
-            const variant = species[specie][i];
+        for (let i = 0; i < Species[specie].length; i++) {
+            const variant = Species[specie][i];
             //Get adult/baby start index
             let index = variant.indexOf(' adult');
             if (index == -1)
@@ -221,7 +222,7 @@ function activate(context) {
             return;
         const variant = (tmpvariant.label + ' ' + tmpvariant.description).trim();
         //Ask for a name
-        const tmpname = names[Math.floor(Math.random() * names.length)];
+        const tmpname = Names[Math.floor(Math.random() * Names.length)];
         const name = await vscode.window.showInputBox({
             title: 'Choose a name for your pet',
             placeHolder: 'name',
@@ -242,6 +243,7 @@ function activate(context) {
         //New pet!
         vscode.window.showInformationMessage(`Say hi to ${name}!`);
     });
+    //Remove pet
     const commandRemovePet = vscode.commands.registerCommand('stardew-pets.removePet', async () => {
         //Get pet names
         let items = Array();
@@ -262,20 +264,24 @@ function activate(context) {
         //Bye pet!
         vscode.window.showInformationMessage('Bye ' + pet.label + '!');
     });
+    //Use ball
     const commandBall = vscode.commands.registerCommand('stardew-pets.ball', async () => {
         webview.postMessage({ type: 'ball' });
     });
+    //Use gift
     const commandGift = vscode.commands.registerCommand('stardew-pets.gift', async () => {
         webview.postMessage({ type: 'gift' });
     });
+    //Open settings
     const commandSettings = vscode.commands.registerCommand('stardew-pets.settings', async () => {
-        //vscode.commands.executeCommand('workbench.action.openSettings', 'StardewPets');
         vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Botpa.stardew-pets');
     });
+    //Open pets JSON file
     const commandOpenPetsFile = vscode.commands.registerCommand('stardew-pets.openPetsFile', async () => {
         const uri = vscode.Uri.file(petsPath);
         const success = await vscode.commands.executeCommand('vscode.openFolder', uri);
     });
+    //Reload pets JSON file
     const commandReloadPetsFile = vscode.commands.registerCommand('stardew-pets.reloadPetsFile', async () => {
         //Remove all pets
         const petsLength = pets.length;
@@ -287,6 +293,7 @@ function activate(context) {
         for (let i = 0; i < pets.length; i++)
             loadPet(pets[i]);
     });
+    //Add commands
     context.subscriptions.push(commandAddPet, commandRemovePet, commandBall, commandGift, commandSettings, commandOpenPetsFile, commandReloadPetsFile);
 }
 /*$$$$$$                                  /$$     /$$                       /$$
@@ -364,25 +371,25 @@ class WebViewProvider {
         const mainJS = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.js'));
         //HTML
         return `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="${style}" rel="stylesheet">
-        <title>stardew pets 😸</title>
-      </head>
-      <body>
-        <div id="pets" background="${config.get('background')}">
-          <div id="ball"></div>
-        </div>
-        <div id="mouse"></div>
-        <script src="${utilJS}"></script>
-        <script src="${petsJS}"></script>
-        <script src="${mainJS}"></script>
-      </body>
-      </html>
-    `;
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href="${style}" rel="stylesheet">
+                <title>stardew pets 😸</title>
+            </head>
+            <body>
+                <div id="pets" background="${config.get('background')}">
+                <div id="ball"></div>
+                </div>
+                <div id="cursor"></div>
+                <script src="${utilJS}"></script>
+                <script src="${petsJS}"></script>
+                <script src="${mainJS}"></script>
+            </body>
+            </html>
+        `;
     }
 }
 exports.WebViewProvider = WebViewProvider;
