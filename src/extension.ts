@@ -425,14 +425,14 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
                 </div>
 
                 <!-- Actions menu -->
-                <div id="actions" onclick="toggleActionsMenu(false)">
+                <div id="actions" class="menu" onclick="toggleActionsMenu(false)">
                     <div onclick="event.stopPropagation()">
                         <div class="actionButton" onclick="toggleActionBall()">
-                            <img filter src="${this.getUri(webview, 'icons/dark/ball.svg')}">
+                            <img src="${this.getUri(webview, 'sprites/ui/ball.png')}">
                             <span>Play with Ball</span>
                         </div>
                         <div class="actionButton" onclick="toggleActionGift()">
-                            <img filter src="${this.getUri(webview, 'icons/dark/gift.svg')}">
+                            <img src="${this.getUri(webview, 'sprites/ui/gift.png')}">
                             <span>Give a Gift</span>
                         </div>
                     </div>

@@ -140,6 +140,7 @@ window.addEventListener('message', event => {
     switch (message.type.toLowerCase()) {
         //Toggle actions menu
         case 'actions':
+            Game.setAction(Action.none)
             toggleActionsMenu()
             break;
 

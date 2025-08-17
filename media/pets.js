@@ -473,8 +473,6 @@ class Pet {
     #selectSprite(offset) {
         this.#element.style.setProperty('--offset-x', -(offset[0] * this.size.x) + 'px');
         this.#element.style.setProperty('--offset-y', -(offset[1] * this.size.y) + 'px');
-        /*this.#element.style.setProperty('--offset-x', offset[0]);
-        this.#element.style.setProperty('--offset-y', offset[1]);*/
     }
 
     //Movement

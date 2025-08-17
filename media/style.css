@@ -1,5 +1,6 @@
 @font-face { font-family: stardew; src: url('./fonts/StardewValley.ttf'); }
 
+
 /* HTML */
 html,
 body {
@@ -24,39 +25,46 @@ img[filter] {
 }
 
 
-/* Actions menu */
-#actions {
+/* Menus */
+.menu {
+    /* Size */
     width: 100%;
     height: 100%;
 
+    /* Layout */
     position: absolute;
     top: 0;
     left: 0;
-    
     display: none;
     align-items: center;
     justify-content: center;
 
+    /* Decoration */
     background-color: rgba(0, 0, 0, 0.25);
 }
 
-#actions[open] {
+.menu[open] {
     display: flex;
 }
 
-#actions > div {
-    padding: 5px;
+.menu > div {
+    /* Spacing */
+    padding: -20px;
 
+    /* Layout */
     display: flex;
     flex-direction: column;
     gap: 5px;
-
-    background-color: #f8ba6f;
-    outline: solid 4px #b24e03;
-
-    border-radius: 10px;
+    
+    /* Decoration */
+    border: 18px solid transparent;
+    border-image-source: url('sprites/ui/menu.png');
+    border-image-slice: 18 fill;
+    border-image-repeat: stretch;
 }
 
+
+/* Actions menu */
 .actionButton {
     padding: 5px;
 
@@ -67,11 +75,11 @@ img[filter] {
     border-radius: 5px;
 
     cursor: pointer;
-    transition: background-color .2s;
+    transition: background-color .1s;
 }
 
 .actionButton:hover {
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: #55121530;
 }
 
 .actionButton > img {
@@ -79,30 +87,6 @@ img[filter] {
     height: 20px;
 
     border-radius: 5px;
-}
-
-
-/* Pets parent element (also the background) */
-#pets,
-#pets[background="grass"] {
-    width: calc(100% / var(--scale));
-    height: calc(100% / var(--scale));
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    transform-origin: 0% 0%;
-
-    transform: scale(var(--scale));
-    background-repeat: repeat;
-    background: url(./backgrounds/grass.png);
-}
-
-#pets[background="sand"] {
-    background: url(./backgrounds/sand.png);
-}
-
-#pets[background="dirt"] {
-    background: url(./backgrounds/dirt.png);
 }
 
 
@@ -119,7 +103,7 @@ img[filter] {
     top: 0;
     left: 0;
 
-    background-image: url(./emotes/emotes.png);
+    background-image: url(./sprites/emotes/emotes.png);
     background-position-x: var(--bg-pos-x);
     background-position-y: var(--bg-pos-y);
 
@@ -153,7 +137,7 @@ img[filter] {
     left: var(--position-x);
     top: calc(var(--position-y));
 
-    background-image: url(./emotes/emotes.png);
+    background-image: url(./sprites/emotes/emotes.png);
     background-position-x: calc(-3 * var(--size));
     background-position-y: calc(-9 * var(--size));
 
@@ -200,6 +184,30 @@ img[filter] {
 }
 
 
+/* Pets parent element (also the background) */
+#pets,
+#pets[background="grass"] {
+    width: calc(100% / var(--scale));
+    height: calc(100% / var(--scale));
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transform-origin: 0% 0%;
+
+    transform: scale(var(--scale));
+    background-repeat: repeat;
+    background: url(./sprites/backgrounds/grass.png);
+}
+
+#pets[background="sand"] {
+    background: url(./sprites/backgrounds/sand.png);
+}
+
+#pets[background="dirt"] {
+    background: url(./sprites/backgrounds/dirt.png);
+}
+
+
 /* Base class for pets */
 .pet {
     --size: 32px;
@@ -212,7 +220,7 @@ img[filter] {
     left: var(--position-x);
     top: var(--position-y);
 
-    --image: url(./animals/cat/black.png);
+    --image: url(./sprites/animals/cat/black.png);
     background-image: var(--image);
     --offset-x: 0px;
     --offset-y: 0px;
@@ -243,7 +251,7 @@ img[filter] {
     right: 0;
     bottom: 0;
 
-    background-image: url(./emotes/emotes.png);
+    background-image: url(./sprites/emotes/emotes.png);
     background-position-x: var(--emote-x);
     background-position-y: var(--emote-y);
 
@@ -306,27 +314,27 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -9px;
-    --image: url(./animals/cat/black.png);
+    --image: url(./sprites/animals/cat/black.png);
 }
 
 .cat[color="orange"] {
-    --image: url(./animals/cat/orange.png);
+    --image: url(./sprites/animals/cat/orange.png);
 }
 
 .cat[color="gray"] {
-    --image: url(./animals/cat/gray.png);
+    --image: url(./sprites/animals/cat/gray.png);
 }
 
 .cat[color="purple"] {
-    --image: url(./animals/cat/purple.png);
+    --image: url(./sprites/animals/cat/purple.png);
 }
 
 .cat[color="white"] {
-    --image: url(./animals/cat/white.png);
+    --image: url(./sprites/animals/cat/white.png);
 }
 
 .cat[color="yellow"] {
-    --image: url(./animals/cat/yellow.png);
+    --image: url(./sprites/animals/cat/yellow.png);
 }
 
 
@@ -336,27 +344,27 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -5px;
-    --image: url(./animals/dog/blonde.png);
+    --image: url(./sprites/animals/dog/blonde.png);
 }
 
 .dog[color="brown"] {
-    --image: url(./animals/dog/brown.png);
+    --image: url(./sprites/animals/dog/brown.png);
 }
 
 .dog[color="dark brown"] {
-    --image: url(./animals/dog/dark-brown.png);
+    --image: url(./sprites/animals/dog/dark-brown.png);
 }
 
 .dog[color="gray"] {
-    --image: url(./animals/dog/gray.png);
+    --image: url(./sprites/animals/dog/gray.png);
 }
 
 .dog[color="light brown"] {
-    --image: url(./animals/dog/light-brown.png);
+    --image: url(./sprites/animals/dog/light-brown.png);
 }
 
 .dog[color="purple"] {
-    --image: url(./animals/dog/purple.png);
+    --image: url(./sprites/animals/dog/purple.png);
 }
 
 
@@ -365,7 +373,7 @@ img[filter] {
     --size: 16px;
     --size: 16px;
     --emoteElevation: 2px;
-    --image: url(./animals/dino/dino.png);
+    --image: url(./sprites/animals/dino/dino.png);
 }
 
 
@@ -374,7 +382,7 @@ img[filter] {
     --size: 16px;
     --size: 16px;
     --emoteElevation: 2px;
-    --image: url(./animals/duck/duck.png);
+    --image: url(./sprites/animals/duck/duck.png);
 }
 
 
@@ -383,7 +391,7 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -2px;
-    --image: url(./animals/raccoon/raccoon.png);
+    --image: url(./sprites/animals/raccoon/raccoon.png);
 }
 
 
@@ -393,11 +401,11 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -10px;
-    --image: url(./animals/turtle/green.png);
+    --image: url(./sprites/animals/turtle/green.png);
 }
 
 .turtle[color="purple"] {
-    --image: url(./animals/turtle/purple.png);
+    --image: url(./sprites/animals/turtle/purple.png);
 }
 
 
@@ -407,12 +415,12 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -2px;
-    --image: url(./animals/goat/adult.png);
+    --image: url(./sprites/animals/goat/adult.png);
 }
 
 .goat[color="baby"] {
     --emoteElevation: -6px;
-    --image: url(./animals/goat/baby.png);
+    --image: url(./sprites/animals/goat/baby.png);
 }
 
 
@@ -422,12 +430,12 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -3px;
-    --image: url(./animals/sheep/adult.png);
+    --image: url(./sprites/animals/sheep/adult.png);
 }
 
 .sheep[color="baby"] {
     --emoteElevation: -6px;
-    --image: url(./animals/sheep/baby.png);
+    --image: url(./sprites/animals/sheep/baby.png);
 }
 
 
@@ -437,12 +445,12 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: 3px;
-    --image: url(./animals/ostrich/adult.png);
+    --image: url(./sprites/animals/ostrich/adult.png);
 }
 
 .ostrich[color="baby"] {
     --emoteElevation: -10px;
-    --image: url(./animals/ostrich/baby.png);
+    --image: url(./sprites/animals/ostrich/baby.png);
 }
 
 
@@ -451,12 +459,12 @@ img[filter] {
 .pig[color="adult"] {
     --size: 32px;
     --size: 32px;
-    --image: url(./animals/pig/adult.png);
+    --image: url(./sprites/animals/pig/adult.png);
 }
 
 .pig[color="baby"] {
     --emoteElevation: -3px;
-    --image: url(./animals/pig/baby.png);
+    --image: url(./sprites/animals/pig/baby.png);
 }
 
 
@@ -466,12 +474,12 @@ img[filter] {
     --size: 16px;
     --size: 16px;
     --emoteElevation: 2px;
-    --image: url(./animals/rabbit/adult.png);
+    --image: url(./sprites/animals/rabbit/adult.png);
 }
 
 .rabbit[color="baby"] {
     --emoteElevation: 0px;
-    --image: url(./animals/rabbit/baby.png);
+    --image: url(./sprites/animals/rabbit/baby.png);
 }
 
 
@@ -481,19 +489,19 @@ img[filter] {
     --size: 16px;
     --size: 16px;
     --emoteElevation: 2px;
-    --image: url(./animals/chicken/white.png);
+    --image: url(./sprites/animals/chicken/white.png);
 }
 
 .chicken[color="black adult"] {
-    --image: url(./animals/chicken/black.png);
+    --image: url(./sprites/animals/chicken/black.png);
 }
 
 .chicken[color="blue adult"] {
-    --image: url(./animals/chicken/blue.png);
+    --image: url(./sprites/animals/chicken/blue.png);
 }
 
 .chicken[color="brown adult"] {
-    --image: url(./animals/chicken/brown.png);
+    --image: url(./sprites/animals/chicken/brown.png);
 }
 
 .chicken[color*="baby"] {
@@ -501,19 +509,19 @@ img[filter] {
 }
 
 .chicken[color="white baby"] {
-    --image: url(./animals/chicken/baby-white.png);
+    --image: url(./sprites/animals/chicken/baby-white.png);
 }
 
 .chicken[color="black baby"] {
-    --image: url(./animals/chicken/baby-black.png);
+    --image: url(./sprites/animals/chicken/baby-black.png);
 }
 
 .chicken[color="blue baby"] {
-    --image: url(./animals/chicken/baby-blue.png);
+    --image: url(./sprites/animals/chicken/baby-blue.png);
 }
 
 .chicken[color="brown baby"] {
-    --image: url(./animals/chicken/baby-brown.png);
+    --image: url(./sprites/animals/chicken/baby-brown.png);
 }
 
 
@@ -523,11 +531,11 @@ img[filter] {
     --size: 32px;
     --size: 32px;
     --emoteElevation: -4px;
-    --image: url(./animals/cow/white.png);
+    --image: url(./sprites/animals/cow/white.png);
 }
 
 .cow[color="brown adult"] {
-    --image: url(./animals/cow/brown.png);
+    --image: url(./sprites/animals/cow/brown.png);
 }
 
 .cow[color*="baby"] {
@@ -535,21 +543,21 @@ img[filter] {
 }
 
 .cow[color="white baby"] {
-    --image: url(./animals/cow/baby-white.png);
+    --image: url(./sprites/animals/cow/baby-white.png);
 }
 
 .cow[color="brown baby"] {
-    --image: url(./animals/cow/baby-brown.png);
+    --image: url(./sprites/animals/cow/baby-brown.png);
 }
 
 
-/* Junimo - filters: brightness(0) + https://isotropic.co/tool/hex-color-to-css-filter/ */
+/* Junimo */
 .junimo,
 .junimo[color="white"] {
     --size: 16px;
     --size: 16px;
     --emoteElevation: 1px;
-    --image: url(./animals/junimo/junimo.png);
+    --image: url(./sprites/animals/junimo/junimo.png);
 }
 
 .junimo:before,
