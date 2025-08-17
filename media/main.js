@@ -14,8 +14,13 @@ const Game = {
     height: window.innerHeight,
     scale: 2,
 
+    //Frames & framerate
+    frames: 0,  //Frames since game start
+    fps: 30,
+
     //Element where the pets are stored
     element: document.getElementById('pets'),
+    pets: [], //List with all the pets
 
     //Action being performed
     action: Action.none,
@@ -59,13 +64,6 @@ const Game = {
             Game.ball.element.style.setProperty('--position-y', pos.y + 'px');
         },
     },
-
-    //Frames & framerate
-    frames: 0,  //Frames since game start
-    fps: 30,
-
-    //List with all the pets
-    pets: []
 }
 
 
@@ -77,15 +75,6 @@ const Game = {
 | $$   | $$  | $$| $$  | $$| $$        | $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
 | $$   |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 |__/    \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|______*/
-
-//Cursor icon
-function setCursorIcon(icon) {
-    //Fix invalid type
-    if (typeof icon != 'string') icon = Action.none
-
-    //Set cursor type
-    Game.cursor.setIcon(icon)
-}
 
 //Actions menu
 const actionsMenu = document.getElementById('actions')
@@ -102,7 +91,7 @@ function toggleActionsMenu(open) {
         actions.removeAttribute('open')
 }
 
-function toggleActionBall(event) {
+function toggleActionBall() {
     //Ball is visible -> Remove it
     if (Game.ball.isVisible) onBallReached()
     
@@ -113,7 +102,7 @@ function toggleActionBall(event) {
     toggleActionsMenu(false)
 }
 
-function toggleActionGift(event) {
+function toggleActionGift() {
     //Toggle gift action
     Game.setAction(Game.isAction(Action.gift) ? Action.none : Action.gift)
 
@@ -237,12 +226,12 @@ window.addEventListener('message', event => {
                 case 'small':
                     Game.scale = 1;
                     break;
+                case 'big':
+                    Game.scale = 3;
+                    break;
                 case 'medium':
                 default:
                     Game.scale = 2;
-                    break;
-                case 'big':
-                    Game.scale = 3;
                     break;
             }
             document.body.style.setProperty('--scale', Game.scale);
@@ -253,20 +242,24 @@ window.addEventListener('message', event => {
 
 //Cursor info
 document.onclick = event => {
-    //No action
+    //No action -> Return
     if (Game.isAction(Action.none)) return
 
-    //Place ball
-    if (Game.isAction(Action.ball)) {
-        //Get ball position
-        const pos = Game.cursor.pos.div(Game.scale).toInt()
+    //Perform action
+    switch (Game.action) {
+        //Place ball
+        case Action.ball: {
+            //Get ball position
+            const pos = Game.cursor.pos.div(Game.scale).toInt()
 
-        //Move ball
-        Game.ball.moveTo(pos)
-        Game.ball.setVisible(true)
+            //Move ball
+            Game.ball.moveTo(pos)
+            Game.ball.setVisible(true)
 
-        //Move all pets towards ball
-        Game.pets.forEach(pet => pet.moveTowardsBall(pos))
+            //Move all pets towards ball
+            Game.pets.forEach(pet => pet.moveTowardsBall(pos))
+            break
+        }
     }
 
     //Clear current action
@@ -291,7 +284,7 @@ document.onmouseleave = event => {
 //Ballin ⛹🏾
 function onBallReached() {
     //Tell pets to stop moving towards the ball
-    Game.pets.forEach(pet => { if (pet.ai.state == AI.MOVING_BALL) pet.ai.setState(AI.IDLE) })
+    Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVING_BALL) pet.ai.setState(PetAI.IDLE) })
 
     //Hide ball
     Game.ball.setVisible(false)

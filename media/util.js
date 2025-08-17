@@ -7,6 +7,13 @@ class Vec2 {
 
     //Constructor
     constructor(x, y) {
+        //Init from Vec2
+        if (typeof x == 'object') {
+            y = x.y;
+            x = x.x;
+        }
+
+        //Init from numbers
         this.x = typeof x == 'number' ? x : 0;
         this.y = typeof y == 'number' ? y : this.x;
     }

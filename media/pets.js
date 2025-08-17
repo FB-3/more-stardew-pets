@@ -64,8 +64,409 @@ class Animation {
 
 }
 
+class PetAnimations {
+
+    static get DEFAULT() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5,
+                { flip: true }
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'sleep': new Animation(
+                [[0, 3], [1, 3]],
+                30,
+                { loop: false }
+            ),
+            'special': new Animation(
+                [[0, 4], [1, 4], [2, 4], [3, 4], [2, 4], [1, 4], [0, 4], [0, 0]],
+                5,
+                { loop: false }
+            ),
+        } 
+    };
+    
+    static get CAT() { 
+        return {
+            'idle': new Animation(
+                [[0, 4], [1, 4], [2, 4]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 5], [1, 5], [2, 5], [3, 5], [0, 5], [2, 4]],
+                5,
+                { loop: false }
+            ),
+            'sleep': [
+                new Animation(
+                    [[0, 7], [1, 7]],
+                    30
+                ),
+                new Animation(
+                    [[0, 6], [1, 6], [2, 6], [3, 6]],
+                    5,
+                    { loop: false }
+                )
+            ],
+        };
+    }
+        
+    static get DOG() { 
+        return {
+            'idle': new Animation(
+                [[0, 5], [1, 5], [2, 5], [3, 5]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[1, 6], [0, 6], [2, 6], [3, 5]],
+                5,
+                { loop: false }
+            ),
+            'sleep': new Animation(
+                [[0, 7], [1, 7]],
+                30
+            ),
+        };
+    }
+
+    static get TURTLE() { 
+        return {
+            'idle': new Animation(
+                [[0, 4]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 6], [1, 6], [2, 6], [3, 6]],
+                5
+            ),
+            'sleep': new Animation(
+                [[0, 4], [1, 4], [2, 4], [3, 4], [0, 5]],
+                30,
+                { loop: false }
+            )
+        };
+    }
+
+    static get DINO() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 6], [1, 6], [2, 6], [3, 6], [0, 6], [0, 0]],
+                5,
+                { loop: false }
+            ),
+            'sleep': new Animation(
+                [[0, 4], [1, 4]],
+                30
+            ),
+        };
+    }
+
+    static get DUCK() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 6], [1, 6], [2, 6], [3, 6], [2, 6], [3, 6], [2, 6], [1, 6], [0, 6]],
+                5,
+                { loop: false }
+            ),
+            'sleep': new Animation(
+                [[0, 7], [1, 7]],
+                30
+            ),
+        };
+    }
+
+    static get RACCOON() { 
+        return {
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0]],
+                2
+            ),
+            'moveLeft': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1]],
+                2
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]],
+                2
+            ),
+            'moveRight': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3]],
+                2
+            ),
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false }
+            ),
+            'special': new Animation(
+                [[8, 2], [9, 2], [10, 2], [11, 2], [12, 2], [13, 2], [14, 2], [15, 2]],
+                5,
+                { loop: true }
+            )
+        };
+    }
+
+    static get RABBIT() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 6], [1, 6], [2, 6], [3, 6], [2, 6], [1, 6], [0, 6], [0, 0]],
+                5,
+                { loop: false }
+            ),
+            'sleep': new Animation(
+                [[0, 4], [1, 4]],
+                30,
+                { loop: false }
+            ),
+        };
+    }
+
+    static get CHICKEN() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 6], [1, 6], [2, 6], [3, 6], [0, 0]],
+                5,
+                { loop: false }
+            ),
+            'sleep': new Animation(
+                [[0, 4], [1, 4]],
+                5,
+                { loop: false }
+            ),
+        };
+    }
+
+    static get COW() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false }
+            ),
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[0, 1], [1, 1], [2, 1], [3, 1]],
+                5,
+                { flip: true }
+            ),
+            'moveUp': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 4], [1, 4], [3, 4], [2, 4], [3, 4], [1, 4], [0, 4]],
+                5,
+                { loop: false }
+            ),
+            'sleep': new Animation(
+                [[0, 3], [1, 3]],
+                30
+            ),
+        };
+    }
+
+    static get JUNIMO() { 
+        return {
+            'moveDown': new Animation(
+                [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0]],
+                2
+            ),
+            'moveRight': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]],
+                2
+            ),
+            'moveLeft': new Animation(
+                [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]],
+                2,
+                { flip: true }
+            ),
+            'moveUp': new Animation(
+                [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4]],
+                2
+            ),
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false })
+            ,
+            'special': [
+                new Animation(
+                    [[4, 3], [5, 3], [6, 3], [7, 3]],
+                    5
+                ),
+                new Animation(
+                    [[4, 5], [5, 5], [6, 5], [7, 5]],
+                    5
+                )
+            ],
+            'sleep': new Animation(
+                [[4, 1], [5, 1], [6, 1], [7, 1]],
+                30
+            ),
+        };
+    }
+
+}
+
 //AI
-class AI {
+class PetAI {
 
     //States
     static get MOVING() { return 0 };
@@ -76,7 +477,7 @@ class AI {
     //AI info
     #pet;
     get pet() { return this.#pet; }
-    #state = AI.IDLE;
+    #state = PetAI.IDLE;
     get state() { return this.#state; }
     #timer = new Timer();
     get timer() { return this.#timer; }
@@ -85,7 +486,7 @@ class AI {
     //Moods
     static #moods = ['gigachad', 'happy', 'mad', 'alien', 'pledge', 'blush'];
     #mood = 'gigachad';
-    #moodAppearTimeout;
+    #moodHideTimeout;
     #moodHeartTimeout;
 
     //Options (idle)
@@ -139,8 +540,8 @@ class AI {
         //State machine
         switch (this.#state) {
             //Moving
-            case AI.MOVING:
-            case AI.MOVING_BALL: {
+            case PetAI.MOVING:
+            case PetAI.MOVING_BALL: {
                 //Move position out of bounds -> Create a new one
                 if (this.#movePos.x > pet.maxX || this.#movePos.y > pet.maxY) this.moveTowards(pet.randomPoint);
 
@@ -159,18 +560,18 @@ class AI {
             }
 
             //Idle
-            case AI.IDLE:
+            case PetAI.IDLE:
                 this.onIdle();
                 break;
 
             //Special
-            case AI.SPECIAL:
+            case PetAI.SPECIAL:
                 this.onSpecial();
                 break;
         }
     }
 
-    click() {
+    onClick() {
         //Has gift?
         if (Game.isAction(Action.gift)) {
             //Consume gift
@@ -184,7 +585,7 @@ class AI {
         this.showMood();
 
         //Play special animation
-        this.setState(AI.SPECIAL);
+        this.setState(PetAI.SPECIAL);
     }
 
     //Mood
@@ -198,7 +599,7 @@ class AI {
     }
 
     #setRandomMood() {
-        this.#mood = AI.#moods[Math.floor(Math.random() * AI.#moods.length)];
+        this.#mood = PetAI.#moods[Math.floor(Math.random() * PetAI.#moods.length)];
     }
 
     showMood() {
@@ -206,8 +607,8 @@ class AI {
         this.#pet.element.setAttribute('mood', this.#mood);
 
         //Clear hide mood timeout & start a new one
-        if (this.#moodAppearTimeout != undefined) clearTimeout(this.#moodAppearTimeout)
-        this.#moodAppearTimeout = setTimeout(() => { this.#pet.element.removeAttribute('mood') }, 2000);
+        clearTimeout(this.#moodHideTimeout)
+        this.#moodHideTimeout = setTimeout(() => { this.#pet.element.removeAttribute('mood') }, 2000);
     }
 
     //States
@@ -221,12 +622,12 @@ class AI {
         //Do something before new state
         switch (newState) {
             //Idle
-            case AI.IDLE:
+            case PetAI.IDLE:
                 this.onIdleStart();
                 break;
 
             //Special
-            case AI.SPECIAL:
+            case PetAI.SPECIAL:
                 this.onSpecialStart();
                 break;
         }
@@ -290,7 +691,7 @@ class AI {
     //State: MOVING or MOVING_BALL
     onMovingEnd() {
         //Moving towards ball?
-        if (this.#state == AI.MOVING_BALL) {
+        if (this.#state == PetAI.MOVING_BALL) {
             //Notify game that the ball was reached
             onBallReached()
 
@@ -299,10 +700,10 @@ class AI {
             this.showMood();
 
             //Play special animation
-            this.setState(AI.SPECIAL);
+            this.setState(PetAI.SPECIAL);
         } else {
             //Play idle
-            this.setState(AI.IDLE);
+            this.setState(PetAI.IDLE);
         }
     }
 
@@ -315,7 +716,7 @@ class AI {
         this.#movePos = point;
 
         //Set state to moving
-        this.setState(towardsBall ? AI.MOVING_BALL : AI.MOVING);
+        this.setState(towardsBall ? PetAI.MOVING_BALL : PetAI.MOVING);
     }
 
     moveTowardsRandom() {
@@ -366,44 +767,12 @@ class Pet {
     get ai() { return this.#ai; }
     #element;
     get element() { return this.#element; }
-    size = new Vec2(32);
+    _size = new Vec2(32);
+    get size() { return this._size; }
 
     //Animations
-    #anim;
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5,
-            { flip: true }
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false })
-        ,
-        'sleep': new Animation(
-            [[0, 3], [1, 3]],
-            30,
-            { loop: false }
-        ),
-        'special': new Animation(
-            [[0, 4], [1, 4], [2, 4], [3, 4], [2, 4], [1, 4], [0, 4], [0, 0]],
-            5,
-            { loop: false }
-        ),
-    };
+    #animation;
+    _animations = PetAnimations.DEFAULT;
 
 
     //State
@@ -434,8 +803,8 @@ class Pet {
         this.respawn();
 
         //Init AI
-        this.#ai = new AI(this, aiOptions);
-        element.onclick = () => this.#ai.click();
+        this.#ai = new PetAI(this, aiOptions);
+        element.onclick = () => this.#ai.onClick();
 
         //Add pet to pets list
         Game.pets.push(this);
@@ -447,26 +816,26 @@ class Pet {
         this.#ai.update();
 
         //Update animation sprite
-        if (this.#anim != undefined) this.#selectSprite(this.#anim.update())
+        if (this.#animation != undefined) this.#selectSprite(this.#animation.update())
     }
 
     //Animations
     animate(name, force) {
         //Not an animation
-        if (typeof this.anims[name] != 'object') return;
+        if (typeof this._animations[name] != 'object') return;
 
         //Force animation
         if (typeof force != 'boolean') force = false;
 
         //Get animation
-        let anim = this.anims[name];
-        if (Array.isArray(anim)) anim = anim[random(anim.length - 1)];
+        let animation = this._animations[name];
+        if (Array.isArray(animation)) animation = animation[random(animation.length - 1)];
 
         //Change current animation & reset it
-        if (anim == this.#anim && !force) return;
-        this.#anim = anim;
-        this.#anim.reset();
-        if (anim.flip) this.element.setAttribute('flip', '');
+        if (animation == this.#animation && !force) return;
+        this.#animation = animation;
+        this.#animation.reset();
+        if (animation.flip) this.element.setAttribute('flip', '');
         else this.element.removeAttribute('flip')
     }
 
@@ -523,7 +892,7 @@ class Pet {
 class PetSmall extends Pet {
 
     //Pet data
-    size = new Vec2(16);
+    _size = new Vec2(16);
 
     //Constructor
     constructor(name, color) { super(name, color); }
@@ -534,45 +903,7 @@ class PetSmall extends Pet {
 class Cat extends Pet {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 4], [1, 4], [2, 4]],
-            5,
-            { loop: false }
-        ),
-        'special': new Animation(
-            [[0, 5], [1, 5], [2, 5], [3, 5], [0, 5], [2, 4]],
-            5,
-            { loop: false }
-        ),
-        'sleep': [
-            new Animation(
-                [[0, 7], [1, 7]],
-                30
-            ),
-            new Animation(
-                [[0, 6], [1, 6], [2, 6], [3, 6]],
-                5,
-                { loop: false }
-            )
-        ],
-    };
+    _animations = PetAnimations.CAT;
 
     //Constructor
     constructor(name, color) {
@@ -586,38 +917,7 @@ class Cat extends Pet {
 class Dog extends Pet {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 5], [1, 5], [2, 5], [3, 5]],
-            5,
-            { loop: false })
-        ,
-        'special': new Animation(
-            [[1, 6], [0, 6], [2, 6], [3, 5]],
-            5,
-            { loop: false }
-        ),
-        'sleep': new Animation(
-            [[0, 7], [1, 7]],
-            30
-        ),
-    };
+    _animations = PetAnimations.DOG;
 
     //Constructor
     constructor(name, color) {
@@ -631,38 +931,7 @@ class Dog extends Pet {
 class Turtle extends Pet {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 4]],
-            5,
-            { loop: false }
-        ),
-        'special': new Animation(
-            [[0, 6], [1, 6], [2, 6], [3, 6]],
-            5
-        ),
-        'sleep': new Animation(
-            [[0, 4], [1, 4], [2, 4], [3, 4], [0, 5]],
-            30,
-            { loop: false }
-        )
-    };
+    _animations = PetAnimations.TURTLE;
 
     //Constructor
     constructor(name, color) {
@@ -676,37 +945,7 @@ class Turtle extends Pet {
 class Dino extends PetSmall {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5
-        ),
-        'special': new Animation(
-            [[0, 6], [1, 6], [2, 6], [3, 6], [0, 6], [0, 0]],
-            5,
-            { loop: false }
-        ),
-        'sleep': new Animation(
-            [[0, 4], [1, 4]],
-            30
-        ),
-    };
+    _animations = PetAnimations.DINO;
 
     //Constructor
     constructor(name, color) {
@@ -720,37 +959,7 @@ class Dino extends PetSmall {
 class Duck extends PetSmall {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5
-        ),
-        'special': new Animation(
-            [[0, 6], [1, 6], [2, 6], [3, 6], [2, 6], [3, 6], [2, 6], [1, 6], [0, 6]],
-            5,
-            { loop: false }
-        ),
-        'sleep': new Animation(
-            [[0, 7], [1, 7]],
-            30
-        ),
-    };
+    _animations = PetAnimations.DUCK;
 
     //Constructor
     constructor(name, color) {
@@ -764,34 +973,7 @@ class Duck extends PetSmall {
 class Raccoon extends Pet {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0]],
-            2
-        ),
-        'moveLeft': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1]],
-            2
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]],
-            2
-        ),
-        'moveRight': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3]],
-            2
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false }
-        ),
-        'special': new Animation(
-            [[8, 2], [9, 2], [10, 2], [11, 2], [12, 2], [13, 2], [14, 2], [15, 2]],
-            5,
-            { loop: true }
-        )
-    };
+    _animations = PetAnimations.RACCOON;
 
     //Constructor
     constructor(name, color) {
@@ -846,39 +1028,7 @@ class Pig extends Pet {
 class Rabbit extends PetSmall {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false })
-        ,
-        'sleep': new Animation(
-            [[0, 4], [1, 4]],
-            30,
-            { loop: false }
-        ),
-        'special': new Animation(
-            [[0, 6], [1, 6], [2, 6], [3, 6], [2, 6], [1, 6], [0, 6], [0, 0]],
-            5,
-            { loop: false }
-        ),
-    };
+    _animations = PetAnimations.RABBIT;
 
     //Constructor
     constructor(name, color) {
@@ -892,39 +1042,7 @@ class Rabbit extends PetSmall {
 class Chicken extends PetSmall {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 3], [1, 3], [2, 3], [3, 3]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false })
-        ,
-        'special': new Animation(
-            [[0, 6], [1, 6], [2, 6], [3, 6], [0, 0]],
-            5,
-            { loop: false }
-        ),
-        'sleep': new Animation(
-            [[0, 4], [1, 4]],
-            5,
-            { loop: false }
-        ),
-    };
+    _animations = PetAnimations.CHICKEN;
 
     //Constructor
     constructor(name, color) {
@@ -938,39 +1056,7 @@ class Chicken extends PetSmall {
 class Cow extends Pet {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0]],
-            5
-        ),
-        'moveRight': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5
-        ),
-        'moveLeft': new Animation(
-            [[0, 1], [1, 1], [2, 1], [3, 1]],
-            5,
-            { flip: true }
-        ),
-        'moveUp': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false })
-        ,
-        'special': new Animation(
-            [[0, 4], [1, 4], [3, 4], [2, 4], [3, 4], [1, 4], [0, 4]],
-            5,
-            { loop: false }
-        ),
-        'sleep': new Animation(
-            [[0, 3], [1, 3]],
-            30
-        ),
-    };
+    _animations = PetAnimations.COW;
 
     //Constructor
     constructor(name, color) {
@@ -984,44 +1070,7 @@ class Cow extends Pet {
 class Junimo extends PetSmall {
 
     //Animations
-    anims = {
-        'moveDown': new Animation(
-            [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0]],
-            2
-        ),
-        'moveRight': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]],
-            2
-        ),
-        'moveLeft': new Animation(
-            [[0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2]],
-            2,
-            { flip: true }
-        ),
-        'moveUp': new Animation(
-            [[0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4]],
-            2
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false })
-        ,
-        'special': [
-            new Animation(
-                [[4, 3], [5, 3], [6, 3], [7, 3]],
-                5
-            ),
-            new Animation(
-                [[4, 5], [5, 5], [6, 5], [7, 5]],
-                5
-            )
-        ],
-        'sleep': new Animation(
-            [[4, 1], [5, 1], [6, 1], [7, 1]],
-            30
-        ),
-    };
+    _animations = PetAnimations.JUNIMO;
 
     //Constructor
     constructor(name, color) {
