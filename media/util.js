@@ -2,8 +2,8 @@
 class Vec2 {
 
     //Position
-    x = 0
-    y = 0
+    x = 0;
+    y = 0;
 
     //Constructor
     constructor(x, y) {
@@ -20,39 +20,43 @@ class Vec2 {
 
     //Functions
     clone() {
-        return new Vec2(this.x, this.y)
+        return new Vec2(this.x, this.y);
     }
 
     add(n) {
         if (typeof n === 'object')
-            return new Vec2(this.x + n.x, this.y + n.y)
+            return new Vec2(this.x + n.x, this.y + n.y);
         else
-            return new Vec2(this.x + n, this.y + n)
+            return new Vec2(this.x + n, this.y + n);
     }
 
     sub(n) {
         if (typeof n === 'object')
-            return new Vec2(this.x - n.x, this.y - n.y)
+            return new Vec2(this.x - n.x, this.y - n.y);
         else
-            return new Vec2(this.x - n, this.y - n)
+            return new Vec2(this.x - n, this.y - n);
     }
 
     mult(n) {
         if (typeof n === 'object')
-            return new Vec2(this.x * n.x, this.y * n.y)
+            return new Vec2(this.x * n.x, this.y * n.y);
         else
-            return new Vec2(this.x * n, this.y * n)
+            return new Vec2(this.x * n, this.y * n);
     }
 
     div(n) {
         if (typeof n === 'object')
-            return new Vec2(this.x / n.x, this.y / n.y)
+            return new Vec2(this.x / n.x, this.y / n.y);
         else
-            return new Vec2(this.x / n, this.y / n)
+            return new Vec2(this.x / n, this.y / n);
     }
 
     toInt() {
-        return new Vec2(Math.floor(this.x), Math.floor(this.y))
+        return new Vec2(Math.floor(this.x), Math.floor(this.y));
+    }
+
+    toString() {
+        return `(${this.x}, ${this.y})`;
     }
 
 }

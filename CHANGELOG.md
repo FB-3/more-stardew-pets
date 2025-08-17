@@ -1,5 +1,9 @@
 # Change Log
 
+## [v1.3.0]
+
+- Updated "Pet actions" menu UI
+
 ## [v1.2.3]
 
 - Moved "Play with Ball" and "Give a Gift" buttons into a new "Actions" menu

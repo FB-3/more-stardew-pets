@@ -1,4 +1,73 @@
-//Generic AI
+//Animations
+class Animation {
+
+    //Animation info (temporal)
+    finished = false;
+    #frame = 0;
+    #counter = 0;
+
+    //Animation info (permanent)
+    #frames = [];
+    #speed = 5;   //Duration of each frame
+    #loop = true;
+    get loop() { return this.#loop; };
+    #flip = false;
+    get flip() { return this.#flip; };
+
+
+    //State
+    constructor(frames, speed, options) {
+        //Animation info
+        this.#frames = frames;
+        this.#speed = speed;
+
+        //Check options
+        if (typeof options === 'object') {
+            if (typeof options.loop === 'boolean') this.#loop = options.loop;
+            if (typeof options.flip === 'boolean') this.#flip = options.flip;
+        }
+
+        //Reset current info
+        this.reset();
+    }
+
+    reset() {
+        //Reset current info
+        this.#frame = 0;
+        this.#counter = 0;
+        this.finished = false;
+    }
+
+    update() {
+        //Not finished
+        if (!this.finished) {
+            //Add one to counter
+            this.#counter++;
+
+            //Check if counter finished
+            if (this.#counter >= this.#speed) {
+                //Counter finished -> Reset it
+                this.#counter = 0;
+
+                //Next frame
+                if (!this.#loop && this.#frame >= this.#frames.length - 1) {
+                    //Already in last frame & not looping -> Finish animation
+                    this.finished = true;
+                } else {
+                    //Next frame
+                    this.#frame++;
+                    if (this.#frame >= this.#frames.length) this.#frame = 0;
+                }
+            }
+        }
+
+        //Return animation sprite position
+        return this.#frames[this.#frame]
+    }
+
+}
+
+//AI
 class AI {
 
     //States
@@ -33,10 +102,7 @@ class AI {
 
 
     //Constructor
-    constructor(character, options) {
-        //Save linked character 
-        this.#character = character;
-
+    constructor(options) {
         //Check options
         if (typeof options == 'object') {
             //Idle options
@@ -53,16 +119,41 @@ class AI {
         }
     }
 
-    //Movement
-    moveTowards(point, towardsBall = false) {
-        //Fix var
-        if (typeof towardsBall !== 'boolean') towardsBall = false
+    assign(character) {
+        //Assign character 
+        this.#character = character;
+    }
 
+    //Movement
+    _moveTowardsMovePos() {
+        //Move position out of bounds -> Create a new one
+        if (this.#movePos.x > this.character.maxPosX || this.#movePos.y > this.character.maxPosY) {
+            this.moveTowards(this.character.randomPoint);
+            return true
+        }
+
+        //Try to move
+        if (this.#movePos.x < this.character.pos.x)
+            this.moveLeft();
+        else if (this.#movePos.x > this.character.pos.x)
+            this.moveRight();
+        else if (this.#movePos.y < this.character.pos.y)
+            this.moveUp();
+        else if (this.#movePos.y > this.character.pos.y)
+            this.moveDown();
+        else
+            return false
+
+        //Moved
+        return true
+    }
+
+    moveTowards(point) {
         //Change move point
         this.#movePos = point;
 
         //Set state to moving
-        this.setState(towardsBall ? AI.MOVE_BALL : AI.MOVING);
+        this.setState(AI.MOVE);
     }
 
     moveTowardsRandom() {
@@ -71,27 +162,23 @@ class AI {
     }
 
     moveLeft() {
-        const character = this.character;
-        character.moveTo(character.pos.x - 1, character.pos.y);
-        character.animate('moveLeft');
+        this.character.moveTo(this.character.pos.x - 1, this.character.pos.y);
+        this.character.animate('moveLeft');
     }
 
     moveRight() {
-        const character = this.character;
-        character.moveTo(character.pos.x + 1, character.pos.y);
-        character.animate('moveRight');
+        this.character.moveTo(this.character.pos.x + 1, this.character.pos.y);
+        this.character.animate('moveRight');
     }
 
     moveUp() {
-        const character = this.character;
-        character.moveTo(character.pos.x, character.pos.y - 1);
-        character.animate('moveUp');
+        this.character.moveTo(this.character.pos.x, this.character.pos.y - 1);
+        this.character.animate('moveUp');
     }
 
     moveDown() {
-        const character = this.character;
-        character.moveTo(character.pos.x, character.pos.y + 1);
-        character.animate('moveDown');
+        this.character.moveTo(this.character.pos.x, this.character.pos.y + 1);
+        this.character.animate('moveDown');
     }
 
     //Actions
@@ -100,24 +187,24 @@ class AI {
     //State
     update() {
         //Run on update for current state
-        const onUpdate = this[`onUpdate_${this.state}`]
-        if (typeof onUpdate === 'function') onUpdate()
+        const onUpdate = this[`onUpdate_${this.state}`];
+        if (typeof onUpdate === 'function') onUpdate.call(this);
     }
 
     setState(newState) {
         //Not a valid state
-        if (typeof newState != 'number') return;
+        if (typeof newState !== 'string') return;
 
         //Run on end for old state
-        const onEnd = this[`onEnd_${this.state}`]
-        if (typeof onEnd === 'function') onEnd()
+        const onEnd = this[`onEnd_${this.state}`];
+        if (typeof onEnd === 'function') onEnd.call(this);
 
         //Set state
         this.#state = newState;
 
         //Run on start for new state
-        const onStart = this[`onStart_${this.state}`]
-        if (typeof onStart === 'function') onStart()
+        const onStart = this[`onStart_${this.state}`];
+        if (typeof onStart === 'function') onStart.call(this);
     }
 
     //State: IDLE
@@ -157,23 +244,13 @@ class AI {
 
     //State: MOVE
     onUpdate_move() {
-        //Get character (tired of typing 'this.')
-        const character = this.character;
-
-        //Move position out of bounds -> Create a new one
-        if (this.#movePos.x > character.maxX || this.#movePos.y > character.maxY) this.moveTowards(character.randomPoint);
-
         //Try to move
-        if (this.#movePos.x < character.pos.x)
-            this.moveLeft();
-        else if (this.#movePos.x > character.pos.x)
-            this.moveRight();
-        else if (this.#movePos.y < character.pos.y)
-            this.moveUp();
-        else if (this.#movePos.y > character.pos.y)
-            this.moveDown();
-        else
-            this.setState(AI.IDLE)
+        if (this._moveTowardsMovePos()) return;
+        
+        //Didn't move -> Point reached
+
+        //Animate idle
+        this.setState(AI.IDLE);
     }
 
     //State: SPECIAL
@@ -198,7 +275,7 @@ class AI {
 
 }
 
-//Generic character
+//Characters
 class Character {
 
     //Element & AI
@@ -253,16 +330,20 @@ class Character {
 
     //Constructor
     constructor(ai) {
+        //Assign AI
         this.#ai = ai
+        ai.assign(this)
 
-        //Create pet element
+        //Create character element
         const element = document.createElement('div');
         Game.element.appendChild(element);
         this.#element = element;
-        this.respawn();
 
         //Add on click listener
         element.onclick = () => this.#ai.onClick();
+
+        //Respawn character
+        this.respawn();
     }
 
     //Update
@@ -295,21 +376,9 @@ class Character {
         this.#pos.y = y;
 
         //Move element
-        this.#element.style.setProperty('--position-x', x + 'px');
-        this.#element.style.setProperty('--position-y', y + 'px');
-        this.#element.style.zIndex = y + this.size.y;
-    }
-
-    moveTowardsObject(objectPos) {
-        //Fix position to have object at the feet
-        const pos = objectPos.sub(this.size.mult(new Vec2(0.5, 0.8)).toInt())
-
-        //Clamp new position
-        pos.x = clamp(pos.x, 0, this.maxPosX);
-        pos.y = clamp(pos.y, 0, this.maxPosY);
-
-        //Update position
-        this.#ai.moveTowards(pos, true)
+        this.element.style.setProperty('--position-x', x + 'px');
+        this.element.style.setProperty('--position-y', y + 'px');
+        this.element.style.zIndex = y + this.size.y;
     }
 
     respawn() {
@@ -320,10 +389,10 @@ class Character {
     //Animations
     animate(name, force) {
         //Not an animation
-        if (typeof this._animations[name] != 'object') return;
+        if (typeof this._animations[name] !== 'object') return;
 
-        //Force animation
-        if (typeof force != 'boolean') force = false;
+        //Fix force animation
+        if (typeof force !== 'boolean') force = false;
 
         //Get animation
         let animation = this._animations[name];
@@ -342,8 +411,8 @@ class Character {
     }
 
     #selectSprite(offset) {
-        this.#element.style.setProperty('--offset-x', -(offset[0] * this.size.x) + 'px');
-        this.#element.style.setProperty('--offset-y', -(offset[1] * this.size.y) + 'px');
+        this.element.style.setProperty('--offset-x', -(offset[0] * this.size.x) + 'px');
+        this.element.style.setProperty('--offset-y', -(offset[1] * this.size.y) + 'px');
     }
 
 }

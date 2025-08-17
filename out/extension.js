@@ -397,6 +397,7 @@ class WebViewProvider {
 
                 <!-- Scripts -->
                 <script src="${this.getUri(webview, 'util.js')}"></script>
+                <script src="${this.getUri(webview, 'base.js')}"></script>
                 <script src="${this.getUri(webview, 'pets.js')}"></script>
                 <script src="${this.getUri(webview, 'main.js')}"></script>
             </body>

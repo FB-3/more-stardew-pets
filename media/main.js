@@ -1,13 +1,13 @@
+//VSCode API
 const vscode = acquireVsCodeApi()
 
-//Actions
+//Game actions & info
 const Action = {
     none: '',
     gift: 'gift',
     ball: 'ball',
 }
 
-//Game info
 const Game = {
     //Window
     width: window.innerWidth,
@@ -63,6 +63,13 @@ const Game = {
             Game.ball.element.style.setProperty('--position-x', pos.x + 'px');
             Game.ball.element.style.setProperty('--position-y', pos.y + 'px');
         },
+        onReached: () => {
+            //Tell pets to stop moving towards the ball
+            Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVE_BALL) pet.ai.setState(AI.IDLE) })
+
+            //Hide ball
+            Game.ball.setVisible(false)
+        },
     },
 }
 
@@ -93,7 +100,7 @@ function toggleActionsMenu(open) {
 
 function toggleActionBall() {
     //Ball is visible -> Remove it
-    if (Game.ball.isVisible) onBallReached()
+    if (Game.ball.isVisible) Game.ball.onReached()
     
     //Toggle ball action
     Game.setAction(Game.isAction(Action.ball) ? Action.none : Action.ball)
@@ -279,15 +286,6 @@ document.onmouseenter = event => {
 document.onmouseleave = event => {
     //Mouse left screen -> Hide cursor
     Game.cursor.setIcon(Action.none)
-}
-
-//Ballin ⛹🏾
-function onBallReached() {
-    //Tell pets to stop moving towards the ball
-    Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVING_BALL) pet.ai.setState(PetAI.IDLE) })
-
-    //Hide ball
-    Game.ball.setVisible(false)
 }
 
 //Window resize
