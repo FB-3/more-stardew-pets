@@ -363,7 +363,7 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
         this.view?.webview.postMessage(message);
     }
 
-    public resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken) {
+    public async resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken) {
         this.view = webviewView; //Needed so we can use it in postMessageToWebview
 
         const webview = webviewView.webview;
@@ -374,7 +374,7 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
         };
 
         //Set the HTML content for the webview
-        webview.html = this.getHtmlContent(
+        webview.html = await this.getHtmlContent(
             webviewView.webview,
         );
 
@@ -416,48 +416,26 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
         return webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', path));
     }
 
-    private getHtmlContent(webview: vscode.Webview): string {
-        return `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="${this.getUri(webview, 'style.css')}" rel="stylesheet">
-                <title>Stardew Pets 😸</title>
-            </head>
-            <body>
-                <!-- Pets & toys -->
-                <div id="pets" background="${config.get('background')}">
-                    <div id="ball"></div>
-                </div>
+    private async getHtmlContent(webview: vscode.Webview): Promise<string> {
+        //Read HTML file
+        const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.html');
+        const fileData = await vscode.workspace.fs.readFile(htmlPath);
+        const htmlContent = new TextDecoder().decode(fileData);
 
-                <!-- Actions menu -->
-                <div id="actions" class="menu" onclick="toggleActionsMenu(false)">
-                    <div onclick="event.stopPropagation()">
-                        <div class="actionButton" onclick="toggleActionBall()">
-                            <img src="${this.getUri(webview, 'sprites/ui/ball.png')}">
-                            <span>Play with Ball</span>
-                        </div>
-                        <div class="actionButton" onclick="toggleActionGift()">
-                            <img src="${this.getUri(webview, 'sprites/ui/gift.png')}">
-                            <span>Give a Gift</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cursor -->
-                <div id="cursor"></div>
-
-                <!-- Scripts -->
-                <script src="${this.getUri(webview, 'util.js')}"></script>
-                <script src="${this.getUri(webview, 'base.js')}"></script>
-                <script src="${this.getUri(webview, 'pets.js')}"></script>
-                <script src="${this.getUri(webview, 'enemies.js')}"></script>
-                <script src="${this.getUri(webview, 'main.js')}"></script>
-            </body>
-            </html>
-        `;
+        //Replace URI placeholders
+        return htmlContent
+            //CSS
+            .replace('{main.css}',          `${this.getUri(webview, 'main.css')}`)
+            //JS
+            .replace('{util.js}',           `${this.getUri(webview, 'util.js')}`)
+            .replace('{characters.js}',     `${this.getUri(webview, 'characters.js')}`)
+            .replace('{main.js}',           `${this.getUri(webview, 'main.js')}`)
+            //Icons
+            .replace('{ball.png}',          `${this.getUri(webview, 'sprites/ui/ball.png')}`)
+            .replace('{gift.png}',          `${this.getUri(webview, 'sprites/ui/gift.png')}`)
+            .replace('{house.png}',         `${this.getUri(webview, 'sprites/ui/house.png')}`)
+            //Config
+            .replace('{config.background}', `${config.get('background')}`)
     }
 
 }

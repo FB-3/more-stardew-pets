@@ -328,7 +328,7 @@ class WebViewProvider {
     postMessage(message) {
         this.view?.webview.postMessage(message);
     }
-    resolveWebviewView(webviewView, context, _token) {
+    async resolveWebviewView(webviewView, context, _token) {
         this.view = webviewView; //Needed so we can use it in postMessageToWebview
         const webview = webviewView.webview;
         //Allow scripts in the webview
@@ -336,7 +336,7 @@ class WebViewProvider {
             enableScripts: true
         };
         //Set the HTML content for the webview
-        webview.html = this.getHtmlContent(webviewView.webview);
+        webview.html = await this.getHtmlContent(webviewView.webview);
         //Handle messages
         webview.onDidReceiveMessage((message) => {
             switch (message.type) {
@@ -369,48 +369,25 @@ class WebViewProvider {
     getUri(webview, path) {
         return webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', path));
     }
-    getHtmlContent(webview) {
-        return `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="${this.getUri(webview, 'style.css')}" rel="stylesheet">
-                <title>Stardew Pets 😸</title>
-            </head>
-            <body>
-                <!-- Pets & toys -->
-                <div id="pets" background="${config.get('background')}">
-                    <div id="ball"></div>
-                </div>
-
-                <!-- Actions menu -->
-                <div id="actions" class="menu" onclick="toggleActionsMenu(false)">
-                    <div onclick="event.stopPropagation()">
-                        <div class="actionButton" onclick="toggleActionBall()">
-                            <img src="${this.getUri(webview, 'sprites/ui/ball.png')}">
-                            <span>Play with Ball</span>
-                        </div>
-                        <div class="actionButton" onclick="toggleActionGift()">
-                            <img src="${this.getUri(webview, 'sprites/ui/gift.png')}">
-                            <span>Give a Gift</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cursor -->
-                <div id="cursor"></div>
-
-                <!-- Scripts -->
-                <script src="${this.getUri(webview, 'util.js')}"></script>
-                <script src="${this.getUri(webview, 'base.js')}"></script>
-                <script src="${this.getUri(webview, 'pets.js')}"></script>
-                <script src="${this.getUri(webview, 'enemies.js')}"></script>
-                <script src="${this.getUri(webview, 'main.js')}"></script>
-            </body>
-            </html>
-        `;
+    async getHtmlContent(webview) {
+        //Read HTML file
+        const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.html');
+        const fileData = await vscode.workspace.fs.readFile(htmlPath);
+        const htmlContent = new TextDecoder().decode(fileData);
+        //Replace URI placeholders
+        return htmlContent
+            //CSS
+            .replace('{main.css}', `${this.getUri(webview, 'main.css')}`)
+            //JS
+            .replace('{util.js}', `${this.getUri(webview, 'util.js')}`)
+            .replace('{characters.js}', `${this.getUri(webview, 'characters.js')}`)
+            .replace('{main.js}', `${this.getUri(webview, 'main.js')}`)
+            //Icons
+            .replace('{ball.png}', `${this.getUri(webview, 'sprites/ui/ball.png')}`)
+            .replace('{gift.png}', `${this.getUri(webview, 'sprites/ui/gift.png')}`)
+            .replace('{house.png}', `${this.getUri(webview, 'sprites/ui/house.png')}`)
+            //Config
+            .replace('{config.background}', `${config.get('background')}`);
     }
 }
 exports.WebViewProvider = WebViewProvider;

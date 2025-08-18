@@ -26,10 +26,13 @@ img[filter] {
 
 
 /* Menus */
-.menu {
+.menuBackdrop {
     /* Size */
     width: 100%;
     height: 100%;
+
+    /* Spacing */
+    padding: 20px;
 
     /* Layout */
     position: absolute;
@@ -38,55 +41,86 @@ img[filter] {
     display: none;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 
     /* Decoration */
     background-color: rgba(0, 0, 0, 0.25);
 }
 
-.menu[open] {
+.menuBackdrop[show] {
     display: flex;
 }
 
-.menu > div {
+.menu {
+    /* Layout */
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    
+    /* Decoration */
+    border: 20px solid transparent;
+    border-image-source: url('sprites/ui/menu.png');
+    border-image-slice: 20 fill;
+    border-image-repeat: stretch;
+}
+
+.menu[show] {
+    display: flex;
+}
+
+.menuContent {
     /* Spacing */
-    padding: -20px;
+    margin: -4px;
 
     /* Layout */
     display: flex;
     flex-direction: column;
     gap: 5px;
-    
-    /* Decoration */
-    border: 18px solid transparent;
-    border-image-source: url('sprites/ui/menu.png');
-    border-image-slice: 18 fill;
-    border-image-repeat: stretch;
 }
 
-
-/* Actions menu */
-.actionButton {
+.menuButton {
+    /* Spacing */
     padding: 5px;
 
+    /* Layout */
     display: flex;
     align-items: center;
     gap: 5px;
 
+    /* Visuals */
     border-radius: 5px;
 
+    /* Other */
     cursor: pointer;
     transition: background-color .1s;
 }
 
-.actionButton:hover {
+.menuButton:hover {
+    /* Visuals */
     background-color: #55121530;
 }
 
-.actionButton > img {
+.menuButton > img {
+    /* Height */
     width: 20px;
     height: 20px;
 
+    /* Visuals */
     border-radius: 5px;
+}
+
+
+/* Money menu */
+#money {
+    /* Layout */
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#money > span {
+    /* Spacing */
+    margin: -8px -4px;
 }
 
 

@@ -1,13 +1,14 @@
 //VSCode API
 const vscode = acquireVsCodeApi()
 
-//Game actions & info
+//Actions
 const Action = {
     none: '',
     gift: 'gift',
     ball: 'ball',
 }
 
+//Game
 const Game = {
     //Window
     width: window.innerWidth,
@@ -28,50 +29,99 @@ const Game = {
     isAction: (action) => { return Game.action == action },
     setAction: (action) => { 
         Game.action = action
-        Game.cursor.setIcon(action)
+        Cursor.setIcon(action)
+    },
+}
+
+//Cursor
+const Cursor = {
+    element: document.getElementById('cursor'),
+
+    //Icon
+    setIcon: (icon) => { 
+        Cursor.element.setAttribute('icon', icon) 
     },
 
-    //Cursor
-    cursor: {
-        element: document.getElementById('cursor'),
-        setIcon: (icon) => { 
-            Game.cursor.element.setAttribute('icon', icon) 
-        },
-        pos: new Vec2(),
-        moveTo: (pos) => {
-            Game.cursor.pos = pos
-            Game.cursor.element.style.left = pos.x + 'px'
-            Game.cursor.element.style.top = pos.y + 'px'
-        },
+    //Position
+    pos: new Vec2(),
+    moveTo: (pos) => {
+        Cursor.pos = pos
+        Cursor.element.style.left = pos.x + 'px'
+        Cursor.element.style.top = pos.y + 'px'
+    },
+}
+
+//Ball
+const Ball = {
+    element: document.getElementById('ball'),
+
+    //Visibility
+    isVisible: false,
+    setVisible: (visible) => {
+        if (typeof visible !== 'boolean') visible = true
+        if (visible)
+            Ball.element.setAttribute('visible', '')
+        else
+            Ball.element.removeAttribute('visible')
+        Ball.isVisible = visible
     },
 
-    //Ball
-    ball: {
-        element: document.getElementById('ball'),
-        isVisible: false,
-        setVisible: (visible) => {
-            if (typeof visible !== 'boolean') visible = true
-            if (visible)
-                Game.ball.element.setAttribute('visible', '')
-            else
-                Game.ball.element.removeAttribute('visible')
-            Game.ball.isVisible = visible
-        },
-        pos: new Vec2(),
-        moveTo: (pos) => {
-            Game.ball.pos = pos
-            Game.ball.element.style.zIndex = pos.y
-            Game.ball.element.style.setProperty('--position-x', pos.x + 'px');
-            Game.ball.element.style.setProperty('--position-y', pos.y + 'px');
-        },
-        onReached: () => {
-            //Tell pets to stop moving towards the ball
-            Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVE_BALL) pet.ai.setState(AI.IDLE) })
-
-            //Hide ball
-            Game.ball.setVisible(false)
-        },
+    //Position
+    pos: new Vec2(),
+    moveTo: (pos) => {
+        Ball.pos = pos
+        Ball.element.style.zIndex = pos.y
+        Ball.element.style.setProperty('--position-x', pos.x + 'px');
+        Ball.element.style.setProperty('--position-y', pos.y + 'px');
     },
+
+    //Pets
+    onReached: () => {
+        //Tell pets to stop moving towards the ball
+        Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVE_BALL) pet.ai.setState(AI.IDLE) })
+
+        //Hide ball
+        Ball.setVisible(false)
+    },
+}
+
+//Menus
+const Menus = {
+    backdrop: document.getElementById('menus'),
+
+    //Toggle menus
+    current: undefined, //Name of the currently open menu
+    toggle: (name, show) => {
+        //Invalid name
+        if (typeof name !== 'string') return;
+        
+        //Get menu
+        const menu = document.getElementById(name);
+        if (!menu) return;
+
+        //Fix show
+        const isVisible = menu.hasAttribute('show');
+        if (typeof show !== 'boolean') 
+            show = !isVisible;
+        else if (show == isVisible) 
+            return;
+
+        //Toggle menu
+        if (show) {
+            //Close currently open menu
+            Menus.toggle(Menus.current, false);
+
+            //Show menu
+            menu.setAttribute('show', '')
+            Menus.current = name;
+            Menus.backdrop.setAttribute('show', '')
+        } else {
+            //Hide menu
+            menu.removeAttribute('show')
+            Menus.current = undefined;
+            Menus.backdrop.removeAttribute('show')
+        }
+    }
 }
 
 
@@ -84,30 +134,17 @@ const Game = {
 | $$   |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 |__/    \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|______*/
 
+
 //Actions menu
-const actionsMenu = document.getElementById('actions')
-
-function toggleActionsMenu(open) {
-    //Fix args
-    if (typeof open !== 'boolean') 
-        open = !actionsMenu.hasAttribute('open')
-
-    //Toggle menu
-    if (open) 
-        actions.setAttribute('open', '')
-    else 
-        actions.removeAttribute('open')
-}
-
 function toggleActionBall() {
     //Ball is visible -> Remove it
-    if (Game.ball.isVisible) Game.ball.onReached()
+    if (Ball.isVisible) Ball.onReached()
     
     //Toggle ball action
     Game.setAction(Game.isAction(Action.ball) ? Action.none : Action.ball)
 
     //Hide actions menu
-    toggleActionsMenu(false)
+    Menus.toggle('actions', false);
 }
 
 function toggleActionGift() {
@@ -115,7 +152,7 @@ function toggleActionGift() {
     Game.setAction(Game.isAction(Action.gift) ? Action.none : Action.gift)
 
     //Hide actions menu
-    toggleActionsMenu(false)
+    Menus.toggle('actions', false);
 }
 
 
@@ -138,7 +175,7 @@ window.addEventListener('message', event => {
         //Toggle actions menu
         case 'actions':
             Game.setAction(Action.none)
-            toggleActionsMenu()
+            Menus.toggle('actions')
             break;
 
         //Create a pet
@@ -258,11 +295,11 @@ document.onclick = event => {
         //Place ball
         case Action.ball: {
             //Get ball position
-            const pos = Game.cursor.pos.div(Game.scale).toInt()
+            const pos = Cursor.pos.div(Game.scale).toInt()
 
             //Move ball
-            Game.ball.moveTo(pos)
-            Game.ball.setVisible(true)
+            Ball.moveTo(pos)
+            Ball.setVisible(true)
 
             //Move all pets towards ball
             Game.pets.forEach(pet => pet.moveTowardsBall(pos))
@@ -276,17 +313,17 @@ document.onclick = event => {
 
 document.onmousemove = event => {
     //Mouse moved -> Update cursor position
-    Game.cursor.moveTo(new Vec2(event.clientX, event.clientY))
+    Cursor.moveTo(new Vec2(event.clientX, event.clientY))
 }
 
 document.onmouseenter = event => {
     //Mouse entered screen -> Show cursor
-    Game.cursor.setIcon(Game.action)
+    Cursor.setIcon(Game.action)
 }
 
 document.onmouseleave = event => {
     //Mouse left screen -> Hide cursor
-    Game.cursor.setIcon(Action.none)
+    Cursor.setIcon(Action.none)
 }
 
 //Window resize

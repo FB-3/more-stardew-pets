@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{main.css}" rel="stylesheet">
+    <title>Stardew Pets 😸</title>
+</head>
+<body>
+    <!-- Pets & toys -->
+    <div id="pets" background="{config.background}">
+        <div id="ball"></div>
+    </div>
+
+    <!-- Menus -->
+    <div id="menus"  class="menuBackdrop" onclick="Menus.toggle(Menus.current, false)">
+        <!-- Actions menu -->
+        <div id="actions" class="menu" onclick="event.stopPropagation()">
+            <div class="menuContent">
+                <!-- Buttons -->
+                <div class="menuButton" onclick="toggleActionBall()">
+                    <img src="{ball.png}">
+                    <span>Play with Ball</span>
+                </div>
+                <div class="menuButton" onclick="toggleActionGift()">
+                    <img src="{gift.png}">
+                    <span>Give a Gift</span>
+                </div>
+                <div class="menuButton" onclick="Menus.toggle('shop', true)">
+                    <img src="{house.png}">
+                    <span>Decoration Shop</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop menu -->
+        <div id="shop" class="menu" onclick="event.stopPropagation()">
+            <div class="menuContent">
+                <!-- Items -->
+                <span class="menuButton">Item 1</span>
+                <span class="menuButton">Item 2</span>
+                <span class="menuButton">Item 3</span>
+            </div>
+        </div>
+
+        <!-- Money menu -->
+        <div id="money" class="menu" show>
+            <span>100G</span>
+        </div>
+    </div>
+
+    <!-- Cursor -->
+    <div id="cursor"></div>
+
+    <!-- Scripts -->
+    <script src="{util.js}"></script>
+    <script src="{characters.js}"></script>
+    <script src="{main.js}"></script>
+</body>
+</html>
