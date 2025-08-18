@@ -21,8 +21,10 @@ const Game = {
 
     //Element where the pets are stored
     element: document.getElementById('pets'),
+    money: 0,
     pets: [],       //List with all the pets
     enemies: [],    //List with all the enemies
+    decoration: [], //List with all the decoration
 
     //Action being performed
     action: Action.none,
@@ -282,6 +284,13 @@ window.addEventListener('message', event => {
             document.body.style.setProperty('--scale', Game.scale);
             onResize();
             break;
+    
+        //Update money
+        case 'money': {
+            Game.money = message.value
+            document.getElementById('moneyText').innerText = `${Game.money}G`
+            break;
+        }
     }
 })
 

@@ -105,12 +105,12 @@
                 }
             },
             {
-                "command": "stardew-pets.openPetsFile",
-                "title": "Stardew Pets: Open pets file (JSON)"
+                "command": "stardew-pets.openSaveFile",
+                "title": "Stardew Pets: Open save file (JSON)"
             },
             {
-                "command": "stardew-pets.reloadPetsFile",
-                "title": "Stardew Pets: Reload pets file"
+                "command": "stardew-pets.reloadSaveFile",
+                "title": "Stardew Pets: Reload save file"
             }
         ],
         "menus": {

@@ -33,14 +33,13 @@ const fs = __importStar(require("fs"));
 let config = vscode.workspace.getConfiguration('stardew-pets');
 let webview;
 let extensionStorageFolder = '';
-//Enemy enums
+//Enums
 const EnemySpecies = {
     slime: ['iron', 'tiger'],
     bug: ['normal', 'normal dangerous', 'armored', 'armored dangerous'],
     crab: ['rock', 'rock dangerous', 'lava', 'lava dangerous', 'iridium', 'truffle', 'stickbug', 'magma cap'],
     golem: ['stone', 'stone dangerous', 'iridium', 'wilderness'],
 };
-//Pet enums (species & names)
 const PetSpecies = {
     cat: ['black', 'gray', 'orange', 'white', 'yellow', 'purple'],
     dog: ['blonde', 'gray', 'brown', 'dark brown', 'light brown', 'purple'],
@@ -60,8 +59,8 @@ const PetSpecies = {
 const Names = [
     'Alex', 'Laura',
     'Raúl', 'Ángela',
-    'Álvaro', 'Victor',
     'Aitor', 'Chao',
+    'Álvaro', 'Victor',
     'Rodri', 'Adri',
     'Oliva', 'Pablo',
     'Sara', 'Mar',
@@ -70,9 +69,117 @@ const Names = [
     'Irene', 'Diana',
     'Aitana', 'Lucia',
 ];
+class Save {
+    money;
+    pets;
+    decoration;
+    constructor() {
+        this.money = 0;
+        this.pets = new Array();
+        this.decoration = new Array();
+    }
+}
+let savePath;
+let save = new Save();
+function loadGame() {
+    //Storage folder does not exist -> Create it
+    if (!fs.existsSync(extensionStorageFolder))
+        fs.mkdirSync(extensionStorageFolder, { recursive: true });
+    //Bool to check if the save was updated to save its file after load
+    let saveUpdated = false;
+    //Check if save file exists
+    if (fs.existsSync(savePath)) {
+        //Exists -> Load save
+        try {
+            //Read save
+            save = JSON.parse(fs.readFileSync(savePath, 'utf8'));
+        }
+        catch (e) {
+            //Failed -> Reset save
+            save = new Save();
+            //Load old pets file if it exists
+            loadPetsFile();
+            //Save updated
+            saveUpdated = true;
+        }
+    }
+    else {
+        //Does not exist -> Load old pets file if it exists
+        loadPetsFile();
+        //Save updated
+        saveUpdated = true;
+    }
+    //Invalid pets list
+    if (!Array.isArray(save.pets)) {
+        //Reset pets list
+        save.pets = new Array();
+        //Save updated
+        saveUpdated = true;
+    }
+    //Invalid decoration list
+    if (!Array.isArray(save.decoration)) {
+        //Reset decoration list
+        save.decoration = new Array();
+        //Save updated
+        saveUpdated = true;
+    }
+    //Save game file
+    if (saveUpdated)
+        saveGame();
+}
+function saveGame() {
+    fs.writeFileSync(savePath, JSON.stringify(save, null, 4));
+}
+function initGame() {
+    //Send background
+    webview.postMessage({
+        type: 'background',
+        value: config.get('background')
+    });
+    //Send scale
+    webview.postMessage({
+        type: 'scale',
+        value: config.get('scale')
+    });
+    //Send money
+    webview.postMessage({
+        type: 'money',
+        value: save.money
+    });
+    //Load pets
+    for (const pet of save.pets)
+        loadPet(pet);
+}
+function loadPetsFile() {
+    //Get old pets save file path
+    const petsPath = path.join(extensionStorageFolder, 'pets.json');
+    //Check if old pets file exists
+    if (fs.existsSync(petsPath)) {
+        //Exists -> Load it
+        try {
+            //Read file
+            save.pets = JSON.parse(fs.readFileSync(petsPath, 'utf8'));
+            //Check if pets list is valid
+            if (Array.isArray(save.pets)) {
+                //Valid -> Delete file
+                fs.unlinkSync(petsPath);
+            }
+            else {
+                //Invalid -> Throw error
+                throw new Error('Failed to read old pets file');
+            }
+        }
+        catch (e) {
+            //Failed -> Reset pets list
+            save.pets = new Array();
+        }
+    }
+    else {
+        //Does not exist -> Reset pets list
+        save.pets = new Array();
+    }
+}
 //Pets
-let petsPath;
-let pets = new Array();
 class PetItem {
     index;
     label;
@@ -83,33 +190,6 @@ class PetItem {
         this.description = description;
     }
 }
-//Save & load pets
-function loadPetsFile() {
-    //Storage folder does not exist
-    if (!fs.existsSync(extensionStorageFolder))
-        fs.mkdirSync(extensionStorageFolder, { recursive: true });
-    //Read pets file
-    if (fs.existsSync(petsPath)) {
-        //Read pets from pets.json
-        try {
-            //Try to read pets file
-            pets = JSON.parse(fs.readFileSync(petsPath, 'utf8'));
-            if (!Array.isArray(pets))
-                pets = new Array();
-        }
-        catch (e) {
-            //Failed -> Reset pets
-            pets = new Array();
-        }
-    }
-    else {
-        //Create pets.json file
-        savePets();
-    }
-}
-function savePets() {
-    fs.writeFileSync(petsPath, JSON.stringify(pets, null, 2));
-}
 function loadPet(pet) {
     //Sends a pet to the webview
     webview.postMessage({
@@ -119,25 +199,24 @@ function loadPet(pet) {
         color: pet.color,
     });
 }
-//Add & remove pets
 function addPet(pet) {
     //Add to list & save json
-    pets.push(pet);
-    savePets();
+    save.pets.push(pet);
+    saveGame();
     //load pet in webview
     loadPet(pet);
 }
-function removePet(index, save) {
+function removePet(index, saveFile) {
     //Remove from pets
-    pets.splice(index, 1);
+    save.pets.splice(index, 1);
     //Remove from webview
     webview.postMessage({
         type: 'remove',
         index: index,
     });
     //Save pets
-    if (save)
-        savePets();
+    if (saveFile)
+        saveGame();
 }
 /*$$$$$              /$$     /$$                       /$$
 /$$__  $$            | $$    |__/                      | $$
@@ -157,11 +236,11 @@ function activate(context) {
   |  $$$$$$/ |  $$$$/|  $$$$$$$| $$        |  $$$$/
    \______/   \___/   \_______/|__/         \__*/
     console.log('Stardew Pets is now active 😽');
-    //Get extension folder & pets file path
+    //Get extension folder & save file path
     extensionStorageFolder = context.globalStorageUri.path.substring(1);
-    petsPath = path.join(extensionStorageFolder, 'pets.json');
-    //Load pets array
-    loadPetsFile();
+    savePath = path.join(extensionStorageFolder, 'save.json');
+    //Load save file
+    loadGame();
     /*$      /$$           /$$       /$$    /$$ /$$
    | $$  /$ | $$          | $$      | $$   | $$|__/
    | $$ /$$$| $$  /$$$$$$ | $$$$$$$ | $$   | $$ /$$  /$$$$$$  /$$  /$$  /$$
@@ -254,8 +333,8 @@ function activate(context) {
     const commandRemovePet = vscode.commands.registerCommand('stardew-pets.removePet', async () => {
         //Get pet names
         let items = Array();
-        for (let i = 0; i < pets.length; i++) {
-            const pet = pets[i];
+        for (let i = 0; i < save.pets.length; i++) {
+            const pet = save.pets[i];
             items.push(new PetItem(i, pet.name, pet.color + ' ' + pet.specie));
         }
         //Ask for pet
@@ -279,25 +358,23 @@ function activate(context) {
     const commandSettings = vscode.commands.registerCommand('stardew-pets.settings', async () => {
         vscode.commands.executeCommand('workbench.action.openSettings', '@ext:Botpa.stardew-pets');
     });
-    //Open pets JSON file
-    const commandOpenPetsFile = vscode.commands.registerCommand('stardew-pets.openPetsFile', async () => {
-        const uri = vscode.Uri.file(petsPath);
+    //Open save file
+    const commandOpenSaveFile = vscode.commands.registerCommand('stardew-pets.openSaveFile', async () => {
+        const uri = vscode.Uri.file(savePath);
         const success = await vscode.commands.executeCommand('vscode.openFolder', uri);
     });
-    //Reload pets JSON file
-    const commandReloadPetsFile = vscode.commands.registerCommand('stardew-pets.reloadPetsFile', async () => {
+    //Reload save file
+    const commandReloadSaveFile = vscode.commands.registerCommand('stardew-pets.reloadSaveFile', async () => {
         //Remove all pets
-        const petsLength = pets.length;
+        const petsLength = save.pets.length;
         for (let i = 0; i < petsLength; i++)
             removePet(0, false);
-        //Reload pets file
-        loadPetsFile();
-        //Load pets
-        for (let i = 0; i < pets.length; i++)
-            loadPet(pets[i]);
+        //Reload save file & init game again
+        loadGame();
+        initGame();
     });
     //Add commands
-    context.subscriptions.push(commandAddPet, commandRemovePet, commandAction, commandSettings, commandOpenPetsFile, commandReloadPetsFile);
+    context.subscriptions.push(commandAddPet, commandRemovePet, commandAction, commandSettings, commandOpenSaveFile, commandReloadSaveFile);
 }
 /*$$$$$$                                  /$$     /$$                       /$$
 | $$__  $$                                | $$    |__/                      | $$
@@ -350,18 +427,7 @@ class WebViewProvider {
                     break;
                 //Init pets
                 case 'init':
-                    //Send background
-                    webview.postMessage({
-                        type: 'background',
-                        value: config.get('background')
-                    });
-                    //Send scale
-                    webview.postMessage({
-                        type: 'scale',
-                        value: config.get('scale')
-                    });
-                    //Load pets
-                    pets.forEach(pet => { loadPet(pet); });
+                    initGame();
                     break;
             }
         });
