@@ -2,6 +2,7 @@
 
 ## [v1.3.0]
 
+- Added enemies that die when clicked
 - Updated "Pet actions" menu UI
 
 ## [v1.2.3]

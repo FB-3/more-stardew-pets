@@ -20,7 +20,8 @@ const Game = {
 
     //Element where the pets are stored
     element: document.getElementById('pets'),
-    pets: [], //List with all the pets
+    pets: [],       //List with all the pets
+    enemies: [],    //List with all the enemies
 
     //Action being performed
     action: Action.none,
@@ -321,6 +322,9 @@ function update() {
 
     //Update pets
     Game.pets.forEach(pet => pet.update())
+
+    //Update enemies
+    Game.enemies.forEach(enemy => enemy.update())
 }
 
 //Start loop

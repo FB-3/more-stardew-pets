@@ -9,8 +9,16 @@ let webview: WebViewProvider;
 let extensionStorageFolder: string = '';
 
 
+//Enemy enums
+const EnemySpecies: { [key: string]: string[] } = {
+    slime:      ['iron', 'tiger'],
+    bug:        ['normal', 'normal dangerous', 'armored', 'armored dangerous'],
+    crab:       ['rock', 'rock dangerous', 'lava', 'lava dangerous', 'iridium', 'truffle', 'stickbug', 'magma cap'],
+    golem:      ['stone', 'stone dangerous', 'iridium', 'wilderness'],
+}
+
 //Pet enums (species & names)
-const Species: { [key: string]: string[] } = {
+const PetSpecies: { [key: string]: string[] } = {
     cat:        ['black', 'gray', 'orange', 'white', 'yellow', 'purple'],
     dog:        ['blonde', 'gray', 'brown', 'dark brown', 'light brown', 'purple'],
     dino:       [],
@@ -208,7 +216,7 @@ export function activate(context: vscode.ExtensionContext) {
     //Add pet
     const commandAddPet = vscode.commands.registerCommand('stardew-pets.addPet', async () => {
         //Ask for a specie
-        const specie = await vscode.window.showQuickPick(Object.keys(Species), {
+        const specie = await vscode.window.showQuickPick(Object.keys(PetSpecies), {
             title: 'Select a pet',
             placeHolder: 'pet',
         });
@@ -217,8 +225,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         //Ask for a variant
         let variants = Array<PetItem>();
-        for (let i = 0; i < Species[specie].length; i++) {
-            const variant = Species[specie][i];
+        for (let i = 0; i < PetSpecies[specie].length; i++) {
+            const variant = PetSpecies[specie][i];
 
             //Get adult/baby start index
             let index = variant.indexOf(' adult');
@@ -445,6 +453,7 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
                 <script src="${this.getUri(webview, 'util.js')}"></script>
                 <script src="${this.getUri(webview, 'base.js')}"></script>
                 <script src="${this.getUri(webview, 'pets.js')}"></script>
+                <script src="${this.getUri(webview, 'enemies.js')}"></script>
                 <script src="${this.getUri(webview, 'main.js')}"></script>
             </body>
             </html>

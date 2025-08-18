@@ -467,7 +467,7 @@ class PetAI extends AI {
         this.showMood();
 
         //Play special animation
-        this.setState(PetAI.SPECIAL);
+        this.setState(AI.SPECIAL);
     }
 
     //State: MOVING or MOVING_BALL
@@ -485,7 +485,7 @@ class PetAI extends AI {
         this.showMood();
 
         //Animate special
-        this.setState(PetAI.SPECIAL);
+        this.setState(AI.SPECIAL);
     }
 
 }
@@ -498,24 +498,24 @@ class PetCharacter extends Character {
     get name() { return this.#name; }
     #specie = '';
     get specie() { return this.#specie; }
-    #color = 'Pet';
+    #color = 'Color';
     get color() { return this.#color; }
     
     //Animations
     _animations = PetAnimations.DEFAULT;
 
 
-    //State
-    constructor(name, color, specie, options) {
+    //Constructor
+    constructor(name, specie, color, options) {
         super(new PetAI(options));
 
-        //Save pet name, color & specie
+        //Save pet name, specie & color
         this.#name = name;
-        this.#color = color;
         this.#specie = specie;
+        this.#color = color;
 
         //Add classes to element
-        this.element.classList.add('pet');
+        this.element.classList.add('character');
         this.element.classList.add(this.specie);
         this.element.setAttribute('color', this.color);
         
@@ -547,7 +547,7 @@ class PetCharacterSmall extends PetCharacter {
     _size = new Vec2(16);
 
     //Constructor
-    constructor(name, color, specie, options) { super(name, color, specie, options); }
+    constructor(name, specie, color, options) { super(name, specie, color, options); }
 
 }
 
@@ -561,141 +561,141 @@ class PetCharacterSmall extends PetCharacter {
 | $$     |  $$$$$$$  |  $$$$//$$$$$$$/
 |__/      \_______/   \___/ |______*/
 
-//Pets (cat)
+//Cat
 class Cat extends PetCharacter {
 
     //Animations
     _animations = PetAnimations.CAT;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'cat'); }
+    constructor(name, color) { super(name, 'cat', color); }
 
 }
 
-//Pets (dog)
+//Dog
 class Dog extends PetCharacter {
 
     //Animations
     _animations = PetAnimations.DOG;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'dog'); }
+    constructor(name, color) { super(name, 'dog', color); }
     
 }
 
-//Pets (tutle)
+//Tutle
 class Turtle extends PetCharacter {
 
     //Animations
     _animations = PetAnimations.TURTLE;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'turtle'); }
+    constructor(name, color) { super(name, 'turtle', color); }
 
 }
 
-//Pets (dino)
+//Dino
 class Dino extends PetCharacterSmall {
 
     //Animations
     _animations = PetAnimations.DINO;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'dino'); }
+    constructor(name, color) { super(name, 'dino', color); }
 
 }
 
-//Pets (duck)
+//Duck
 class Duck extends PetCharacterSmall {
 
     //Animations
     _animations = PetAnimations.DUCK;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'duck'); }
+    constructor(name, color) { super(name, 'duck', color); }
 
 }
 
-//Pets (raccoon)
+//Raccoon
 class Raccoon extends PetCharacter {
 
     //Animations
     _animations = PetAnimations.RACCOON;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'raccoon', { canSleep: false }); }
+    constructor(name, color) { super(name, 'raccoon', color, { canSleep: false }); }
 
 }
 
-//Pets (goat, sheep, ostrich, pig)
+//Goat, sheep, ostrich, pig
 class Goat extends PetCharacter {
 
     //Constructor
-    constructor(name, color) { super(name, color, 'goat'); }
+    constructor(name, color) { super(name, 'goat', color); }
 
 }
 
 class Sheep extends PetCharacter {
 
     //Constructor
-    constructor(name, color) { super(name, color, 'sheep'); }
+    constructor(name, color) { super(name, 'sheep', color); }
 
 }
 
 class Ostrich extends PetCharacter {
 
     //Constructor
-    constructor(name, color) { super(name, color, 'ostrich'); }
+    constructor(name, color) { super(name, 'ostrich', color); }
 
 }
 
 class Pig extends PetCharacter {
 
     //Constructor
-    constructor(name, color) { super(name, color, 'pig'); }
+    constructor(name, color) { super(name, 'pig', color); }
 
 }
 
-//Pets (rabbit)
+//Rabbit
 class Rabbit extends PetCharacterSmall {
 
     //Animations
     _animations = PetAnimations.RABBIT;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'rabbit'); }
+    constructor(name, color) { super(name, 'rabbit', color); }
 
 }
 
-//Pets (chicken)
+//Chicken
 class Chicken extends PetCharacterSmall {
 
     //Animations
     _animations = PetAnimations.CHICKEN;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'chicken'); }
+    constructor(name, color) { super(name, 'chicken', color); }
 
 }
 
-//Pets (cow)
+//Cow
 class Cow extends PetCharacter {
 
     //Animations
     _animations = PetAnimations.COW;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'cow'); }
+    constructor(name, color) { super(name, 'cow', color); }
 
 }
 
-//Pets (junimo)
+//Junimo
 class Junimo extends PetCharacterSmall {
 
     //Animations
     _animations = PetAnimations.JUNIMO;
 
     //Constructor
-    constructor(name, color) { super(name, color, 'junimo'); }
+    constructor(name, color) { super(name, 'junimo', color); }
 
 }
