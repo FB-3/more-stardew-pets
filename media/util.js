@@ -85,6 +85,39 @@ class Timer {
 
 }
 
+class Timeout {
+
+    //Info
+    #fun;
+    #timeout;
+
+    //Constructor
+    constructor(fun, duration) {
+        this.#fun = fun;
+        if (typeof duration === 'number') this.wait(duration);
+    }
+
+    //Functions
+    wait(duration) {
+        clearTimeout(this.#timeout);
+        this.#timeout = setTimeout(this.#fun, duration);
+    }
+
+}
+
+//Array extension
+Array.prototype.removeAt = function(index) {
+    const elem = this[index];
+    this.splice(index, 1);
+    return elem;
+}
+
+Array.prototype.removeItem = function(elem) {
+    const index = this.indexOf(elem);
+    this.splice(index, 1);
+    return index;
+}
+
 //Functions
 function random(max) {
     //Random number from 0 to max inclusive

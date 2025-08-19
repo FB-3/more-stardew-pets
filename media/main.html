@@ -7,13 +7,17 @@
     <title>Stardew Pets 😸</title>
 </head>
 <body>
-    <!-- Pets & toys -->
-    <div id="pets" background="{config.background}">
+    <!-- Characters & ball -->
+    <div id="characters" background="{config.background}">
+        <!-- Ball -->
         <div id="ball"></div>
     </div>
 
+    <!-- Messages -->
+    <div id="messages"></div>
+
     <!-- Menus -->
-    <div id="menus"  class="menuBackdrop" onclick="Menus.toggle(Menus.current, false)">
+    <div id="menus" onclick="Menus.toggle(Menus.current, false)">
         <!-- Actions menu -->
         <div id="actions" class="menu" onclick="event.stopPropagation()">
             <div class="menuContent">

@@ -19,19 +19,40 @@ const Game = {
     frames: 0,  //Frames since game start
     fps: 30,
 
-    //Element where the pets are stored
-    element: document.getElementById('pets'),
-    money: 0,
-    pets: [],       //List with all the pets
-    enemies: [],    //List with all the enemies
-    decoration: [], //List with all the decoration
+    //Characters
+    characters: document.getElementById('characters'),   //Parent element for the characters
+    pets: [],       //List of all the pets
+    enemies: [],    //List of all the enemies
+    spawner: new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000),
 
-    //Action being performed
+    //Money
+    money: 0,
+    moneyHide: new Timeout(() => { document.getElementById('moneyMessage').removeAttribute('show'); }),
+    setMoney: (amount) => {
+        Game.money = amount;
+        document.getElementById('moneyText').innerText = `${amount}G`;
+    },
+    addMoney: (amount) => {
+        Game.setMoney(Game.money + amount);
+        Game.showMessage(`${amount >= 0 ? '+' : '-'}${Math.abs(amount)}G`);
+        vscode.postMessage({ type: 'money', value: Game.money });
+    },
+
+    //Current action being performed
     action: Action.none,
     isAction: (action) => { return Game.action == action },
-    setAction: (action) => { 
+    setAction: (action) => { ;
         Game.action = action
-        Cursor.setIcon(action)
+        Cursor.setIcon(action);
+    },
+
+    //Messages
+    showMessage: (content) => {
+        const message = document.createElement('span');
+        message.classList.add('message');
+        message.innerText = content;
+        document.getElementById('messages').appendChild(message);
+        setTimeout(() => message.remove(), 2000);
     },
 }
 
@@ -174,81 +195,48 @@ window.addEventListener('message', event => {
 
     //Check message type
     switch (message.type.toLowerCase()) {
-        //Toggle actions menu
-        case 'actions':
-            Game.setAction(Action.none)
-            Menus.toggle('actions')
-            break;
-
-        //Create a pet
-        case 'add':
+        //Spawn a pet
+        case 'spawn_pet':
             switch (message.specie) {
-                //Create a cat
                 case 'cat':
                     new Cat(message.name, message.color);
                     break;
-
-                //Create a dog
                 case 'dog':
                     new Dog(message.name, message.color);
                     break;
-
-                //Create a raccoon
                 case 'raccoon':
                     new Raccoon(message.name, message.color);
                     break;
-
-                //Create a dino
                 case 'dino':
                     new Dino(message.name, message.color);
                     break;
-
-                //Create a duck
                 case 'duck':
                     new Duck(message.name, message.color);
                     break;
-
-                //Create a turtle
                 case 'turtle':
                     new Turtle(message.name, message.color);
                     break;
-
-                //Create a goat
                 case 'goat':
                     new Goat(message.name, message.color);
                     break;
-
-                //Create a sheep
                 case 'sheep':
                     new Sheep(message.name, message.color);
                     break;
-
-                //Create a ostrich
                 case 'ostrich':
                     new Ostrich(message.name, message.color);
                     break;
-
-                //Create a pig
                 case 'pig':
                     new Pig(message.name, message.color);
                     break;
-
-                //Create a rabbit
                 case 'rabbit':
                     new Rabbit(message.name, message.color);
                     break;
-
-                //Create a chicken
                 case 'chicken':
                     new Chicken(message.name, message.color);
                     break;
-
-                //Create a cow
                 case 'cow':
                     new Cow(message.name, message.color);
                     break;
-
-                //Create a junimo
                 case 'junimo':
                     new Junimo(message.name, message.color);
                     break;
@@ -256,15 +244,20 @@ window.addEventListener('message', event => {
             break;
 
         //Remove a pet
-        case 'remove':
-            const pet = Game.pets[message.index];
-            pet.element.remove()
-            Game.pets.splice(message.index, 1);
+        case 'remove_pet':
+            const pet = Game.pets.removeAt(message.index);
+            pet.element.remove();
+            break;
+
+        //Toggle actions menu
+        case 'actions':
+            Game.setAction(Action.none)
+            Menus.toggle('actions')
             break;
 
         //Update background
         case 'background':
-            Game.element.setAttribute('background', message.value.toLowerCase());
+            Game.characters.setAttribute('background', message.value.toLowerCase());
             break;
 
         //Update scale
@@ -286,11 +279,27 @@ window.addEventListener('message', event => {
             break;
     
         //Update money
-        case 'money': {
-            Game.money = message.value
-            document.getElementById('moneyText').innerText = `${Game.money}G`
+        case 'money': 
+            Game.setMoney(message.value)
             break;
-        }
+
+        //Spawn an enemy
+        case 'spawn_enemy':
+            switch (message.specie) {
+                case 'slime':
+                    new Slime(message.color);
+                    break;
+                case 'bug':
+                    new Bug(message.color);
+                    break;
+                case 'crab':
+                    new Crab(message.color);
+                    break;
+                case 'golem':
+                    new Golem(message.color);
+                    break;
+            }
+            break;
     }
 })
 

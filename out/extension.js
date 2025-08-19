@@ -70,14 +70,9 @@ const Names = [
     'Aitana', 'Lucia',
 ];
 class Save {
-    money;
-    pets;
-    decoration;
-    constructor() {
-        this.money = 0;
-        this.pets = new Array();
-        this.decoration = new Array();
-    }
+    money = 0;
+    pets = new Array();
+    decoration = new Array();
 }
 let savePath;
 let save = new Save();
@@ -106,6 +101,13 @@ function loadGame() {
     else {
         //Does not exist -> Load old pets file if it exists
         loadPetsFile();
+        //Save updated
+        saveUpdated = true;
+    }
+    //Invalid money value
+    if (typeof save.money !== 'number') {
+        //Reset money value
+        save.money = 0;
         //Save updated
         saveUpdated = true;
     }
@@ -193,9 +195,9 @@ class PetItem {
 function loadPet(pet) {
     //Sends a pet to the webview
     webview.postMessage({
-        type: 'add',
-        specie: pet.specie,
+        type: 'spawn_pet',
         name: pet.name,
+        specie: pet.specie,
         color: pet.color,
     });
 }
@@ -211,7 +213,7 @@ function removePet(index, saveFile) {
     save.pets.splice(index, 1);
     //Remove from webview
     webview.postMessage({
-        type: 'remove',
+        type: 'remove_pet',
         index: index,
     });
     //Save pets
@@ -406,7 +408,9 @@ class WebViewProvider {
         this.view?.webview.postMessage(message);
     }
     async resolveWebviewView(webviewView, context, _token) {
-        this.view = webviewView; //Needed so we can use it in postMessageToWebview
+        //Needed so we can use it in postMessageToWebview
+        this.view = webviewView;
+        //Get webview
         const webview = webviewView.webview;
         //Allow scripts in the webview
         webview.options = {
@@ -415,8 +419,8 @@ class WebViewProvider {
         //Set the HTML content for the webview
         webview.html = await this.getHtmlContent(webviewView.webview);
         //Handle messages
-        webview.onDidReceiveMessage((message) => {
-            switch (message.type) {
+        webview.onDidReceiveMessage(message => {
+            switch (message.type.toLowerCase()) {
                 //Error message
                 case 'error':
                     vscode.window.showErrorMessage(message.text);
@@ -429,6 +433,27 @@ class WebViewProvider {
                 case 'init':
                     initGame();
                     break;
+                //Update money
+                case 'money':
+                    save.money = message.value;
+                    saveGame();
+                    break;
+                //Spawn enemy
+                case 'spawn_enemy': {
+                    //Get specie
+                    const species = Object.keys(EnemySpecies);
+                    const specie = species[Math.floor(Math.random() * species.length)];
+                    //Get color
+                    const colors = EnemySpecies[specie];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    //Spawn enemy
+                    this.postMessage({
+                        type: 'spawn_enemy',
+                        specie: specie,
+                        color: color,
+                    });
+                    break;
+                }
             }
         });
     }

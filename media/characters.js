@@ -336,7 +336,7 @@ class Character {
 
         //Create character element
         const element = document.createElement('div');
-        Game.element.appendChild(element);
+        Game.characters.appendChild(element);
         this.#element = element;
 
         //Add on click listener
@@ -838,8 +838,8 @@ class PetAI extends AI {
     //Moods
     static #moods = ['gigachad', 'happy', 'mad', 'alien', 'pledge', 'blush'];
     #mood = 'gigachad';
-    #moodHideTimeout;
-    #moodHeartTimeout;
+    #moodHideTimeout = new Timeout(() => this.character.element.removeAttribute('mood'));
+    #moodHeartTimeout = new Timeout(() => this.#setRandomMood());
 
 
     //State
@@ -856,8 +856,7 @@ class PetAI extends AI {
         this.#mood = 'heart';
 
         //Clear heart mood timeout & start a new one
-        if (this.#moodHeartTimeout != undefined) clearTimeout(this.#moodHeartTimeout)
-        this.#moodHeartTimeout = setTimeout(() => { this.#setRandomMood() }, 10 * 60 * 1000); //Heart stays for 10 minutes
+        this.#moodHeartTimeout.wait(10 * 60 * 1000); //Heart stays for 10 minutes
     }
 
     #setRandomMood() {
@@ -869,8 +868,7 @@ class PetAI extends AI {
         this.character.element.setAttribute('mood', this.#mood);
 
         //Clear hide mood timeout & start a new one
-        clearTimeout(this.#moodHideTimeout)
-        this.#moodHideTimeout = setTimeout(() => { this.character.element.removeAttribute('mood') }, 2000);
+        this.#moodHideTimeout.wait(2000);
     }
 
     //Movement (override)
@@ -1178,11 +1176,11 @@ class EnemyAnimations {
                 4,
             ),
             'moveLeft': new Animation(
-                [[0, 2], [1, 2], [2, 2], [3, 2]],
+                [[0, 3], [1, 3], [2, 3], [3, 3]],
                 4,
             ),
             'moveUp': new Animation(
-                [[0, 3], [1, 3], [2, 3], [3, 3]],
+                [[0, 2], [1, 2], [2, 2], [3, 2]],
                 4,
             ),
             'special': new Animation(
@@ -1285,7 +1283,13 @@ class EnemyAI extends AI {
         this.character.element.remove();
 
         //Remove enemy from enemies list
-        Game.enemies.remove(Game.enemies.indexOf(this.character))
+        Game.enemies.removeItem(this.character);
+
+        //Give money to player
+        Game.addMoney(5);
+
+        //Wait to spawn a new enemy
+        Game.spawner.wait(60 * 1000);
     }
 
 }
