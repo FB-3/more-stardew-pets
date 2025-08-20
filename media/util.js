@@ -119,7 +119,12 @@ Array.prototype.removeItem = function(elem) {
 }
 
 //Functions
-function random(max) {
+function randomExclusive(max) {
+    //Random number from 0 to max exclusive
+    return Math.floor(Math.random() * (max));
+}
+
+function randomInclusive(max) {
     //Random number from 0 to max inclusive
     return Math.floor(Math.random() * (max + 1));
 }

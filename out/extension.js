@@ -151,6 +151,8 @@ function initGame() {
     //Load pets
     for (const pet of save.pets)
         loadPet(pet);
+    //Finish
+    webview.postMessage({ type: 'init' });
 }
 function loadPetsFile() {
     //Get old pets save file path
@@ -279,7 +281,7 @@ function activate(context) {
   | $$    $$| $$  | $$| $$ | $$ | $$| $$ | $$ | $$ /$$__  $$| $$  | $$| $$  | $$ \____  $$
   |  $$$$$$/|  $$$$$$/| $$ | $$ | $$| $$ | $$ | $$|  $$$$$$$| $$  | $$|  $$$$$$$ /$$$$$$$/
    \______/  \______/ |__/ |__/ |__/|__/ |__/ |__/ \_______/|__/  |__/ \_______/|______*/
-    //The commands have to be defined in package.json in order to be added here
+    //Commands have to be defined in package.json in order to be added here
     //Add pet
     const commandAddPet = vscode.commands.registerCommand('stardew-pets.addPet', async () => {
         //Ask for a specie
@@ -457,28 +459,13 @@ class WebViewProvider {
             }
         });
     }
-    getUri(webview, path) {
-        return webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', path));
-    }
     async getHtmlContent(webview) {
         //Read HTML file
         const htmlPath = vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.html');
         const fileData = await vscode.workspace.fs.readFile(htmlPath);
         const htmlContent = new TextDecoder().decode(fileData);
-        //Replace URI placeholders
-        return htmlContent
-            //CSS
-            .replace('{main.css}', `${this.getUri(webview, 'main.css')}`)
-            //JS
-            .replace('{util.js}', `${this.getUri(webview, 'util.js')}`)
-            .replace('{characters.js}', `${this.getUri(webview, 'characters.js')}`)
-            .replace('{main.js}', `${this.getUri(webview, 'main.js')}`)
-            //Icons
-            .replace('{ball.png}', `${this.getUri(webview, 'sprites/ui/ball.png')}`)
-            .replace('{gift.png}', `${this.getUri(webview, 'sprites/ui/gift.png')}`)
-            .replace('{house.png}', `${this.getUri(webview, 'sprites/ui/house.png')}`)
-            //Config
-            .replace('{config.background}', `${config.get('background')}`);
+        //Replace media folder URI placeholder with path
+        return htmlContent.replaceAll('{media}', `${webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media'))}/`);
     }
 }
 exports.WebViewProvider = WebViewProvider;

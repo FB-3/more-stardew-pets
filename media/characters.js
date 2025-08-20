@@ -1,3 +1,152 @@
+//Game objects
+class GameObject {
+
+    //Position & Size
+    #pos = new Vec2();
+    get pos() { return this.#pos; }
+    #size = new Vec2(16);
+    get size() { return this.#size; }
+
+    //Rendering
+    #sprite = new Image();
+    get sprite() { return this.#sprite; }
+    #offset = new Vec2();
+    get offset() { return this.#offset; }
+
+    //Animations
+    #animations = {};
+    get animations() { return this.#animations; }
+    #animation;
+    get animation() { return this.#animation; }
+
+
+    //Constructor
+    constructor(config) {
+        //Add to game objects list
+        Game.objects.push(this);
+
+        //No config
+        if (typeof config !== 'object') return;
+
+        //Position & size config
+        if (typeof config.pos === 'object') this.#pos = config.pos;
+        if (typeof config.size === 'object') this.#size = config.size;
+
+        //Rendering config
+        if (typeof config.sprite === 'string') this.#sprite.src = `${Game.media}sprites/${config.sprite}`;
+        if (typeof config.offset === 'object') this.#offset = config.offset;
+
+        //Animation config
+        if (typeof config.animations === 'object') this.#animations = config.animations;
+    }
+
+    remove() {
+        //Remove from objects list
+        Game.objects.removeItem(this);
+    }
+
+    //Update
+    update() {
+        //Update animation offset
+        if (this.#animation) this.#offset = this.#animation.update().mult(this.size);
+    }
+
+    //Click
+    checkClick(click) {
+        //Check if clicked outside element
+        if (click.x < this.pos.x || click.x > this.pos.x + this.size.x || 
+            click.y < this.pos.y || click.y > this.pos.y + this.size.y) {
+            return false;
+        }
+        
+        //Click
+        return this.click();
+    }
+    
+    click() {
+        return true;
+    }
+
+    //Rendering
+    draw(ctx) {
+        //Invalid image
+        if (!this.sprite.complete) return;
+
+        //Save context transform
+        ctx.save(); 
+
+        //Translate sprite
+        ctx.translate(this.pos.x, this.pos.y);
+
+        //Flip sprite
+        if (this.animation && this.animation.flip) {
+            ctx.translate(this.size.x, 0);
+            ctx.scale(-1, 1);
+        }
+        
+        //Draw sprite
+        ctx.drawImage(
+            this.sprite,
+            this.offset.x,
+            this.offset.y, 
+            this.size.x,
+            this.size.y,
+            0,
+            0,
+            this.size.x,
+            this.size.y
+        );
+
+        //Restore context transform
+        ctx.restore();
+    }
+
+    //Animations
+    animate(name, force) {
+        //Not an animation
+        if (typeof this.animations[name] !== 'object') return;
+
+        //Fix force animation
+        if (typeof force !== 'boolean') force = false;
+
+        //Get animation
+        let animation = this.animations[name];
+        if (Array.isArray(animation)) animation = animation[randomExclusive(animation.length)];
+
+        //Change current animation & reset it
+        if (animation == this.animation && !force) return;
+        this.#animation = animation;
+        this.animation.reset();
+    }
+
+    //Movement
+    get maxPosX() { return Math.floor((Game.size.x / Game.scale) - this.size.x); }
+    get maxPosY() { return Math.floor((Game.size.y / Game.scale) - this.size.y); }
+    get randomPoint() { return new Vec2(randomInclusive(this.maxPosX), randomInclusive(this.maxPosY)); }
+
+    moveTo(x, y) {
+        //moveTo(Vec2) instead of moveTo(x, y)
+        if (typeof x == 'object') {
+            y = x.y;
+            x = x.x;
+        }
+
+        //Clamp new position
+        x = clamp(x, 0, this.maxPosX);
+        y = clamp(y, 0, this.maxPosY);
+
+        //Update position
+        this.#pos.x = x;
+        this.#pos.y = y;
+    }
+
+    respawn() {
+        //Move to random point
+        this.moveTo(this.randomPoint);
+    }
+
+}
+
 //Animations
 class Animation {
 
@@ -16,15 +165,15 @@ class Animation {
 
 
     //State
-    constructor(frames, speed, options) {
+    constructor(frames, speed, config) {
         //Animation info
         this.#frames = frames;
         this.#speed = speed;
 
-        //Check options
-        if (typeof options === 'object') {
-            if (typeof options.loop === 'boolean') this.#loop = options.loop;
-            if (typeof options.flip === 'boolean') this.#flip = options.flip;
+        //Check config
+        if (typeof config === 'object') {
+            if (typeof config.loop === 'boolean') this.#loop = config.loop;
+            if (typeof config.flip === 'boolean') this.#flip = config.flip;
         }
 
         //Reset current info
@@ -62,7 +211,8 @@ class Animation {
         }
 
         //Return animation sprite position
-        return this.#frames[this.#frame]
+        const offset = this.#frames[this.#frame];
+        return new Vec2(offset[0], offset[1]);
     }
 
 }
@@ -84,45 +234,48 @@ class AI {
     get timer() { return this.#timer; }
     #movePos = new Vec2();
 
-    //Options (idle)
+    //Config (idle)
     #idleDurationBase = 2 * Game.fps;       //Minimum duration of idle (in frames)
     #idleDurationVariation = 2 * Game.fps;  //Variation of duration for idle (in frames)
-    get idleDuration() { return this.#idleDurationBase + random(this.#idleDurationVariation); }
+    get idleDuration() { return this.#idleDurationBase + randomInclusive(this.#idleDurationVariation); }
 
-    //Options (sleep)
+    //Config (sleep)
     #canSleep = true;
     #isSleeping = false;
     #sleepDurationBase = 10 * Game.fps;     //Minimum duration of sleep (in frames)
     #sleepDurationVariation = 5 * Game.fps; //Variation of duration for sleep (in frames)
-    get sleepDuration() { return this.#sleepDurationBase + random(this.#sleepDurationVariation); }
+    get sleepDuration() { return this.#sleepDurationBase + randomInclusive(this.#sleepDurationVariation); }
 
-    //Options (special)
+    //Config (special)
     #specialDuration = 2 * Game.fps;        //Duration of special (in frames)
     get specialDuration() { return this.#specialDuration; }
 
 
     //Constructor
-    constructor(options) {
-        //Check options
-        if (typeof options == 'object') {
-            //Idle options
-            if (typeof options.idleDurationBase == 'number') this.#idleDurationBase = options.idleDurationBase;
-            if (typeof options.idleDurationVariation == 'number') this.#idleDurationVariation = options.idleDurationVariation;
+    constructor(config) {
+        //No config
+        if (typeof config !== 'object') return;
 
-            //Sleep options
-            if (typeof options.canSleep == 'boolean') this.#canSleep = options.canSleep;
-            if (typeof options.sleepDurationBase == 'number') this.#sleepDurationBase = options.sleepDurationBase;
-            if (typeof options.sleepDurationVariation == 'number') this.#sleepDurationVariation = options.sleepDurationVariation;
+        //Idle config
+        if (typeof config.idleDurationBase == 'number') this.#idleDurationBase = config.idleDurationBase;
+        if (typeof config.idleDurationVariation == 'number') this.#idleDurationVariation = config.idleDurationVariation;
 
-            //Special options
-            if (typeof options.specialDuration == 'number') this.#specialDuration = options.specialDuration;
-        }
+        //Sleep config
+        if (typeof config.canSleep == 'boolean') this.#canSleep = config.canSleep;
+        if (typeof config.sleepDurationBase == 'number') this.#sleepDurationBase = config.sleepDurationBase;
+        if (typeof config.sleepDurationVariation == 'number') this.#sleepDurationVariation = config.sleepDurationVariation;
+
+        //Special config
+        if (typeof config.specialDuration == 'number') this.#specialDuration = config.specialDuration;
     }
 
     assign(character) {
         //Assign character 
         this.#character = character;
     }
+
+    //Click
+    click() {}
 
     //Movement
     _moveTowardsMovePos() {
@@ -181,9 +334,6 @@ class AI {
         this.character.animate('moveDown');
     }
 
-    //Actions
-    onClick() {}
-
     //State
     update() {
         //Run on update for current state
@@ -227,7 +377,7 @@ class AI {
         this.timer.reset();
 
         //Check action (75% chance to sleep if it can)
-        if (this.#canSleep && !this.#isSleeping && random(99) < 75) {
+        if (this.#canSleep && !this.#isSleeping && randomExclusive(100) < 75) {
             //Animate sleep
             this.character.animate('sleep');
 
@@ -247,9 +397,7 @@ class AI {
         //Try to move
         if (this._moveTowardsMovePos()) return;
         
-        //Didn't move -> Point reached
-
-        //Animate idle
+        //Didn't move -> Point reached, animate idle
         this.setState(AI.IDLE);
     }
 
@@ -276,71 +424,20 @@ class AI {
 }
 
 //Characters
-class Character {
+class Character extends GameObject {
 
-    //Element & AI
-    #element;
-    get element() { return this.#element; }
+    //AI
     #ai;
     get ai() { return this.#ai; }
-    
-    //Position & Size
-    #pos = new Vec2();
-    get pos() { return this.#pos; }
-    _size = new Vec2(32);
-    get size() { return this._size; }
-
-    //Animations
-    #animation;
-    _animations = {
-        'moveDown': new Animation(
-            [[0, 0]],
-            5,
-        ),
-        'moveRight': new Animation(
-            [[0, 0]],
-            5,
-        ),
-        'moveLeft': new Animation(
-            [[0, 0]],
-            5,
-            { flip: true }
-        ),
-        'moveUp': new Animation(
-            [[0, 0]],
-            5
-        ),
-        'idle': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false },
-        ),
-        'sleep': new Animation(
-            [[0, 0]],
-            30,
-            { loop: false },
-        ),
-        'special': new Animation(
-            [[0, 0]],
-            5,
-            { loop: false },
-        ),
-    };
 
 
     //Constructor
-    constructor(ai) {
+    constructor(config, ai) {
+        super(config);
+
         //Assign AI
         this.#ai = ai
         ai.assign(this)
-
-        //Create character element
-        const element = document.createElement('div');
-        Game.characters.appendChild(element);
-        this.#element = element;
-
-        //Add on click listener
-        element.onclick = () => this.#ai.onClick();
 
         //Respawn character
         this.respawn();
@@ -351,68 +448,14 @@ class Character {
         //Update AI
         this.ai.update();
 
-        //Update animation sprite
-        if (this.#animation) this.#selectSprite(this.#animation.update())
+        //Update game object
+        super.update();
     }
-
-    //Movement
-    get maxPosX() { return Math.floor((Game.width / Game.scale) - this.size.x); }
-    get maxPosY() { return Math.floor((Game.height / Game.scale) - this.size.y); }
-    get randomPoint() { return new Vec2(random(this.maxPosX), random(this.maxPosY)); }
-
-    moveTo(x, y) {
-        //moveTo(Vec2) instead of moveTo(x, y)
-        if (typeof x == 'object') {
-            y = x.y;
-            x = x.x;
-        }
-
-        //Clamp new position
-        x = clamp(x, 0, this.maxPosX);
-        y = clamp(y, 0, this.maxPosY);
-
-        //Update position
-        this.#pos.x = x;
-        this.#pos.y = y;
-
-        //Move element
-        this.element.style.setProperty('--position-x', x + 'px');
-        this.element.style.setProperty('--position-y', y + 'px');
-        this.element.style.zIndex = y + this.size.y;
-    }
-
-    respawn() {
-        //Move to random point
-        this.moveTo(this.randomPoint);
-    }
-
-    //Animations
-    animate(name, force) {
-        //Not an animation
-        if (typeof this._animations[name] !== 'object') return;
-
-        //Fix force animation
-        if (typeof force !== 'boolean') force = false;
-
-        //Get animation
-        let animation = this._animations[name];
-        if (Array.isArray(animation)) animation = animation[random(animation.length - 1)];
-
-        //Change current animation & reset it
-        if (animation == this.#animation && !force) return;
-        this.#animation = animation;
-        this.#animation.reset();
-
-        //Flip sprite
-        if (animation.flip) 
-            this.element.setAttribute('flip', '');
-        else 
-            this.element.removeAttribute('flip')
-    }
-
-    #selectSprite(offset) {
-        this.element.style.setProperty('--offset-x', -(offset[0] * this.size.x) + 'px');
-        this.element.style.setProperty('--offset-y', -(offset[1] * this.size.y) + 'px');
+    
+    //Click
+    onclick() {
+        //Notify AI a click happened
+        this.ai.onclick();
     }
 
 }
@@ -738,7 +781,7 @@ class PetAnimations {
                 5
             ),
             'special': new Animation(
-                [[0, 6], [1, 6], [2, 6], [3, 6], [0, 0]],
+                [[0, 6], [1, 6], [2, 6], [1, 6], [2, 6], [1, 6], [0, 6], [0, 0]],
                 5,
                 { loop: false }
             ),
@@ -830,57 +873,59 @@ class PetAnimations {
 }
 
 //AI
+class PetMoods {
+
+    //Sprite size
+    static size = new Vec2(9);
+
+    //Special moods
+    static get HEART() { return new Vec2(1, 3); }
+    static get RANDOM() { return PetMoods[PetMoods.moods[randomExclusive(PetMoods.moods.length)]]; }
+
+    //Normal moods
+    static moods = ['GIGACHAD', 'HAPPY', 'MAD', 'ALIEN', 'PLEDGE', 'BLUSH'];
+    static get GIGACHAD() { return new Vec2(11, 1); }
+    static get HAPPY() { return new Vec2(0, 0); }
+    static get MAD() { return new Vec2(2, 1); }
+    static get ALIEN() { return new Vec2(1, 2); }
+    static get PLEDGE() { return new Vec2(8, 1); }
+    static get BLUSH() { return new Vec2(8, 0); }
+
+}
+
 class PetAI extends AI {
 
     //States
     static get MOVE_BALL() { return 'moveball' };
 
     //Moods
-    static #moods = ['gigachad', 'happy', 'mad', 'alien', 'pledge', 'blush'];
-    #mood = 'gigachad';
-    #moodHideTimeout = new Timeout(() => this.character.element.removeAttribute('mood'));
+    #moodSprite = new Image();
+    #moodOffset = new Vec2();
+    #moodElevation = 0; //Elevation is reversed, positive is down, negative is up
+    #moodShow = false;
+    #moodHideTimeout = new Timeout(() => this.#moodShow = false);
     #moodHeartTimeout = new Timeout(() => this.#setRandomMood());
 
 
     //State
-    constructor(options) {
-        super(options);
+    constructor(config) {
+        super(config);
+
+        //Check config
+        if (typeof config === 'object') {
+            //Mood elevation
+            if (typeof config.moodElevation === 'number') this.#moodElevation = config.moodElevation;
+        }
+
+        //Init moods sprite
+        this.#moodSprite.src = `${Game.media}sprites/emotes/emotes.png`;
 
         //Random mood
         this.#setRandomMood()
     }
 
-    //Mood
-    #setHeartMood() {
-        //Change mood to heart
-        this.#mood = 'heart';
-
-        //Clear heart mood timeout & start a new one
-        this.#moodHeartTimeout.wait(10 * 60 * 1000); //Heart stays for 10 minutes
-    }
-
-    #setRandomMood() {
-        this.#mood = PetAI.#moods[Math.floor(Math.random() * PetAI.#moods.length)];
-    }
-
-    showMood() {
-        //Show mood
-        this.character.element.setAttribute('mood', this.#mood);
-
-        //Clear hide mood timeout & start a new one
-        this.#moodHideTimeout.wait(2000);
-    }
-
-    //Movement (override)
-    moveTowards(point, towardsBall) {
-        super.moveTowards(point)
-
-        //Move towards ball
-        if (towardsBall) this.setState(PetAI.MOVE_BALL);
-    }
-
-    //Actions (override)
-    onClick() {
+    //Click
+    click() {
         //Has gift?
         if (Game.isAction(Action.gift)) {
             //Consume gift
@@ -897,14 +942,64 @@ class PetAI extends AI {
         this.setState(AI.SPECIAL);
     }
 
+    //Mood
+    #setMood(offset) {
+        this.#moodOffset = offset.mult(PetMoods.size);
+    }
+
+    #setHeartMood() {
+        //Change mood to heart
+        this.#setMood(PetMoods.HEART);
+
+        //Clear heart mood timeout & start a new one
+        this.#moodHeartTimeout.wait(10 * 60 * 1000); //Heart stays for 10 minutes
+    }
+
+    #setRandomMood() {
+        //Change mood to a random one
+        this.#setMood(PetMoods.RANDOM);
+    }
+
+    showMood() {
+        //Show mood
+        this.#moodShow = true;
+
+        //Clear hide mood timeout & start a new one
+        this.#moodHideTimeout.wait(2000);
+    }
+
+    drawMood(ctx) {
+        //Mood is hidden
+        if (!this.#moodShow) return;
+
+        //Draw mood
+        ctx.drawImage(
+            this.#moodSprite,
+            this.#moodOffset.x,
+            this.#moodOffset.y, 
+            PetMoods.size.x,
+            PetMoods.size.y,
+            this.character.pos.x + Math.round((this.character.size.x - PetMoods.size.x) / 2),
+            this.character.pos.y + this.#moodElevation,
+            PetMoods.size.x,
+            PetMoods.size.y
+        );
+    }
+
+    //Movement
+    moveTowards(point, towardsBall) {
+        super.moveTowards(point)
+
+        //Move towards ball
+        if (towardsBall) this.setState(PetAI.MOVE_BALL);
+    }
+
     //State: MOVING or MOVING_BALL
     onUpdate_moveball() {
         //Try to move
         if (this._moveTowardsMovePos()) return;
 
-        //Didn't move -> Point reached
-
-        //Notify game that the ball was reached
+        //Didn't move -> Point reached, notify game that the ball was reached
         Ball.onReached()
 
         //Set mood to heart & show mood
@@ -928,29 +1023,50 @@ class PetCharacter extends Character {
     #color = 'Color';
     get color() { return this.#color; }
     
-    //Animations
-    _animations = PetAnimations.DEFAULT;
-
 
     //Constructor
-    constructor(name, specie, color, options) {
-        super(new PetAI(options));
+    constructor(name, specie, color, config, config_ai) {
+        //Add sprite to config
+        config.sprite = `pets/${specie}/${(color == '' ? specie : color).replaceAll(' ', '_')}.png`;
 
-        //Save pet name, specie & color
+        //Create character
+        super(config, new PetAI(config_ai));
+        
+        //Save info
         this.#name = name;
         this.#specie = specie;
         this.#color = color;
 
-        //Add classes to element
-        this.element.classList.add('character');
-        this.element.classList.add(this.specie);
-        this.element.setAttribute('color', this.color);
-        
-        //Add pet to pets list
-        Game.pets.push(this);
-
         //Move towards random point
         this.ai.moveTowardsRandom();
+
+        //Add to pets list
+        Game.pets.push(this);
+    }
+
+    remove() {
+        super.remove();
+
+        //Remove from pets list
+        Game.pets.removeItem(this);
+    }
+
+    //Click
+    click() {
+        //Notify AI pet was clicked
+        this.ai.click();
+
+        //Click performed
+        return true;
+    }
+
+    //Rendering
+    draw(ctx) {
+        //Draw character
+        super.draw(ctx);
+        
+        //Draw AI mood
+        this.ai.drawMood(ctx);
     }
 
     //Movement
@@ -968,152 +1084,195 @@ class PetCharacter extends Character {
 
 }
 
-class PetCharacterSmall extends PetCharacter {
+class PetCharacterBig extends PetCharacter {
 
-    //Position & Size
-    _size = new Vec2(16);
+    constructor(name, specie, color, config, config_ai) {
+        //Change pet size to big
+        config.size = new Vec2(32);
 
-    //Constructor
-    constructor(name, specie, color, options) { super(name, specie, color, options); }
+        //Create pet
+        super(name, specie, color, config, config_ai);
+    }
 
 }
 
 //Cat
-class Cat extends PetCharacter {
+class Cat extends PetCharacterBig {
 
-    //Animations
-    _animations = PetAnimations.CAT;
-
-    //Constructor
-    constructor(name, color) { super(name, 'cat', color); }
+    constructor(name, color) { 
+        super(name, 'cat', color, { 
+            animations: PetAnimations.CAT
+        }, {
+            moodElevation: 3
+        }); 
+    }
 
 }
 
 //Dog
-class Dog extends PetCharacter {
+class Dog extends PetCharacterBig {
 
-    //Animations
-    _animations = PetAnimations.DOG;
-
-    //Constructor
-    constructor(name, color) { super(name, 'dog', color); }
+    constructor(name, color) { 
+        super(name, 'dog', color, { 
+            animations: PetAnimations.DOG
+        }, {
+            moodElevation: -4
+        }); 
+    }
     
 }
 
 //Tutle
-class Turtle extends PetCharacter {
+class Turtle extends PetCharacterBig {
 
-    //Animations
-    _animations = PetAnimations.TURTLE;
-
-    //Constructor
-    constructor(name, color) { super(name, 'turtle', color); }
+    constructor(name, color) { 
+        super(name, 'turtle', color, { 
+            animations: PetAnimations.TURTLE
+        }, {
+            moodElevation: 2
+        }); 
+    }
 
 }
 
 //Dino
-class Dino extends PetCharacterSmall {
+class Dino extends PetCharacter {
 
-    //Animations
-    _animations = PetAnimations.DINO;
-
-    //Constructor
-    constructor(name, color) { super(name, 'dino', color); }
+    constructor(name, color) { 
+        super(name, 'dino', color, { 
+            animations: PetAnimations.DINO
+        }, {
+            moodElevation: -11
+        }); 
+    }
 
 }
 
 //Duck
-class Duck extends PetCharacterSmall {
+class Duck extends PetCharacter {
 
-    //Animations
-    _animations = PetAnimations.DUCK;
-
-    //Constructor
-    constructor(name, color) { super(name, 'duck', color); }
+    constructor(name, color) { 
+        super(name, 'duck', color, { 
+            animations: PetAnimations.DUCK
+        }, {
+            moodElevation: -8
+        }); 
+    }
 
 }
 
 //Raccoon
-class Raccoon extends PetCharacter {
+class Raccoon extends PetCharacterBig {
 
-    //Animations
-    _animations = PetAnimations.RACCOON;
-
-    //Constructor
-    constructor(name, color) { super(name, 'raccoon', color, { canSleep: false }); }
+    constructor(name, color) { 
+        super(name, 'raccoon', color, { 
+            animations: PetAnimations.RACCOON
+        }, { 
+            moodElevation: -4,
+            canSleep: false
+        }); 
+    }
 
 }
 
 //Goat, sheep, ostrich, pig
-class Goat extends PetCharacter {
+class Goat extends PetCharacterBig {
 
-    //Constructor
-    constructor(name, color) { super(name, 'goat', color); }
-
-}
-
-class Sheep extends PetCharacter {
-
-    //Constructor
-    constructor(name, color) { super(name, 'sheep', color); }
+    constructor(name, color) { 
+        super(name, 'goat', color, { 
+            animations: PetAnimations.DEFAULT
+        }, {
+            moodElevation: (color == 'adult' ? -7 : -3)
+        }); 
+    }
 
 }
 
-class Ostrich extends PetCharacter {
+class Sheep extends PetCharacterBig {
 
-    //Constructor
-    constructor(name, color) { super(name, 'ostrich', color); }
+    constructor(name, color) { 
+        super(name, 'sheep', color, { 
+            animations: PetAnimations.DEFAULT
+        }, {
+            moodElevation: (color == 'adult' ? -3 : 0)
+        }); 
+    }
 
 }
 
-class Pig extends PetCharacter {
+class Ostrich extends PetCharacterBig {
 
-    //Constructor
-    constructor(name, color) { super(name, 'pig', color); }
+    constructor(name, color) { 
+        super(name, 'ostrich', color, { 
+            animations: PetAnimations.DEFAULT 
+        }, {
+            moodElevation: (color == 'adult' ? -8 : 2)
+        }); 
+    }
+
+}
+
+class Pig extends PetCharacterBig {
+
+    constructor(name, color) { 
+        super(name, 'pig', color, {
+            animations: PetAnimations.DEFAULT 
+        }, {
+            moodElevation: (color == 'adult' ? -8 : -4)
+        }); 
+    }
 
 }
 
 //Rabbit
-class Rabbit extends PetCharacterSmall {
+class Rabbit extends PetCharacter {
 
-    //Animations
-    _animations = PetAnimations.RABBIT;
-
-    //Constructor
-    constructor(name, color) { super(name, 'rabbit', color); }
+    constructor(name, color) { 
+        super(name, 'rabbit', color, { 
+            animations: PetAnimations.DINO
+        }, {
+            moodElevation: (color == 'adult' ? -10 : -8)
+        }); 
+    }
 
 }
 
 //Chicken
-class Chicken extends PetCharacterSmall {
-
-    //Animations
-    _animations = PetAnimations.CHICKEN;
-
-    //Constructor
-    constructor(name, color) { super(name, 'chicken', color); }
+class Chicken extends PetCharacter {
+    
+    constructor(name, color) { 
+        super(name, 'chicken', color, { 
+            animations: PetAnimations.CHICKEN 
+        }, {
+            moodElevation: (color.includes('adult') ? -10 : -2)
+        });
+    }
 
 }
 
 //Cow
-class Cow extends PetCharacter {
+class Cow extends PetCharacterBig {
 
-    //Animations
-    _animations = PetAnimations.COW;
-
-    //Constructor
-    constructor(name, color) { super(name, 'cow', color); }
+    constructor(name, color) { 
+        super(name, 'cow', color, { 
+            animations: PetAnimations.COW 
+        }, {
+            moodElevation: (color.includes('adult') ? -3 : -1)
+        }); 
+    }
 
 }
 
 //Junimo
-class Junimo extends PetCharacterSmall {
+class Junimo extends PetCharacter {
 
-    //Animations
-    _animations = PetAnimations.JUNIMO;
-
-    //Constructor
-    constructor(name, color) { super(name, 'junimo', color); }
+    constructor(name, color) { 
+        super(name, 'junimo', color, { 
+            animations: PetAnimations.JUNIMO 
+        }, {
+            moodElevation: -9
+        }); 
+    }
 
 }
 
@@ -1259,17 +1418,17 @@ class EnemyAnimations {
 class EnemyAI extends AI {
 
     //State
-    constructor(options) { 
-        //Fix options & disable sleep
-        if (typeof options !== 'object') options = {};
-        options.canSleep = false;
+    constructor(config) { 
+        //Fix config & disable sleep
+        if (typeof config !== 'object') config = {};
+        config.canSleep = false;
         
         //Base AI
-        super(options); 
+        super(config); 
     }
 
-    //Actions (override)
-    onClick() {
+    //Click
+    click() {
         //Alredy clicked
         if (this.state == AI.SPECIAL) return;
 
@@ -1279,11 +1438,8 @@ class EnemyAI extends AI {
 
     //State: SPECIAL
     onEnd_special() {
-        //Remove element from game
-        this.character.element.remove();
-
-        //Remove enemy from enemies list
-        Game.enemies.removeItem(this.character);
+        //Remove enemy from game
+        this.character.remove();
 
         //Give money to player
         Game.addMoney(5);
@@ -1302,29 +1458,40 @@ class EnemyCharacter extends Character {
     get specie() { return this.#specie; }
     #color = 'Color';
     get color() { return this.#color; }
-    
-    //Position & Size
-    _size = new Vec2(16, 24);
-
 
     //Constructor
-    constructor(specie, color, options) {
-        super(new EnemyAI(options));
+    constructor(specie, color, config, config_ai) {
+        //Add sprite to config
+        config.sprite = `enemies/${specie}/${(color == '' ? specie : color).replaceAll(' ', '_')}.png`;
+        
+        //Create character
+        super(config, new EnemyAI(config_ai));
 
-        //Save enemy specie & color
+        //Save info
         this.#specie = specie;
         this.#color = color;
 
-        //Add classes to element
-        this.element.classList.add('character');
-        this.element.classList.add(this.specie);
-        this.element.setAttribute('color', this.color);
-        
-        //Add enemy to enemies list
-        Game.enemies.push(this);
-
         //Move towards random point
         this.ai.moveTowardsRandom();
+        
+        //Add to enemies list
+        Game.enemies.push(this);
+    }
+
+    remove() {
+        super.remove();
+
+        //Remove from enemies list
+        Game.enemies.removeItem(this);
+    }
+
+    //Click
+    click() {
+        //Notify AI emeny was clicked
+        this.ai.click();
+
+        //Click performed
+        return true;
     }
 
 }
@@ -1332,46 +1499,55 @@ class EnemyCharacter extends Character {
 //Slime
 class Slime extends EnemyCharacter {
 
-    //Animations
-    _animations = EnemyAnimations.SLIME;
-
-    //Constructor
-    constructor(color) { super('slime', color, { specialDuration: 0.4 * Game.fps }); }
+    constructor(color) { 
+        super('slime', color, {
+            size: new Vec2(16, 24), 
+            animations: EnemyAnimations.SLIME 
+        }, { 
+            specialDuration: 0.4 * Game.fps 
+        }); 
+    }
 
 }
 
 //Bug
 class Bug extends EnemyCharacter {
 
-    //Position & Size
-    _size = new Vec2(16);
-
-    //Animations
-    _animations = EnemyAnimations.BUG;
-
-    //Constructor
-    constructor(color) { super('bug', color, { specialDuration: 0.4 * Game.fps }); }
+    constructor(color) { 
+        super('bug', color, { 
+            size: new Vec2(16), 
+            animations: EnemyAnimations.BUG 
+        }, { 
+            specialDuration: 0.4 * Game.fps 
+        }); 
+    }
 
 }
 
 //Golem
 class Golem extends EnemyCharacter {
 
-    //Animations
-    _animations = EnemyAnimations.GOLEM;
-
-    //Constructor
-    constructor(color) { super('golem', color, { specialDuration: 0.4 * Game.fps }); }
+    constructor(color) { 
+        super('golem', color, { 
+            size: new Vec2(16, 24), 
+            animations: EnemyAnimations.GOLEM 
+        }, {
+            specialDuration: 0.4 * Game.fps 
+        }); 
+    }
 
 }
 
 //Crab
 class Crab extends EnemyCharacter {
 
-    //Animations
-    _animations = EnemyAnimations.CRAB;
-
-    //Constructor
-    constructor(color) { super('crab', color, { specialDuration: 0.4 * Game.fps }); }
+    constructor(color) { 
+        super('crab', color, { 
+            size: new Vec2(16, 24), 
+            animations: EnemyAnimations.CRAB 
+        }, { 
+            specialDuration: 0.4 * Game.fps 
+        }); 
+    }
 
 }

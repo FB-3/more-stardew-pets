@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{main.css}" rel="stylesheet">
+    <link href="{media}main.css" rel="stylesheet">
     <title>Stardew Pets 😸</title>
 </head>
-<body>
-    <!-- Characters & ball -->
-    <div id="characters" background="{config.background}">
+<body media="{media}" hide>
+    <!-- Background & ball -->
+    <div id="background">
+        <!-- Game canvas -->
+        <canvas id="canvas"></canvas>
+        
         <!-- Ball -->
         <div id="ball"></div>
     </div>
@@ -23,16 +26,16 @@
             <div class="menuContent">
                 <!-- Buttons -->
                 <div class="menuButton" onclick="toggleActionBall()">
-                    <img src="{ball.png}">
+                    <img src="{media}sprites/ui/ball.png">
                     <span>Play with Ball</span>
                 </div>
                 <div class="menuButton" onclick="toggleActionGift()">
-                    <img src="{gift.png}">
+                    <img src="{media}sprites/ui/gift.png">
                     <span>Give a Gift</span>
                 </div>
                 <div class="menuButton" onclick="Menus.toggle('shop', true)">
-                    <img src="{house.png}">
-                    <span>Decoration Shop</span>
+                    <img src="{media}sprites/ui/house.png">
+                    <span>General Store</span>
                 </div>
             </div>
         </div>
@@ -57,8 +60,8 @@
     <div id="cursor"></div>
 
     <!-- Scripts -->
-    <script src="{util.js}"></script>
-    <script src="{characters.js}"></script>
-    <script src="{main.js}"></script>
+    <script src="{media}util.js"></script>
+    <script src="{media}characters.js"></script>
+    <script src="{media}main.js"></script>
 </body>
 </html>

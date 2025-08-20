@@ -1,17 +1,27 @@
 @font-face { font-family: Stardew; src: url('./fonts/StardewValley.ttf'); }
 
 
-/* HTML */
+/* Window */
 html,
 body {
+    /* Size */
     width: 100%;
     height: 100%;
+
+    /* Spacing */
     margin: 0;
     padding: 0;
-    border: none;
-    overflow: hidden;
-    image-rendering: pixelated;
 
+    /* Layout */
+    position: relative;
+    overflow: hidden;
+
+    /* Visuals */
+    border: none;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+
+    /* Text */
     font-family: Stardew;
     color: #551215;
     font-size: 19px;
@@ -20,20 +30,61 @@ body {
     --scale: 1;
 }
 
-img[filter] {
-    filter: brightness(0) saturate(100%) invert(8%) sepia(49%) saturate(4766%) hue-rotate(344deg) brightness(85%) contrast(94%);
+body[hide] {
+    display: none;
+}
+
+
+/* Background */
+#background,
+#background[background="grass"] {
+    /* Size */
+    width: calc(100% / var(--scale));
+    height: calc(100% / var(--scale));
+
+    /* Visuals */
+    background-repeat: repeat;
+    background: url(./sprites/backgrounds/grass.png);
+
+    /* Other */
+    transform-origin: 0% 0%;
+    transform: scale(var(--scale));
+    pointer-events: none;
+}
+
+#background[background="sand"] {
+    background: url(./sprites/backgrounds/sand.png);
+}
+
+#background[background="dirt"] {
+    background: url(./sprites/backgrounds/dirt.png);
+}
+
+
+/* Game canvas */
+#canvas {
+    /* Layout */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    /* Other */
+    transform-origin: 0% 0%;
 }
 
 
 /* Messages */
 #messages {
+    /* Size */
     width: 100%;
     height: 100%;
 
+    /* Layout */
     position: absolute;
     top: 0;
     left: 0;
 
+    /* Other */
     pointer-events: none;
 }
 
@@ -60,15 +111,12 @@ img[filter] {
         top: 25px;
         opacity: 0;
     }
-
     25% {
         opacity: 1;
     }
-
     75% {
         opacity: 1;
     }
-
     to {
         top: 5px;
         opacity: 0;
@@ -99,6 +147,7 @@ img[filter] {
 }
 
 #menus[show] {
+    /* Layout */
     display: flex;
 }
 
@@ -116,6 +165,7 @@ img[filter] {
 }
 
 .menu[show] {
+    /* Layout */
     display: flex;
 }
 
@@ -266,556 +316,4 @@ img[filter] {
     100% {
         top: calc(var(--position-y) - 0px);
     }
-}
-
-
-/* Characters parent element (also the background) */
-#characters,
-#characters[background="grass"] {
-    width: calc(100% / var(--scale));
-    height: calc(100% / var(--scale));
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    transform-origin: 0% 0%;
-
-    transform: scale(var(--scale));
-    background-repeat: repeat;
-    background: url(./sprites/backgrounds/grass.png);
-}
-
-#characters[background="sand"] {
-    background: url(./sprites/backgrounds/sand.png);
-}
-
-#characters[background="dirt"] {
-    background: url(./sprites/backgrounds/dirt.png);
-}
-
-
-  /*$$$$$  /$$                                                /$$
- /$$__  $$| $$                                               | $$
-| $$  \__/| $$$$$$$   /$$$$$$   /$$$$$$  /$$$$$$   /$$$$$$$ /$$$$$$    /$$$$$$   /$$$$$$   /$$$$$$$
-| $$      | $$__  $$ |____  $$ /$$__  $$|____  $$ /$$_____/|_  $$_/   /$$__  $$ /$$__  $$ /$$_____/
-| $$      | $$  \ $$  /$$$$$$$| $$  \__/ /$$$$$$$| $$        | $$    | $$$$$$$$| $$  \__/|  $$$$$$
-| $$    $$| $$  | $$ /$$__  $$| $$      /$$__  $$| $$        | $$ /$$| $$_____/| $$       \____  $$
-|  $$$$$$/| $$  | $$|  $$$$$$$| $$     |  $$$$$$$|  $$$$$$$  |  $$$$/|  $$$$$$$| $$       /$$$$$$$/
- \______/ |__/  |__/ \_______/|__/      \_______/ \_______/   \___/   \_______/|__/      |______*/
-
-/* Base class */
-.character {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    width: var(--sizeX);
-    height: var(--sizeY);
-
-    position: absolute;
-    --position-x: 0px;
-    --position-y: 0px;
-    left: var(--position-x);
-    top: var(--position-y);
-
-    --image: url(./sprites/pets/cat/black.png);
-    background-image: var(--image);
-    --offset-x: 0px;
-    --offset-y: 0px;
-    background-position-x: var(--offset-x);
-    background-position-y: var(--offset-y);
-
-    --emoteSize: 9px;
-    --emoteElevation: 0px;
-    --emote-x: 0px;
-    --emote-y: 0px;
-}
-
-.character[flip] {
-    transform: scale(-1, 1);
-}
-
-
-/* Moods */
-.character::after {
-    content: '';
-
-    width: var(--emoteSize);
-    height: var(--emoteSize);
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    background-image: url(./sprites/emotes/emotes.png);
-    background-position-x: var(--emote-x);
-    background-position-y: var(--emote-y);
-
-    --translation-x: calc((var(--sizeX) - var(--emoteSize)) / 2);
-    --translation-y: calc(-1 * var(--emoteSize) - var(--emoteElevation));
-    transform: translateX(var(--translation-x)) translateY(var(--translation-y));
-    transform-origin: center;
-
-    pointer-events: none;
-    opacity: 0;
-}
-
-.character[flip]::after {
-    transform: translateX(var(--translation-x)) translateY(var(--translation-y)) scale(-1, 1);
-}
-
-.character[mood]::after {
-    opacity: 1;
-}
-
-.character[mood="heart"] {
-    --emote-x: calc(-1 * var(--emoteSize));
-    --emote-y: calc(-3 * var(--emoteSize));
-}
-
-.character[mood="gigachad"] {
-    --emote-x: calc(-11 * var(--emoteSize));
-    --emote-y: calc(-1 * var(--emoteSize));
-}
-
-.character[mood="happy"] {
-    --emote-x: calc(-0 * var(--emoteSize));
-    --emote-y: calc(-0 * var(--emoteSize));
-}
-
-.character[mood="mad"] {
-    --emote-x: calc(-2 * var(--emoteSize));
-    --emote-y: calc(-1 * var(--emoteSize));
-}
-
-.character[mood="alien"] {
-    --emote-x: calc(-1 * var(--emoteSize));
-    --emote-y: calc(-2 * var(--emoteSize));
-}
-
-.character[mood="pledge"] {
-    --emote-x: calc(-8 * var(--emoteSize));
-    --emote-y: calc(-1 * var(--emoteSize));
-}
-
-.character[mood="blush"] {
-    --emote-x: calc(-8 * var(--emoteSize));
-    --emote-y: calc(-0 * var(--emoteSize));
-}
-
-
- /*$$$$$$             /$$
-| $$__  $$           | $$
-| $$  \ $$ /$$$$$$  /$$$$$$   /$$$$$$$
-| $$$$$$$//$$__  $$|_  $$_/  /$$_____/
-| $$____/| $$$$$$$$  | $$   |  $$$$$$
-| $$     | $$_____/  | $$ /$$\____  $$
-| $$     |  $$$$$$$  |  $$$$//$$$$$$$/
-|__/      \_______/   \___/ |______*/
-
-/* Cat */
-.cat,
-.cat[color="black"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -9px;
-    --image: url(./sprites/pets/cat/black.png);
-}
-
-.cat[color="orange"] {
-    --image: url(./sprites/pets/cat/orange.png);
-}
-
-.cat[color="gray"] {
-    --image: url(./sprites/pets/cat/gray.png);
-}
-
-.cat[color="purple"] {
-    --image: url(./sprites/pets/cat/purple.png);
-}
-
-.cat[color="white"] {
-    --image: url(./sprites/pets/cat/white.png);
-}
-
-.cat[color="yellow"] {
-    --image: url(./sprites/pets/cat/yellow.png);
-}
-
-
-/* Dog */
-.dog,
-.dog[color="blonde"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -5px;
-    --image: url(./sprites/pets/dog/blonde.png);
-}
-
-.dog[color="brown"] {
-    --image: url(./sprites/pets/dog/brown.png);
-}
-
-.dog[color="dark brown"] {
-    --image: url(./sprites/pets/dog/dark-brown.png);
-}
-
-.dog[color="gray"] {
-    --image: url(./sprites/pets/dog/gray.png);
-}
-
-.dog[color="light brown"] {
-    --image: url(./sprites/pets/dog/light-brown.png);
-}
-
-.dog[color="purple"] {
-    --image: url(./sprites/pets/dog/purple.png);
-}
-
-
-/* Dino */
-.dino {
-    --sizeX: 16px;
-    --sizeY: 16px;
-    --emoteElevation: 2px;
-    --image: url(./sprites/pets/dino/dino.png);
-}
-
-
-/* Duck */
-.duck {
-    --sizeX: 16px;
-    --sizeY: 16px;
-    --emoteElevation: 2px;
-    --image: url(./sprites/pets/duck/duck.png);
-}
-
-
-/* Raccoon */
-.raccoon {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -2px;
-    --image: url(./sprites/pets/raccoon/raccoon.png);
-}
-
-
-/* Turtle */
-.turtle,
-.turtle[color="green"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -10px;
-    --image: url(./sprites/pets/turtle/green.png);
-}
-
-.turtle[color="purple"] {
-    --image: url(./sprites/pets/turtle/purple.png);
-}
-
-
-/* Goat */
-.goat,
-.goat[color="adult"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -2px;
-    --image: url(./sprites/pets/goat/adult.png);
-}
-
-.goat[color="baby"] {
-    --emoteElevation: -6px;
-    --image: url(./sprites/pets/goat/baby.png);
-}
-
-
-/* Sheep */
-.sheep,
-.sheep[color="adult"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -3px;
-    --image: url(./sprites/pets/sheep/adult.png);
-}
-
-.sheep[color="baby"] {
-    --emoteElevation: -6px;
-    --image: url(./sprites/pets/sheep/baby.png);
-}
-
-
-/* Ostrich */
-.ostrich,
-.ostrich[color="adult"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: 3px;
-    --image: url(./sprites/pets/ostrich/adult.png);
-}
-
-.ostrich[color="baby"] {
-    --emoteElevation: -10px;
-    --image: url(./sprites/pets/ostrich/baby.png);
-}
-
-
-/* Pig */
-.pig,
-.pig[color="adult"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --image: url(./sprites/pets/pig/adult.png);
-}
-
-.pig[color="baby"] {
-    --emoteElevation: -3px;
-    --image: url(./sprites/pets/pig/baby.png);
-}
-
-
-/* Rabbit */
-.rabbit,
-.rabbit[color="adult"] {
-    --sizeX: 16px;
-    --sizeY: 16px;
-    --emoteElevation: 2px;
-    --image: url(./sprites/pets/rabbit/adult.png);
-}
-
-.rabbit[color="baby"] {
-    --emoteElevation: 0px;
-    --image: url(./sprites/pets/rabbit/baby.png);
-}
-
-
-/* Chicken */
-.chicken,
-.chicken[color="white adult"] {
-    --sizeX: 16px;
-    --sizeY: 16px;
-    --emoteElevation: 2px;
-    --image: url(./sprites/pets/chicken/white.png);
-}
-
-.chicken[color="black adult"] {
-    --image: url(./sprites/pets/chicken/black.png);
-}
-
-.chicken[color="blue adult"] {
-    --image: url(./sprites/pets/chicken/blue.png);
-}
-
-.chicken[color="brown adult"] {
-    --image: url(./sprites/pets/chicken/brown.png);
-}
-
-.chicken[color*="baby"] {
-    --emoteElevation: -4px;
-}
-
-.chicken[color="white baby"] {
-    --image: url(./sprites/pets/chicken/baby-white.png);
-}
-
-.chicken[color="black baby"] {
-    --image: url(./sprites/pets/chicken/baby-black.png);
-}
-
-.chicken[color="blue baby"] {
-    --image: url(./sprites/pets/chicken/baby-blue.png);
-}
-
-.chicken[color="brown baby"] {
-    --image: url(./sprites/pets/chicken/baby-brown.png);
-}
-
-
-/* Cow */
-.cow,
-.cow[color="white adult"] {
-    --sizeX: 32px;
-    --sizeY: 32px;
-    --emoteElevation: -4px;
-    --image: url(./sprites/pets/cow/white.png);
-}
-
-.cow[color="brown adult"] {
-    --image: url(./sprites/pets/cow/brown.png);
-}
-
-.cow[color*="baby"] {
-    --emoteElevation: -6px;
-}
-
-.cow[color="white baby"] {
-    --image: url(./sprites/pets/cow/baby-white.png);
-}
-
-.cow[color="brown baby"] {
-    --image: url(./sprites/pets/cow/baby-brown.png);
-}
-
-
-/* Junimo */
-.junimo,
-.junimo[color="white"] {
-    --sizeX: 16px;
-    --sizeY: 16px;
-    --emoteElevation: 1px;
-    --image: url(./sprites/pets/junimo/junimo.png);
-}
-
-.junimo:before,
-.junimo[color="white"]:before {
-    content: '';
-
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-
-    background-image: var(--image);
-    background-position-x: var(--offset-x);
-    background-position-y: var(--offset-y);
-
-    filter: brightness(0) invert(100%);
-    mix-blend-mode: multiply;
-}
-
-.junimo[color="black"]:before {
-    filter: brightness(0) invert(16%) sepia(8%) saturate(173%) hue-rotate(97deg) brightness(93%) contrast(86%);
-}
-
-.junimo[color="gray"]:before {
-    filter: brightness(0) invert(59%) sepia(4%) saturate(323%) hue-rotate(182deg) brightness(89%) contrast(88%);
-}
-
-.junimo[color="pink"]:before {
-    filter: brightness(0) invert(88%) sepia(58%) saturate(6754%) hue-rotate(256deg) brightness(103%) contrast(106%);
-}
-
-.junimo[color="red"]:before {
-    filter: brightness(0) invert(9%) sepia(100%) saturate(7382%) hue-rotate(358deg) brightness(90%) contrast(103%);
-}
-
-.junimo[color="orange"]:before {
-    filter: brightness(0) invert(45%) sepia(83%) saturate(954%) hue-rotate(360deg) brightness(106%) contrast(102%);
-}
-
-.junimo[color="yellow"]:before {
-    filter: brightness(0) invert(92%) sepia(55%) saturate(5413%) hue-rotate(342deg) brightness(105%) contrast(101%);
-}
-
-.junimo[color="green"]:before {
-    filter: brightness(0) invert(63%) sepia(41%) saturate(5613%) hue-rotate(82deg) brightness(120%) contrast(122%);
-}
-
-.junimo[color="cyan"]:before {
-    filter: brightness(0) invert(84%) sepia(98%) saturate(1528%) hue-rotate(109deg) brightness(103%) contrast(97%);
-}
-
-.junimo[color="purple"]:before {
-    filter: brightness(0) invert(13%) sepia(100%) saturate(5495%) hue-rotate(280deg) brightness(86%) contrast(111%);
-}
-
-.junimo[color="brown"]:before {
-    filter: brightness(0) invert(33%) sepia(93%) saturate(772%) hue-rotate(358deg) brightness(97%) contrast(99%);
-}
-
-
- /*$$$$$$$                                   /$$
-| $$_____/                                  |__/
-| $$       /$$$$$$$   /$$$$$$  /$$$$$$/$$$$  /$$  /$$$$$$   /$$$$$$$
-| $$$$$   | $$__  $$ /$$__  $$| $$_  $$_  $$| $$ /$$__  $$ /$$_____/
-| $$__/   | $$  \ $$| $$$$$$$$| $$ \ $$ \ $$| $$| $$$$$$$$|  $$$$$$
-| $$      | $$  | $$| $$_____/| $$ | $$ | $$| $$| $$_____/ \____  $$
-| $$$$$$$$| $$  | $$|  $$$$$$$| $$ | $$ | $$| $$|  $$$$$$$ /$$$$$$$/
-|________/|__/  |__/ \_______/|__/ |__/ |__/|__/ \_______/|______*/
-
-/* Slime */
-.slime,
-.slime[color="iron"] {
-    --sizeX: 16px;
-    --sizeY: 24px;
-    --image: url(./sprites/enemies/slime/iron.png);
-}
-
-.slime[color="tiger"] {
-    --image: url(./sprites/enemies/slime/tiger.png);
-}
-
-/* Bug */
-.bug,
-.bug[color="normal"] {
-    --sizeX: 16px;
-    --sizeY: 16px;
-    --image: url(./sprites/enemies/bug/normal.png);
-}
-
-.bug[color="normal dangerous"] {
-    --image: url(./sprites/enemies/bug/normal_dangerous.png);
-}
-
-.bug[color="armored"] {
-    --image: url(./sprites/enemies/bug/armored.png);
-}
-
-.bug[color="armored dangerous"] {
-    --image: url(./sprites/enemies/bug/armored_dangerous.png);
-}
-
-/* Golem */
-.golem,
-.golem[color="stone"] {
-    --sizeX: 16px;
-    --sizeY: 24px;
-    --image: url(./sprites/enemies/golem/stone.png);
-}
-
-.golem[color="stone dangerous"] {
-    --image: url(./sprites/enemies/golem/stone_dangerous.png);
-}
-
-.golem[color="iridium"] {
-    --image: url(./sprites/enemies/golem/iridium.png);
-}
-
-.golem[color="wilderness"] {
-    --image: url(./sprites/enemies/golem/wilderness.png);
-}
-
-/* Crab */
-.crab,
-.crab[color="rock"] {
-    --sizeX: 16px;
-    --sizeY: 24px;
-    --image: url(./sprites/enemies/crab/rock.png);
-}
-
-.crab[color="rock dangerous"] {
-    --image: url(./sprites/enemies/crab/rock_dangerous.png);
-}
-
-.crab[color="lava"] {
-    --image: url(./sprites/enemies/crab/lava.png);
-}
-
-.crab[color="lava dangerous"] {
-    --image: url(./sprites/enemies/crab/lava_dangerous.png);
-}
-
-.crab[color="iridium"] {
-    --image: url(./sprites/enemies/crab/iridium.png);
-}
-
-.crab[color="truffle"] {
-    --image: url(./sprites/enemies/crab/truffle.png);
-}
-
-.crab[color="stickbug"] {
-    --image: url(./sprites/enemies/crab/stickbug.png);
-}
-
-.crab[color="magma cap"] {
-    --image: url(./sprites/enemies/crab/magma_cap.png);
 }

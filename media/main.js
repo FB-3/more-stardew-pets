@@ -10,17 +10,25 @@ const Action = {
 
 //Game
 const Game = {
+    //Media folder URI
+    media: document.body.getAttribute('media'), 
+
     //Window
-    width: window.innerWidth,
-    height: window.innerHeight,
+    size: new Vec2(window.innerWidth, window.innerHeight),
     scale: 2,
 
     //Frames & framerate
     frames: 0,  //Frames since game start
     fps: 30,
 
-    //Characters
-    characters: document.getElementById('characters'),   //Parent element for the characters
+    //Canvas
+    background: document.getElementById('background'), 
+    canvas: document.getElementById('canvas'),
+    ctx: document.getElementById('canvas').getContext('2d'),
+
+    //Game objects
+    objects: [],    //List of all the game objects
+    sortObjects: () => Game.objects.sort((a, b) => { return (a.pos.y + a.size.y) - (b.pos.y + b.size.y); }),
     pets: [],       //List of all the pets
     enemies: [],    //List of all the enemies
     spawner: new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000),
@@ -242,47 +250,7 @@ window.addEventListener('message', event => {
                     break;
             }
             break;
-
-        //Remove a pet
-        case 'remove_pet':
-            const pet = Game.pets.removeAt(message.index);
-            pet.element.remove();
-            break;
-
-        //Toggle actions menu
-        case 'actions':
-            Game.setAction(Action.none)
-            Menus.toggle('actions')
-            break;
-
-        //Update background
-        case 'background':
-            Game.characters.setAttribute('background', message.value.toLowerCase());
-            break;
-
-        //Update scale
-        case 'scale':
-            switch (message.value.toLowerCase()) {
-                case 'small':
-                    Game.scale = 1;
-                    break;
-                case 'big':
-                    Game.scale = 3;
-                    break;
-                case 'medium':
-                default:
-                    Game.scale = 2;
-                    break;
-            }
-            document.body.style.setProperty('--scale', Game.scale);
-            onResize();
-            break;
-    
-        //Update money
-        case 'money': 
-            Game.setMoney(message.value)
-            break;
-
+        
         //Spawn an enemy
         case 'spawn_enemy':
             switch (message.specie) {
@@ -300,29 +268,83 @@ window.addEventListener('message', event => {
                     break;
             }
             break;
+
+        //Remove a pet
+        case 'remove_pet':
+            Game.pets[message.index].remove();
+            break;
+
+        //Toggle actions menu
+        case 'actions':
+            Game.setAction(Action.none)
+            Menus.toggle('actions')
+            break;
+
+        //Update background
+        case 'background':
+            Game.background.setAttribute('background', message.value.toLowerCase());
+            break;
+
+        //Update scale
+        case 'scale':
+            switch (message.value.toLowerCase()) {
+                case 'small':
+                    Game.scale = 1;
+                    break;
+                case 'big':
+                    Game.scale = 3;
+                    break;
+                case 'medium':
+                default:
+                    Game.scale = 2;
+                    break;
+            }
+            document.body.style.setProperty('--scale', Game.scale);
+            Game.ctx.scale(Game.scale, Game.scale);
+            onResize();
+            break;
+    
+        //Update money
+        case 'money': 
+            Game.setMoney(message.value)
+            break;
+
+        //Init
+        case 'init':
+            document.body.removeAttribute('hide');
+            break;
     }
 })
 
 //Cursor info
 document.onclick = event => {
-    //No action -> Return
-    if (Game.isAction(Action.none)) return
+    //Get scaled mouse position
+    const pos = Cursor.pos.div(Game.scale).toInt()
 
     //Perform action
     switch (Game.action) {
         //Place ball
         case Action.ball: {
-            //Get ball position
-            const pos = Cursor.pos.div(Game.scale).toInt()
-
             //Move ball
             Ball.moveTo(pos)
             Ball.setVisible(true)
 
             //Move all pets towards ball
             Game.pets.forEach(pet => pet.moveTowardsBall(pos))
-            break
+            break;
         }
+
+        //Other
+        default:
+            //Sort objects
+            Game.sortObjects();
+
+            //Check for clicks from nearest to farthest object
+            for (let i = Game.objects.length - 1; i >= 0; i--) {
+                const obj = Game.objects[i];
+                if (obj.checkClick(pos)) break;
+            }
+            break;
     }
 
     //Clear current action
@@ -347,8 +369,11 @@ document.onmouseleave = event => {
 //Window resize
 function onResize() {
     //Update game window size
-    Game.width = window.innerWidth;
-    Game.height = window.innerHeight;
+    Game.size = new Vec2(window.innerWidth, window.innerHeight);
+
+    //Update game canvas size
+    Game.canvas.width = Game.size.x;
+    Game.canvas.height = Game.size.y;
 
     //Fit all pets on screen
     Game.pets.forEach(pet => pet.moveTo(pet.pos))
@@ -367,19 +392,30 @@ function onResize() {
                               | $$
                               |_*/
 
-//Main loop function
+//Main loop functions
 function update() {
     //Check if window size changed
-    if (Game.width != window.innerWidth || Game.height != window.innerHeight) onResize()
+    if (Game.size.x != window.innerWidth || Game.size.y != window.innerHeight) onResize();
 
     //Next frame
-    Game.frames++
+    Game.frames++;
 
-    //Update pets
-    Game.pets.forEach(pet => pet.update())
+    //Update game objects
+    Game.objects.forEach(obj => obj.update());
 
-    //Update enemies
-    Game.enemies.forEach(enemy => enemy.update())
+    //Draw
+    requestAnimationFrame(draw);
+}
+
+function draw() {
+    //Clear canvas
+    Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
+
+    //Sort objects from top to bottom
+    Game.sortObjects();
+
+    //Draw objects
+    Game.objects.forEach(obj => obj.draw(Game.ctx));
 }
 
 //Start loop
