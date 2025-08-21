@@ -55,7 +55,8 @@
                     "enum": [
                         "Grass",
                         "Dirt",
-                        "Sand"
+                        "Sand",
+                        "Snow"
                     ],
                     "description": "The background theme for the window."
                 },

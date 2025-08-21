@@ -352,10 +352,11 @@ class Game {
     static pets = [];       //List of all the pets
     static enemies = [];    //List of all the enemies
     static enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
+    static decoration = []; //List of all the decoration
 
     static sortObjects() {
         //Sort objects for rendering
-        Game.objects.sort((a, b) => { return (a.pos.y + a.size.y) - (b.pos.y + b.size.y); }); 
+        Game.objects.sort((a, b) => { return a.sortingOrder - b.sortingOrder; }); 
     }
 
     //Money
@@ -480,6 +481,7 @@ class GameObject {
     get size() { return this.#size; }
 
     //Rendering
+    get sortingOrder() { return this.pos.y + this.size.y; }
     #sprite = new Image();              //Image containing the sprite sheet
     get sprite() { return this.#sprite; }
     #spriteOffset = new Vec2();         //Offset for sprites inside a sprite sheet
@@ -507,6 +509,7 @@ class GameObject {
         if (typeof config.size === 'object') this.#size = config.size;
 
         //Rendering config
+        if (typeof config.sortingOrder === 'number') Object.defineProperty(this, 'sortingOrder', { get() { return config.sortingOrder; }, });
         if (typeof config.sprite === 'string') this.#sprite.src = `${Game.mediaURI}sprites/${config.sprite}`;
         if (typeof config.spriteOffset === 'object') this.#spriteOffset = config.spriteOffset;
         if (typeof config.spriteSheetOffset === 'object') this.#spriteSheetOffset = config.spriteSheetOffset;

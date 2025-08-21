@@ -5,6 +5,7 @@
 - Remade the engine to use an HTML canvas instead of HTML & CSS for objects like pets
 - Added enemies that die and give you money when clicked
 - Updated UI to look closer to the original game
+- Added snowy background
 - Cursor now gets hidden when using the ball or gift
 
 ## [v1.2.3]

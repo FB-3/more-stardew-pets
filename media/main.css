@@ -73,6 +73,10 @@ body[cursor="none"] {
     background: url(./sprites/backgrounds/dirt.png);
 }
 
+#background[background="snow"] {
+    background: url(./sprites/backgrounds/snow.png);
+}
+
 /* Ball */
 #ball {
     --size: 9px;
