@@ -35,26 +35,26 @@ let webview;
 let extensionStorageFolder = '';
 //Enums
 const EnemySpecies = {
-    slime: ['iron', 'tiger'],
-    bug: ['normal', 'normal dangerous', 'armored', 'armored dangerous'],
-    crab: ['rock', 'rock dangerous', 'lava', 'lava dangerous', 'iridium', 'truffle', 'stickbug', 'magma cap'],
-    golem: ['stone', 'stone dangerous', 'iridium', 'wilderness'],
+    Slime: ['Iron', 'Tiger'],
+    Bug: ['Normal', 'Normal Dangerous', 'Armored', 'Armored Dangerous'],
+    Crab: ['Rock', 'Rock Dangerous', 'Lava', 'Lava Dangerous', 'Iridium', 'Truffle', 'Stickbug', 'Magma Cap'],
+    Golem: ['Stone', 'Stone Dangerous', 'Iridium', 'Wilderness'],
 };
 const PetSpecies = {
-    cat: ['black', 'gray', 'orange', 'white', 'yellow', 'purple'],
-    dog: ['blonde', 'gray', 'brown', 'dark brown', 'light brown', 'purple'],
-    dino: [],
-    turtle: ['green', 'purple'],
-    raccoon: [],
-    duck: [],
-    goat: ['adult', 'baby'],
-    sheep: ['adult', 'baby'],
-    ostrich: ['adult', 'baby'],
-    pig: ['adult', 'baby'],
-    rabbit: ['adult', 'baby'],
-    chicken: ['white adult', 'blue adult', 'brown adult', 'black adult', 'white baby', 'blue baby', 'brown baby', 'black baby'],
-    cow: ['white adult', 'brown adult', 'white baby', 'brown baby'],
-    junimo: ['white', 'black', 'gray', 'pink', 'red', 'orange', 'yellow', 'green', 'cyan', 'purple', 'brown'],
+    Cat: ['Black', 'Gray', 'Orange', 'White', 'Yellow', 'Purple'],
+    Dog: ['Blonde', 'Gray', 'Brown', 'Dark Brown', 'Light Brown', 'Purple'],
+    Dino: [],
+    Turtle: ['Green', 'Purple'],
+    Raccoon: [],
+    Duck: [],
+    Goat: ['Adult', 'Baby'],
+    Sheep: ['Adult', 'Baby'],
+    Ostrich: ['Adult', 'Baby'],
+    Pig: ['Adult', 'Baby'],
+    Rabbit: ['Adult', 'Baby'],
+    Chicken: ['White Adult', 'White Baby', 'Blue Adult', 'Blue Baby', 'Brown Adult', 'Brown Baby', 'Black Adult', 'Black Baby'],
+    Cow: ['White Adult', 'White Baby', 'Brown Adult', 'Brown Baby'],
+    Junimo: ['White', 'Black', 'Gray', 'Pink', 'Red', 'Orange', 'Yellow', 'Green', 'Cyan', 'Purple', 'Brown'],
 };
 const Names = [
     'Alex', 'Laura',
@@ -239,6 +239,7 @@ function activate(context) {
    /$$  \ $$ | $$ /$$ /$$__  $$| $$        | $$ /$$
   |  $$$$$$/ |  $$$$/|  $$$$$$$| $$        |  $$$$/
    \______/   \___/   \_______/|__/         \__*/
+    //Extension is active
     console.log('Stardew Pets is now active 😽');
     //Get extension folder & save file path
     extensionStorageFolder = context.globalStorageUri.path.substring(1);
@@ -287,7 +288,7 @@ function activate(context) {
         //Ask for a specie
         const specie = await vscode.window.showQuickPick(Object.keys(PetSpecies), {
             title: 'Select a pet',
-            placeHolder: 'pet',
+            placeHolder: 'Pet',
         });
         if (specie == null)
             return;
@@ -306,7 +307,7 @@ function activate(context) {
         }
         const tmpvariant = variants.length == 0 ? new PetItem(0, '', '') : await vscode.window.showQuickPick(variants, {
             title: 'Select a variant',
-            placeHolder: 'variant',
+            placeHolder: 'Variant',
         });
         if (tmpvariant == null)
             return;
@@ -315,7 +316,7 @@ function activate(context) {
         const tmpname = Names[Math.floor(Math.random() * Names.length)];
         const name = await vscode.window.showInputBox({
             title: 'Choose a name for your pet',
-            placeHolder: 'name',
+            placeHolder: 'Name',
             value: tmpname,
             valueSelection: [0, tmpname.length],
             validateInput: text => {
@@ -344,7 +345,7 @@ function activate(context) {
         //Ask for pet
         const pet = await vscode.window.showQuickPick(items, {
             title: 'Select a pet to remove',
-            placeHolder: 'pet',
+            placeHolder: 'Pet',
             matchOnDescription: true,
         });
         if (pet == null)

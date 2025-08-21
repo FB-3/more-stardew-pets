@@ -1,160 +1,6 @@
 //VSCode API
 const vscode = acquireVsCodeApi()
 
-//Actions
-const Action = {
-    none: '',
-    gift: 'gift',
-    ball: 'ball',
-}
-
-//Game
-const Game = {
-    //Media folder URI
-    media: document.body.getAttribute('media'), 
-
-    //Window
-    size: new Vec2(window.innerWidth, window.innerHeight),
-    scale: 2,
-
-    //Frames & framerate
-    frames: 0,  //Frames since game start
-    fps: 30,
-
-    //Canvas
-    background: document.getElementById('background'), 
-    canvas: document.getElementById('canvas'),
-    ctx: document.getElementById('canvas').getContext('2d'),
-
-    //Game objects
-    objects: [],    //List of all the game objects
-    sortObjects: () => Game.objects.sort((a, b) => { return (a.pos.y + a.size.y) - (b.pos.y + b.size.y); }),
-    pets: [],       //List of all the pets
-    enemies: [],    //List of all the enemies
-    spawner: new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000),
-
-    //Money
-    money: 0,
-    moneyHide: new Timeout(() => { document.getElementById('moneyMessage').removeAttribute('show'); }),
-    setMoney: (amount) => {
-        Game.money = amount;
-        document.getElementById('moneyText').innerText = `${amount}G`;
-    },
-    addMoney: (amount) => {
-        Game.setMoney(Game.money + amount);
-        Game.showMessage(`${amount >= 0 ? '+' : '-'}${Math.abs(amount)}G`);
-        vscode.postMessage({ type: 'money', value: Game.money });
-    },
-
-    //Current action being performed
-    action: Action.none,
-    isAction: (action) => { return Game.action == action },
-    setAction: (action) => { ;
-        Game.action = action
-        Cursor.setIcon(action);
-    },
-
-    //Messages
-    showMessage: (content) => {
-        const message = document.createElement('span');
-        message.classList.add('message');
-        message.innerText = content;
-        document.getElementById('messages').appendChild(message);
-        setTimeout(() => message.remove(), 2000);
-    },
-}
-
-//Cursor
-const Cursor = {
-    element: document.getElementById('cursor'),
-
-    //Icon
-    setIcon: (icon) => { 
-        Cursor.element.setAttribute('icon', icon) 
-    },
-
-    //Position
-    pos: new Vec2(),
-    moveTo: (pos) => {
-        Cursor.pos = pos
-        Cursor.element.style.left = pos.x + 'px'
-        Cursor.element.style.top = pos.y + 'px'
-    },
-}
-
-//Ball
-const Ball = {
-    element: document.getElementById('ball'),
-
-    //Visibility
-    isVisible: false,
-    setVisible: (visible) => {
-        if (typeof visible !== 'boolean') visible = true
-        if (visible)
-            Ball.element.setAttribute('visible', '')
-        else
-            Ball.element.removeAttribute('visible')
-        Ball.isVisible = visible
-    },
-
-    //Position
-    pos: new Vec2(),
-    moveTo: (pos) => {
-        Ball.pos = pos
-        Ball.element.style.zIndex = pos.y
-        Ball.element.style.setProperty('--position-x', pos.x + 'px');
-        Ball.element.style.setProperty('--position-y', pos.y + 'px');
-    },
-
-    //Pets
-    onReached: () => {
-        //Tell pets to stop moving towards the ball
-        Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVE_BALL) pet.ai.setState(AI.IDLE) })
-
-        //Hide ball
-        Ball.setVisible(false)
-    },
-}
-
-//Menus
-const Menus = {
-    backdrop: document.getElementById('menus'),
-
-    //Toggle menus
-    current: undefined, //Name of the currently open menu
-    toggle: (name, show) => {
-        //Invalid name
-        if (typeof name !== 'string') return;
-        
-        //Get menu
-        const menu = document.getElementById(name);
-        if (!menu) return;
-
-        //Fix show
-        const isVisible = menu.hasAttribute('show');
-        if (typeof show !== 'boolean') 
-            show = !isVisible;
-        else if (show == isVisible) 
-            return;
-
-        //Toggle menu
-        if (show) {
-            //Close currently open menu
-            Menus.toggle(Menus.current, false);
-
-            //Show menu
-            menu.setAttribute('show', '')
-            Menus.current = name;
-            Menus.backdrop.setAttribute('show', '')
-        } else {
-            //Hide menu
-            menu.removeAttribute('show')
-            Menus.current = undefined;
-            Menus.backdrop.removeAttribute('show')
-        }
-    }
-}
-
 
  /*$$$$$$$                              /$$     /$$
 | $$_____/                             | $$    |__/
@@ -165,14 +11,13 @@ const Menus = {
 | $$   |  $$$$$$/| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
 |__/    \______/ |__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|______*/
 
-
 //Actions menu
 function toggleActionBall() {
     //Ball is visible -> Remove it
     if (Ball.isVisible) Ball.onReached()
     
     //Toggle ball action
-    Game.setAction(Game.isAction(Action.ball) ? Action.none : Action.ball)
+    Game.setAction(Game.isAction(Action.BALL) ? Action.NONE : Action.BALL)
 
     //Hide actions menu
     Menus.toggle('actions', false);
@@ -180,7 +25,7 @@ function toggleActionBall() {
 
 function toggleActionGift() {
     //Toggle gift action
-    Game.setAction(Game.isAction(Action.gift) ? Action.none : Action.gift)
+    Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT)
 
     //Hide actions menu
     Menus.toggle('actions', false);
@@ -203,71 +48,77 @@ window.addEventListener('message', event => {
 
     //Check message type
     switch (message.type.toLowerCase()) {
-        //Spawn a pet
-        case 'spawn_pet':
-            switch (message.specie) {
+        //Spawn a pet/enemy
+        case 'spawn_pet': {
+            const name = message.name;
+            const specie = message.specie.toLowerCase();
+            const color = message.color.toLowerCase();
+            switch (specie) {
                 case 'cat':
-                    new Cat(message.name, message.color);
+                    new Cat(name, color);
                     break;
                 case 'dog':
-                    new Dog(message.name, message.color);
+                    new Dog(name, color);
                     break;
                 case 'raccoon':
-                    new Raccoon(message.name, message.color);
+                    new Raccoon(name, color);
                     break;
                 case 'dino':
-                    new Dino(message.name, message.color);
+                    new Dino(name, color);
                     break;
                 case 'duck':
-                    new Duck(message.name, message.color);
+                    new Duck(name, color);
                     break;
                 case 'turtle':
-                    new Turtle(message.name, message.color);
+                    new Turtle(name, color);
                     break;
                 case 'goat':
-                    new Goat(message.name, message.color);
+                    new Goat(name, color);
                     break;
                 case 'sheep':
-                    new Sheep(message.name, message.color);
+                    new Sheep(name, color);
                     break;
                 case 'ostrich':
-                    new Ostrich(message.name, message.color);
+                    new Ostrich(name, color);
                     break;
                 case 'pig':
-                    new Pig(message.name, message.color);
+                    new Pig(name, color);
                     break;
                 case 'rabbit':
-                    new Rabbit(message.name, message.color);
+                    new Rabbit(name, color);
                     break;
                 case 'chicken':
-                    new Chicken(message.name, message.color);
+                    new Chicken(name, color);
                     break;
                 case 'cow':
-                    new Cow(message.name, message.color);
+                    new Cow(name, color);
                     break;
                 case 'junimo':
-                    new Junimo(message.name, message.color);
+                    new Junimo(name, color);
                     break;
             }
             break;
+        }
         
-        //Spawn an enemy
-        case 'spawn_enemy':
-            switch (message.specie) {
+        case 'spawn_enemy': {
+            const specie = message.specie.toLowerCase();
+            const color = message.color.toLowerCase();
+            switch (specie) {
                 case 'slime':
-                    new Slime(message.color);
+                    new Slime(color);
                     break;
                 case 'bug':
-                    new Bug(message.color);
+                    new Bug(color);
                     break;
                 case 'crab':
-                    new Crab(message.color);
+                    new Crab(color);
                     break;
                 case 'golem':
-                    new Golem(message.color);
+                    new Golem(color);
                     break;
             }
             break;
+        }
 
         //Remove a pet
         case 'remove_pet':
@@ -276,7 +127,7 @@ window.addEventListener('message', event => {
 
         //Toggle actions menu
         case 'actions':
-            Game.setAction(Action.none)
+            Game.setAction(Action.NONE)
             Menus.toggle('actions')
             break;
 
@@ -301,7 +152,7 @@ window.addEventListener('message', event => {
             }
             document.body.style.setProperty('--scale', Game.scale);
             Game.ctx.scale(Game.scale, Game.scale);
-            onResize();
+            Game.onResize();
             break;
     
         //Update money
@@ -324,7 +175,7 @@ document.onclick = event => {
     //Perform action
     switch (Game.action) {
         //Place ball
-        case Action.ball: {
+        case Action.BALL: {
             //Move ball
             Ball.moveTo(pos)
             Ball.setVisible(true)
@@ -348,7 +199,7 @@ document.onclick = event => {
     }
 
     //Clear current action
-    Game.setAction(Action.none)
+    Game.setAction(Action.NONE)
 }
 
 document.onmousemove = event => {
@@ -363,20 +214,7 @@ document.onmouseenter = event => {
 
 document.onmouseleave = event => {
     //Mouse left screen -> Hide cursor
-    Cursor.setIcon(Action.none)
-}
-
-//Window resize
-function onResize() {
-    //Update game window size
-    Game.size = new Vec2(window.innerWidth, window.innerHeight);
-
-    //Update game canvas size
-    Game.canvas.width = Game.size.x;
-    Game.canvas.height = Game.size.y;
-
-    //Fit all pets on screen
-    Game.pets.forEach(pet => pet.moveTo(pet.pos))
+    Cursor.setIcon(Action.NONE)
 }
 
 
@@ -392,34 +230,8 @@ function onResize() {
                               | $$
                               |_*/
 
-//Main loop functions
-function update() {
-    //Check if window size changed
-    if (Game.size.x != window.innerWidth || Game.size.y != window.innerHeight) onResize();
-
-    //Next frame
-    Game.frames++;
-
-    //Update game objects
-    Game.objects.forEach(obj => obj.update());
-
-    //Draw
-    requestAnimationFrame(draw);
-}
-
-function draw() {
-    //Clear canvas
-    Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
-
-    //Sort objects from top to bottom
-    Game.sortObjects();
-
-    //Draw objects
-    Game.objects.forEach(obj => obj.draw(Game.ctx));
-}
-
-//Start loop
-const timer = setInterval(update, 1000 / Game.fps)
+//Start game loop
+const timer = setInterval(Game.update, 1000 / Game.fps)
 
 //Tell VSCode the game was loaded
 vscode.postMessage({ type: 'init' })

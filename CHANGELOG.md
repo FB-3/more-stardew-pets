@@ -1,9 +1,11 @@
 # Change Log
 
-## [v1.3.0]
+## [v2.0.0]
 
-- Added enemies that die when clicked
-- Updated "Pet actions" menu UI
+- Remade the engine to use an HTML canvas instead of HTML & CSS for objects like pets
+- Added enemies that die and give you money when clicked
+- Updated UI to look closer to the original game
+- Cursor now gets hidden when using the ball or gift
 
 ## [v1.2.3]
 

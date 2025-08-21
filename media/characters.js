@@ -1,222 +1,3 @@
-//Game objects
-class GameObject {
-
-    //Position & Size
-    #pos = new Vec2();
-    get pos() { return this.#pos; }
-    #size = new Vec2(16);
-    get size() { return this.#size; }
-
-    //Rendering
-    #sprite = new Image();
-    get sprite() { return this.#sprite; }
-    #offset = new Vec2();
-    get offset() { return this.#offset; }
-
-    //Animations
-    #animations = {};
-    get animations() { return this.#animations; }
-    #animation;
-    get animation() { return this.#animation; }
-
-
-    //Constructor
-    constructor(config) {
-        //Add to game objects list
-        Game.objects.push(this);
-
-        //No config
-        if (typeof config !== 'object') return;
-
-        //Position & size config
-        if (typeof config.pos === 'object') this.#pos = config.pos;
-        if (typeof config.size === 'object') this.#size = config.size;
-
-        //Rendering config
-        if (typeof config.sprite === 'string') this.#sprite.src = `${Game.media}sprites/${config.sprite}`;
-        if (typeof config.offset === 'object') this.#offset = config.offset;
-
-        //Animation config
-        if (typeof config.animations === 'object') this.#animations = config.animations;
-    }
-
-    remove() {
-        //Remove from objects list
-        Game.objects.removeItem(this);
-    }
-
-    //Update
-    update() {
-        //Update animation offset
-        if (this.#animation) this.#offset = this.#animation.update().mult(this.size);
-    }
-
-    //Click
-    checkClick(click) {
-        //Check if clicked outside element
-        if (click.x < this.pos.x || click.x > this.pos.x + this.size.x || 
-            click.y < this.pos.y || click.y > this.pos.y + this.size.y) {
-            return false;
-        }
-        
-        //Click
-        return this.click();
-    }
-    
-    click() {
-        return true;
-    }
-
-    //Rendering
-    draw(ctx) {
-        //Invalid image
-        if (!this.sprite.complete) return;
-
-        //Save context transform
-        ctx.save(); 
-
-        //Translate sprite
-        ctx.translate(this.pos.x, this.pos.y);
-
-        //Flip sprite
-        if (this.animation && this.animation.flip) {
-            ctx.translate(this.size.x, 0);
-            ctx.scale(-1, 1);
-        }
-        
-        //Draw sprite
-        ctx.drawImage(
-            this.sprite,
-            this.offset.x,
-            this.offset.y, 
-            this.size.x,
-            this.size.y,
-            0,
-            0,
-            this.size.x,
-            this.size.y
-        );
-
-        //Restore context transform
-        ctx.restore();
-    }
-
-    //Animations
-    animate(name, force) {
-        //Not an animation
-        if (typeof this.animations[name] !== 'object') return;
-
-        //Fix force animation
-        if (typeof force !== 'boolean') force = false;
-
-        //Get animation
-        let animation = this.animations[name];
-        if (Array.isArray(animation)) animation = animation[randomExclusive(animation.length)];
-
-        //Change current animation & reset it
-        if (animation == this.animation && !force) return;
-        this.#animation = animation;
-        this.animation.reset();
-    }
-
-    //Movement
-    get maxPosX() { return Math.floor((Game.size.x / Game.scale) - this.size.x); }
-    get maxPosY() { return Math.floor((Game.size.y / Game.scale) - this.size.y); }
-    get randomPoint() { return new Vec2(randomInclusive(this.maxPosX), randomInclusive(this.maxPosY)); }
-
-    moveTo(x, y) {
-        //moveTo(Vec2) instead of moveTo(x, y)
-        if (typeof x == 'object') {
-            y = x.y;
-            x = x.x;
-        }
-
-        //Clamp new position
-        x = clamp(x, 0, this.maxPosX);
-        y = clamp(y, 0, this.maxPosY);
-
-        //Update position
-        this.#pos.x = x;
-        this.#pos.y = y;
-    }
-
-    respawn() {
-        //Move to random point
-        this.moveTo(this.randomPoint);
-    }
-
-}
-
-//Animations
-class Animation {
-
-    //Animation info (temporal)
-    finished = false;
-    #frame = 0;
-    #counter = 0;
-
-    //Animation info (permanent)
-    #frames = [];
-    #speed = 5;   //Duration of each frame
-    #loop = true;
-    get loop() { return this.#loop; };
-    #flip = false;
-    get flip() { return this.#flip; };
-
-
-    //State
-    constructor(frames, speed, config) {
-        //Animation info
-        this.#frames = frames;
-        this.#speed = speed;
-
-        //Check config
-        if (typeof config === 'object') {
-            if (typeof config.loop === 'boolean') this.#loop = config.loop;
-            if (typeof config.flip === 'boolean') this.#flip = config.flip;
-        }
-
-        //Reset current info
-        this.reset();
-    }
-
-    reset() {
-        //Reset current info
-        this.#frame = 0;
-        this.#counter = 0;
-        this.finished = false;
-    }
-
-    update() {
-        //Not finished
-        if (!this.finished) {
-            //Add one to counter
-            this.#counter++;
-
-            //Check if counter finished
-            if (this.#counter >= this.#speed) {
-                //Counter finished -> Reset it
-                this.#counter = 0;
-
-                //Next frame
-                if (!this.#loop && this.#frame >= this.#frames.length - 1) {
-                    //Already in last frame & not looping -> Finish animation
-                    this.finished = true;
-                } else {
-                    //Next frame
-                    this.#frame++;
-                    if (this.#frame >= this.#frames.length) this.#frame = 0;
-                }
-            }
-        }
-
-        //Return animation sprite position
-        const offset = this.#frames[this.#frame];
-        return new Vec2(offset[0], offset[1]);
-    }
-
-}
-
 //AI
 class AI {
 
@@ -237,14 +18,14 @@ class AI {
     //Config (idle)
     #idleDurationBase = 2 * Game.fps;       //Minimum duration of idle (in frames)
     #idleDurationVariation = 2 * Game.fps;  //Variation of duration for idle (in frames)
-    get idleDuration() { return this.#idleDurationBase + randomInclusive(this.#idleDurationVariation); }
+    get idleDuration() { return this.#idleDurationBase + Util.randomInclusive(this.#idleDurationVariation); }
 
     //Config (sleep)
     #canSleep = true;
     #isSleeping = false;
     #sleepDurationBase = 10 * Game.fps;     //Minimum duration of sleep (in frames)
     #sleepDurationVariation = 5 * Game.fps; //Variation of duration for sleep (in frames)
-    get sleepDuration() { return this.#sleepDurationBase + randomInclusive(this.#sleepDurationVariation); }
+    get sleepDuration() { return this.#sleepDurationBase + Util.randomInclusive(this.#sleepDurationVariation); }
 
     //Config (special)
     #specialDuration = 2 * Game.fps;        //Duration of special (in frames)
@@ -377,7 +158,7 @@ class AI {
         this.timer.reset();
 
         //Check action (75% chance to sleep if it can)
-        if (this.#canSleep && !this.#isSleeping && randomExclusive(100) < 75) {
+        if (this.#canSleep && !this.#isSleeping && Util.randomExclusive(100) < 75) {
             //Animate sleep
             this.character.animate('sleep');
 
@@ -880,7 +661,7 @@ class PetMoods {
 
     //Special moods
     static get HEART() { return new Vec2(1, 3); }
-    static get RANDOM() { return PetMoods[PetMoods.moods[randomExclusive(PetMoods.moods.length)]]; }
+    static get RANDOM() { return PetMoods[PetMoods.moods[Util.randomExclusive(PetMoods.moods.length)]]; }
 
     //Normal moods
     static moods = ['GIGACHAD', 'HAPPY', 'MAD', 'ALIEN', 'PLEDGE', 'BLUSH'];
@@ -918,7 +699,7 @@ class PetAI extends AI {
         }
 
         //Init moods sprite
-        this.#moodSprite.src = `${Game.media}sprites/emotes/emotes.png`;
+        this.#moodSprite.src = `${Game.mediaURI}sprites/emotes/emotes.png`;
 
         //Random mood
         this.#setRandomMood()
@@ -927,9 +708,9 @@ class PetAI extends AI {
     //Click
     click() {
         //Has gift?
-        if (Game.isAction(Action.gift)) {
+        if (Game.isAction(Action.GIFT)) {
             //Consume gift
-            Game.setAction(Action.none);
+            Game.setAction(Action.NONE);
 
             //Set mood to heart
             this.#setHeartMood()
@@ -943,8 +724,8 @@ class PetAI extends AI {
     }
 
     //Mood
-    #setMood(offset) {
-        this.#moodOffset = offset.mult(PetMoods.size);
+    #setMood(moodOffset) {
+        this.#moodOffset = moodOffset.mult(PetMoods.size);
     }
 
     #setHeartMood() {
@@ -1075,8 +856,8 @@ class PetCharacter extends Character {
         const pos = ballPos.sub(this.size.mult(new Vec2(0.5, 0.8)).toInt())
 
         //Clamp new position
-        pos.x = clamp(pos.x, 0, this.maxPosX);
-        pos.y = clamp(pos.y, 0, this.maxPosY);
+        pos.x = Util.clamp(pos.x, 0, this.maxPosX);
+        pos.y = Util.clamp(pos.y, 0, this.maxPosY);
 
         //Update position
         this.ai.moveTowards(pos, true)
@@ -1445,7 +1226,7 @@ class EnemyAI extends AI {
         Game.addMoney(5);
 
         //Wait to spawn a new enemy
-        Game.spawner.wait(60 * 1000);
+        Game.enemySpawner.wait(60 * 1000);
     }
 
 }
