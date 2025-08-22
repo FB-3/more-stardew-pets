@@ -37,16 +37,16 @@ let extensionStorageFolder = '';
 const EnemySpecies = {
     Slime: ['Iron', 'Tiger'],
     Bug: ['Normal', 'Normal Dangerous', 'Armored', 'Armored Dangerous'],
-    Crab: ['Rock', 'Rock Dangerous', 'Lava', 'Lava Dangerous', 'Iridium', 'Truffle', 'Stickbug', 'Magma Cap'],
     Golem: ['Stone', 'Stone Dangerous', 'Iridium', 'Wilderness'],
+    Crab: ['Rock', 'Rock Dangerous', 'Lava', 'Lava Dangerous', 'Iridium', 'Truffle', 'Stickbug', 'Magma Cap'],
 };
 const PetSpecies = {
     Cat: ['Black', 'Gray', 'Orange', 'White', 'Yellow', 'Purple'],
     Dog: ['Blonde', 'Gray', 'Brown', 'Dark Brown', 'Light Brown', 'Purple'],
-    Dino: [],
     Turtle: ['Green', 'Purple'],
-    Raccoon: [],
+    Dino: [],
     Duck: [],
+    Raccoon: [],
     Goat: ['Adult', 'Baby'],
     Sheep: ['Adult', 'Baby'],
     Ostrich: ['Adult', 'Baby'],

@@ -356,7 +356,7 @@ class Game {
 
     static sortObjects() {
         //Sort objects for rendering
-        Game.objects.sort((a, b) => { return a.sortingOrder - b.sortingOrder; }); 
+        Game.objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
     }
 
     //Money
@@ -480,8 +480,12 @@ class GameObject {
     #size = new Vec2(16);
     get size() { return this.#size; }
 
-    //Rendering
+    //Rendering (sorting)
+    #sortingLayer = 0;
+    get sortingLayer() { return this.#sortingLayer; }
     get sortingOrder() { return this.pos.y + this.size.y; }
+
+    //Rendering (sprite sheet)
     #sprite = new Image();              //Image containing the sprite sheet
     get sprite() { return this.#sprite; }
     #spriteOffset = new Vec2();         //Offset for sprites inside a sprite sheet
@@ -508,8 +512,10 @@ class GameObject {
         if (typeof config.pos === 'object') this.#pos = config.pos;
         if (typeof config.size === 'object') this.#size = config.size;
 
-        //Rendering config
-        if (typeof config.sortingOrder === 'number') Object.defineProperty(this, 'sortingOrder', { get() { return config.sortingOrder; }, });
+        //Rendering (sorting) config
+        if (typeof config.sortingLayer === 'number') this.#sortingLayer = config.sortingLayer;
+
+        //Rendering (sprite sheet) config
         if (typeof config.sprite === 'string') this.#sprite.src = `${Game.mediaURI}sprites/${config.sprite}`;
         if (typeof config.spriteOffset === 'object') this.#spriteOffset = config.spriteOffset;
         if (typeof config.spriteSheetOffset === 'object') this.#spriteSheetOffset = config.spriteSheetOffset;

@@ -237,11 +237,13 @@ const timer = setInterval(Game.update, 1000 / Game.fps)
 vscode.postMessage({ type: 'init' })
 
 //Decoration testing
+/*
 const max = 6
-const size = new Vec2(48, 48)
-const category = DecorationPreset.RUGS
+const size = new Vec2(16, 32)
+const category = DecorationPreset.HOUSE_PLANTS
 const items = Object.keys(category);
 for (let i = 0; i < items.length; i++) {
     const preset = category[items[i]];
     new Decoration({ pos: new Vec2(i % max * size.x, Math.floor(i / max) * size.y) }, preset);
 }
+*/
