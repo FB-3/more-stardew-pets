@@ -144,6 +144,12 @@ body[cursor="none"] {
     transform-origin: 0% 0%;
 }
 
+/* Hidden canvas */
+#hiddenCanvas {
+    /* Layout */
+    display: none;
+}
+
 
  /*$      /$$
 | $$$    /$$$

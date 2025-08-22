@@ -335,6 +335,8 @@ class Game {
     static background = document.getElementById('background');
     static canvas = document.getElementById('canvas');
     static ctx = document.getElementById('canvas').getContext('2d');
+    static hiddenCanvas = document.getElementById('hiddenCanvas');
+    static hiddenCtx = document.getElementById('hiddenCanvas').getContext('2d');
 
     static draw() {
         //Clear canvas
@@ -480,14 +482,18 @@ class GameObject {
     #size = new Vec2(16);
     get size() { return this.#size; }
 
+    //Clicks
+    #clickable = true;
+    get clickable() { return this.#clickable; }
+
     //Rendering (sorting)
     #sortingLayer = 0;
     get sortingLayer() { return this.#sortingLayer; }
     get sortingOrder() { return this.pos.y + this.size.y; }
 
     //Rendering (sprite sheet)
-    #sprite = new Image();              //Image containing the sprite sheet
-    get sprite() { return this.#sprite; }
+    #image = new Image();               //Image containing the sprite sheet
+    get image() { return this.#image; }
     #spriteOffset = new Vec2();         //Offset for sprites inside a sprite sheet
     get spriteOffset() { return this.#spriteOffset; }
     #spriteSheetOffset = new Vec2();    //Offset for images with multiple sprite sheets
@@ -501,26 +507,29 @@ class GameObject {
 
 
     //Constructor
-    constructor(config) {
+    constructor(config = {}) {
         //Add to game objects list
         Game.objects.push(this);
 
         //No config
         if (typeof config !== 'object') return;
 
-        //Position & size config
+        //Position & size
         if (typeof config.pos === 'object') this.#pos = config.pos;
         if (typeof config.size === 'object') this.#size = config.size;
 
-        //Rendering (sorting) config
+        //Clicks
+        if (typeof config.clickable === 'boolean') this.#clickable = config.clickable;
+
+        //Rendering (sorting)
         if (typeof config.sortingLayer === 'number') this.#sortingLayer = config.sortingLayer;
 
-        //Rendering (sprite sheet) config
-        if (typeof config.sprite === 'string') this.#sprite.src = `${Game.mediaURI}sprites/${config.sprite}`;
+        //Rendering (sprite sheet)
+        if (typeof config.image === 'string') this.#image.src = `${Game.mediaURI}sprites/${config.image}`;
         if (typeof config.spriteOffset === 'object') this.#spriteOffset = config.spriteOffset;
         if (typeof config.spriteSheetOffset === 'object') this.#spriteSheetOffset = config.spriteSheetOffset;
 
-        //Animation config
+        //Animation
         if (typeof config.animations === 'object') this.#animations = config.animations;
     }
 
@@ -535,16 +544,41 @@ class GameObject {
         if (this.#animation) this.#spriteOffset = this.#animation.update().mult(this.size);
     }
 
-    //Click
-    checkClick(click) {
-        //Check if clicked outside element
-        if (click.x < this.pos.x || click.x > this.pos.x + this.size.x || 
-            click.y < this.pos.y || click.y > this.pos.y + this.size.y) {
-            return false;
-        }
+    //Clicks
+    checkClick(clickPos) {
+        //Not clickable
+        if (!this.clickable) return false;
+
+        //Check if clicked inside bounding box
+        if (!this.isPosInBounds(clickPos)) return false;
+
+        //Check if clicked on transparent pixel
+        if (!this.isPosInSprite(clickPos, Game.hiddenCanvas, Game.hiddenCtx)) return false;
         
-        //Click
+        //Click object
         return this.click();
+    }
+
+    isPosInBounds(pos) {
+        //Return true if pos is inside bounding box
+        return pos.x >= this.pos.x && pos.x <= this.pos.x + this.size.x && pos.y >= this.pos.y && pos.y <= this.pos.y + this.size.y;
+    }
+
+    isPosInSprite(pos, canvas, ctx) {
+        //Get relative click position
+        const relPos = pos.sub(this.pos);  
+
+        //Change canvas size to match object size
+        canvas.width = this.size.x;
+        canvas.height = this.size.y;
+        
+        //Clear canvas & draw object at origin
+        ctx.clearRect(0, 0, this.size.x, this.size.y);
+        this.draw(ctx, { pos: new Vec2() });
+
+        //Get pixel at pos & check alpha
+        const pixelData = ctx.getImageData(relPos.x, relPos.y, 1, 1).data;
+        return pixelData[3] !== 0;
     }
     
     click() {
@@ -553,12 +587,15 @@ class GameObject {
     }
 
     //Rendering
-    draw(ctx) {
+    draw(ctx, config = {}) {
+        //Get info
+        const pos = (typeof config.pos === 'object' ? config.pos : this.pos);
+
         //Save context transform
         ctx.save(); 
 
         //Translate sprite
-        ctx.translate(this.pos.x, this.pos.y);
+        ctx.translate(pos.x, pos.y);
 
         //Flip sprite
         if (this.animation && this.animation.flip) {
@@ -568,15 +605,15 @@ class GameObject {
         
         //Draw sprite
         ctx.drawImage(
-            this.sprite,
-            this.spriteSheetOffset.x + this.spriteOffset.x,
-            this.spriteSheetOffset.y + this.spriteOffset.y, 
-            this.size.x,
-            this.size.y,
-            0,
-            0,
-            this.size.x,
-            this.size.y
+            this.image,     //Image
+            this.spriteSheetOffset.x + this.spriteOffset.x, //Sprite offset x
+            this.spriteSheetOffset.y + this.spriteOffset.y, //Sprite offset y
+            this.size.x,         //Source sprite width
+            this.size.y,         //Source sprite height
+            0,              //Position
+            0,              //Position
+            this.size.x,         //Drawing width
+            this.size.y          //Drawing height
         );
 
         //Restore context transform
@@ -606,20 +643,13 @@ class GameObject {
     get maxPosY() { return Math.floor((Game.size.y / Game.scale) - this.size.y); }
     get randomPoint() { return new Vec2(Util.randomInclusive(this.maxPosX), Util.randomInclusive(this.maxPosY)); }
 
-    moveTo(x, y) {
-        //moveTo(Vec2) instead of moveTo(x, y)
-        if (typeof x == 'object') {
-            y = x.y;
-            x = x.x;
-        }
-
+    moveTo(pos) {
         //Clamp new position
-        x = Util.clamp(x, 0, this.maxPosX);
-        y = Util.clamp(y, 0, this.maxPosY);
+        pos.x = Util.clamp(pos.x, 0, this.maxPosX);
+        pos.y = Util.clamp(pos.y, 0, this.maxPosY);
 
         //Update position
-        this.#pos.x = x;
-        this.#pos.y = y;
+        this.#pos = pos;
     }
 
     respawn() {

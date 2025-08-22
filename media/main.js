@@ -238,8 +238,8 @@ vscode.postMessage({ type: 'init' })
 
 //Decoration testing
 /*
-const max = 6
-const size = new Vec2(16, 32)
+const max = 5
+const size = new Vec2(32, 48)
 const category = DecorationPreset.HOUSE_PLANTS
 const items = Object.keys(category);
 for (let i = 0; i < items.length; i++) {

@@ -96,22 +96,22 @@ class AI {
     }
 
     moveLeft() {
-        this.character.moveTo(this.character.pos.x - 1, this.character.pos.y);
+        this.character.moveTo(new Vec2(this.character.pos.x - 1, this.character.pos.y));
         this.character.animate('moveLeft');
     }
 
     moveRight() {
-        this.character.moveTo(this.character.pos.x + 1, this.character.pos.y);
+        this.character.moveTo(new Vec2(this.character.pos.x + 1, this.character.pos.y));
         this.character.animate('moveRight');
     }
 
     moveUp() {
-        this.character.moveTo(this.character.pos.x, this.character.pos.y - 1);
+        this.character.moveTo(new Vec2(this.character.pos.x, this.character.pos.y - 1));
         this.character.animate('moveUp');
     }
 
     moveDown() {
-        this.character.moveTo(this.character.pos.x, this.character.pos.y + 1);
+        this.character.moveTo(new Vec2(this.character.pos.x, this.character.pos.y + 1));
         this.character.animate('moveDown');
     }
 
@@ -808,9 +808,9 @@ class PetCharacter extends Character {
     
 
     //Constructor
-    constructor(name, specie, color, config, config_ai) {
-        //Add sprite to config
-        config.sprite = `pets/${specie.toLowerCase()}.png`;
+    constructor(name, specie, color, config = {}, config_ai = {}) {
+        //Add image to config
+        config.image = `pets/${specie.toLowerCase()}.png`;
 
         //Create character
         super(config, new PetAI(config_ai));
@@ -834,7 +834,7 @@ class PetCharacter extends Character {
         Game.pets.removeItem(this);
     }
 
-    //Click
+    //Clicks
     click() {
         //Notify AI pet was clicked
         this.ai.click();
@@ -844,9 +844,9 @@ class PetCharacter extends Character {
     }
 
     //Rendering
-    draw(ctx) {
+    draw(ctx, options) {
         //Draw character
-        super.draw(ctx);
+        super.draw(ctx, options);
         
         //Draw AI mood
         this.ai.drawMood(ctx);
@@ -869,7 +869,7 @@ class PetCharacter extends Character {
 
 class PetCharacterBig extends PetCharacter {
 
-    constructor(name, specie, color, config, config_ai) {
+    constructor(name, specie, color, config = {}, config_ai = {}) {
         //Change pet size to big
         config.size = new Vec2(32);
 
@@ -1496,9 +1496,9 @@ class EnemyCharacter extends Character {
 
 
     //Constructor
-    constructor(specie, color, config, config_ai) {
-        //Add sprite to config
-        config.sprite = `enemies/${specie.toLowerCase()}.png`;
+    constructor(specie, color, config = {}, config_ai = {}) {
+        //Add image to config
+        config.image = `enemies/${specie.toLowerCase()}.png`;
         
         //Create character
         super(config, new EnemyAI(config_ai));
@@ -1521,7 +1521,7 @@ class EnemyCharacter extends Character {
         Game.enemies.removeItem(this);
     }
 
-    //Click
+    //Clicks
     click() {
         //Notify AI emeny was clicked
         this.ai.click();
