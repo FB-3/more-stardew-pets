@@ -1477,10 +1477,10 @@ class EnemyAI extends AI {
         this.character.remove();
 
         //Give money to player
-        Game.addMoney(5);
+        Game.addMoney(50 + 5 * Util.randomInclusive(5)); //50 - 75 gold
 
         //Wait to spawn a new enemy
-        Game.enemySpawner.wait(60 * 1000);
+        Game.enemySpawner.wait(30 * 1000);
     }
 
 }

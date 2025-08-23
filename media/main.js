@@ -31,6 +31,80 @@ function toggleActionGift() {
     Menus.toggle('actions', false);
 }
 
+//Store menu
+function openStoreMenu() {
+    //Empty list
+    const content = document.getElementById('storeContent');
+    content.innerHTML = '';
+    content.scrollTop = 0;
+
+    //Add back button
+    const back = createStoreItem('> Back');
+    back.onclick = () => Menus.toggle('actions', true);
+    content.appendChild(back);
+
+    //Create decoration categories
+    for (const category of Object.keys(DecorationPreset)) {
+        //Create item element
+        const element = createStoreItem(category);
+        element.onclick = () => selectStoreCategory(category);
+        content.appendChild(element);
+    }
+    
+    //Show store menu
+    Menus.toggle('store', true);
+}
+
+function selectStoreCategory(category) {
+    //Empty list
+    const content = document.getElementById('storeContent');
+    content.innerHTML = '';
+    content.scrollTop = 0;
+
+    //Add back button
+    const back = createStoreItem('> Back');
+    back.onclick = openStoreMenu;
+    content.appendChild(back);
+
+    //Create category items
+    for (const name of Object.keys(DecorationPreset[category])) {
+        //Get item
+        const item = DecorationPreset[category][name];
+
+        //Create item element
+        const element = createStoreItem(name, item.price);
+        content.appendChild(element);
+        
+        //Add image to element
+        const imgBox = document.createElement('div');
+        const img = document.createElement('div');
+        img.style.setProperty('--image', `url('./sprites/decoration/decoration.png')`)
+        img.style.setProperty('--width', `${item.size.x}px`)
+        img.style.setProperty('--height', `${item.size.y}px`)
+        img.style.setProperty('--scale', `${50 / Math.max(item.size.x, item.size.y)}`)
+        img.style.setProperty('--spriteOffset', `${-item.spriteOffset.x}px ${-item.spriteOffset.y}px`)
+        imgBox.prepend(img);
+        element.prepend(imgBox);
+    }
+}
+
+function createStoreItem(name, price) {
+    //Item element
+    const element = document.createElement('div');
+    element.classList.add('menuButton', 'storeButton');
+
+    //Name text element
+    const text = document.createElement('span');
+    text.innerText = Util.titleCase(name.toLowerCase().replaceAll('_', ' '));
+    element.append(text);
+
+    //Add price to text
+    if (typeof price === 'number') text.innerHTML += `<br><span class="storeButtonMoney">${price}G</span>`;
+
+    //Return element
+    return element;
+}
+
 
  /*$       /$$             /$$
 | $$      |__/            | $$
@@ -167,7 +241,7 @@ window.addEventListener('message', event => {
     }
 })
 
-//Cursor info
+//Cursor events
 document.onclick = event => {
     //Get scaled mouse position
     const pos = Cursor.pos.div(Game.scale).toInt()

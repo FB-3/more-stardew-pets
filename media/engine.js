@@ -139,6 +139,12 @@ class Util {
         //Move towards target
         return (distance < delta ? target : current + diff / distance * delta)
     }
+        
+    static titleCase(str) {
+        const parts = str.toLowerCase().split(' ');
+        for (var i = 0; i < parts.length; i++) parts[i] = parts[i].charAt(0).toUpperCase() + parts[i].substring(1);
+        return parts.join(' ');
+    }
 
 }
 
