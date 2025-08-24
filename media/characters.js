@@ -701,7 +701,7 @@ class PetAI extends AI {
         }
 
         //Init moods sprite
-        this.#moodSprite.src = `${Game.mediaURI}sprites/emotes/emotes.png`;
+        this.#moodSprite.src = `${Game.mediaURI}sprites/emotes.png`;
 
         //Random mood
         this.#setRandomMood()

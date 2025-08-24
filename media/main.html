@@ -43,6 +43,10 @@
                         <img src="{media}sprites/ui/house.png">
                         <span>General Store</span>
                     </div>
+                    <div class="menuButton" onclick="toggleDecorMode()">
+                        <img src="{media}sprites/ui/pickaxe.png">
+                        <span>Enter Decor Mode</span>
+                    </div>
                 </div>
             </div>
 
@@ -60,6 +64,11 @@
             <div id="money" class="menu" show>
                 <span id="moneyText">0G</span>
             </div>
+        </div>
+
+        <!-- Decor mode -->
+        <div id="decorExit" class="menu" button onclick="toggleDecorMode()">
+            <span>Exit</span>
         </div>
 
         <!-- Cursor -->

@@ -270,6 +270,11 @@ body[cursor="none"] {
     display: flex;
 }
 
+.menu[button] {
+    /* Other */
+    cursor: pointer;
+}
+
 .menuContent {
     /* Spacing */
     margin: -4px;
@@ -368,7 +373,6 @@ body[cursor="none"] {
     color: #c0640d;
 }
 
-
 /* Money menu */
 #money {
     /* Layout */
@@ -378,6 +382,19 @@ body[cursor="none"] {
 }
 
 #money > span {
+    /* Spacing */
+    margin: -8px -4px;
+}
+
+/* Decor mode */
+#decorExit {
+    /* Layout */
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#decorExit > span {
     /* Spacing */
     margin: -8px -4px;
 }
@@ -404,7 +421,7 @@ body[cursor="none"] {
     top: 0;
     left: 0;
 
-    background-image: url(./sprites/emotes/emotes.png);
+    background-image: url(./sprites/emotes.png);
     background-position-x: var(--bg-pos-x);
     background-position-y: var(--bg-pos-y);
 

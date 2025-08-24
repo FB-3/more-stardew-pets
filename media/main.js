@@ -13,22 +13,44 @@ const vscode = acquireVsCodeApi()
 
 //Actions menu
 function toggleActionBall() {
+    //Hide actions menu
+    Menus.toggle('actions', false);
+
     //Ball is visible -> Remove it
     if (Ball.isVisible) Ball.onReached()
     
     //Toggle ball action
     Game.setAction(Game.isAction(Action.BALL) ? Action.NONE : Action.BALL)
-
-    //Hide actions menu
-    Menus.toggle('actions', false);
 }
 
 function toggleActionGift() {
-    //Toggle gift action
-    Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT)
-
     //Hide actions menu
     Menus.toggle('actions', false);
+
+    //Toggle gift action
+    Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT)
+}
+
+function toggleDecorMode() {
+    //Hide actions menu
+    Menus.toggle('actions', false);
+
+    //Exit decor mode
+    if (Game.isAction(Action.DECOR)) {
+        Game.setAction(Action.NONE);
+        Game.toggleDecorExit(false);
+        return;
+    }
+
+    //No decoration
+    if (Game.decoration.length <= 0) {
+        Game.showMessage('Buy decoration first');
+        return;
+    }
+
+    //Enter decor mode
+    Game.setAction(Action.DECOR);
+    Game.toggleDecorExit(true);
 }
 
 //Store menu
@@ -36,7 +58,6 @@ function openStoreMenu() {
     //Empty list
     const content = document.getElementById('storeContent');
     content.innerHTML = '';
-    content.scrollTop = 0;
 
     //Add back button
     const back = createStoreItem('> Back');
@@ -50,6 +71,9 @@ function openStoreMenu() {
         element.onclick = () => selectStoreCategory(category);
         content.appendChild(element);
     }
+
+    //Scroll to top
+    content.scrollTop = 0;
     
     //Show store menu
     Menus.toggle('store', true);
@@ -59,7 +83,6 @@ function selectStoreCategory(category) {
     //Empty list
     const content = document.getElementById('storeContent');
     content.innerHTML = '';
-    content.scrollTop = 0;
 
     //Add back button
     const back = createStoreItem('> Back');
@@ -86,6 +109,9 @@ function selectStoreCategory(category) {
         imgBox.prepend(img);
         element.prepend(imgBox);
     }
+
+    //Scroll to top
+    content.scrollTop = 0;
 }
 
 function createStoreItem(name, price) {
@@ -201,8 +227,9 @@ window.addEventListener('message', event => {
 
         //Toggle actions menu
         case 'actions':
-            Game.setAction(Action.NONE)
-            Menus.toggle('actions')
+            Game.setAction(Action.NONE);
+            Game.toggleDecorExit(false);
+            Menus.toggle('actions');
             break;
 
         //Update background
@@ -231,7 +258,7 @@ window.addEventListener('message', event => {
     
         //Update money
         case 'money': 
-            Game.setMoney(message.value)
+            Game.setMoney(message.value);
             break;
 
         //Init
@@ -251,12 +278,17 @@ document.onclick = event => {
         //Place ball
         case Action.BALL: {
             //Move ball
-            Ball.moveTo(pos)
-            Ball.setVisible(true)
+            Ball.moveTo(pos);
+            Ball.setVisible(true);
 
             //Move all pets towards ball
-            Game.pets.forEach(pet => pet.moveTowardsBall(pos))
+            Game.pets.forEach(pet => pet.moveTowardsBall(pos));
             break;
+        }
+
+        //Decor mode
+        case Action.DECOR: {
+            return;
         }
 
         //Other
@@ -265,10 +297,9 @@ document.onclick = event => {
             Game.sortObjects();
 
             //Check for clicks from nearest to farthest object
-            for (let i = Game.objects.length - 1; i >= 0; i--) {
-                const obj = Game.objects[i];
-                if (obj.checkClick(pos)) break;
-            }
+            for (let i = Game.objects.length - 1; i >= 0; i--)
+                if (Game.objects[i].checkClick(pos)) 
+                    break;
             break;
     }
 

@@ -180,6 +180,7 @@ class Action {
     static get NONE() { return ''; }
     static get GIFT() { return 'gift'; }
     static get BALL() { return 'ball'; }
+    static get DECOR() { return 'decor'; }
 
 }
 
@@ -287,7 +288,12 @@ class Cursor {
     }
 
     //Icon
+    static icons = [Action.BALL, Action.GIFT];
+
     static setIcon(icon) {
+        //Valid icons
+        icon = Cursor.icons.includes(icon) ? icon : Action.NONE;
+
         //Change cursor icon
         Cursor.element.setAttribute('icon', icon);
 
@@ -348,11 +354,22 @@ class Game {
         //Clear canvas
         Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
 
-        //Sort objects from top to bottom
-        Game.sortObjects();
 
-        //Draw objects
-        Game.objects.forEach(obj => obj.draw(Game.ctx));
+        //Check if in decor mode
+        if (Game.isAction(Action.DECOR)) {
+            //Create & sort decor array copy to preserve original order
+            const decoration = Game.decoration.slice();
+            Game.sortObjects(decoration);
+
+            //Draw decoration
+            decoration.forEach(obj => obj.draw(Game.ctx));
+        } else {
+            //Sort objects from top to bottom
+            Game.sortObjects();
+
+            //Draw objects
+            Game.objects.forEach(obj => obj.draw(Game.ctx));
+        }
     }
 
     //Game objects
@@ -362,9 +379,12 @@ class Game {
     static enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
     static decoration = []; //List of all the decoration
 
-    static sortObjects() {
+    static sortObjects(objects) {
+        //Fix objects array
+        if (!Array.isArray(objects)) objects = Game.objects;
+
         //Sort objects for rendering
-        Game.objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
+        objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
     }
 
     //Money
@@ -380,6 +400,20 @@ class Game {
         Game.setMoney(Game.money + amount);
         Game.showMessage(`${amount >= 0 ? '+' : '-'}${Math.abs(amount)}G`);
         vscode.postMessage({ type: 'money', value: Game.money });
+    }
+
+    //Decor mode
+    static decorExit = document.getElementById('decorExit');
+
+    static toggleDecorExit(show) {
+        //Fix args
+        if (typeof show !== 'boolean') show = !Game.decorExit.hasAttribute('show');
+
+        //Toggle
+        if (show)
+            Game.decorExit.setAttribute('show', '');
+        else
+            Game.decorExit.removeAttribute('show');
     }
 
     //Current action being performed
