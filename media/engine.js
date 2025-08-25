@@ -60,6 +60,13 @@ class Vec2 {
             return new Vec2(this.x / n, this.y / n);
     }
 
+    mod(n) {
+        if (typeof n === 'object')
+            return new Vec2(this.x % n.x, this.y % n.y);
+        else
+            return new Vec2(this.x % n, this.y % n);
+    }
+
     toInt() {
         return new Vec2(Math.floor(this.x), Math.floor(this.y));
     }
@@ -280,6 +287,7 @@ class Cursor {
 
     //Position
     static pos = new Vec2();
+    static get scaledPos() { return Cursor.pos.div(Game.scale).toInt(); }
 
     static moveTo(pos) {
         Cursor.pos = pos;
@@ -312,10 +320,12 @@ class Game {
     //Window
     static size = new Vec2(window.innerWidth, window.innerHeight);
     static scale = 2;
+    static scaledSize = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
 
     static onResize() {
         //Update game window size
         Game.size = new Vec2(window.innerWidth, window.innerHeight);
+        Game.scaledSize = Game.size.div(Game.scale);
 
         //Update game canvas size
         Game.canvas.width = Game.size.x;
@@ -354,37 +364,32 @@ class Game {
         //Clear canvas
         Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
 
+        //Sort objects
+        Game.sortObjects();
 
         //Check if in decor mode
-        if (Game.isAction(Action.DECOR)) {
-            //Create & sort decor array copy to preserve original order
-            const decoration = Game.decoration.slice();
-            Game.sortObjects(decoration);
+        const inDecorMode = Game.isAction(Action.DECOR);
 
-            //Draw decoration
-            decoration.forEach(obj => obj.draw(Game.ctx));
-        } else {
-            //Sort objects from top to bottom
-            Game.sortObjects();
+        //Draw objects
+        for (const obj of Game.objects) {
+            //Check if in decor mode and object is not decor
+            if (inDecorMode && !(obj instanceof Decoration)) continue;
 
-            //Draw objects
-            Game.objects.forEach(obj => obj.draw(Game.ctx));
+            //Draw object
+            obj.draw(Game.ctx)
         }
     }
 
     //Game objects
     static objects = [];    //List of all the game objects
-    static pets = [];       //List of all the pets
     static enemies = [];    //List of all the enemies
+    static pets = [];       //List of all the pets       (do not sort, positions must be the same as in extension.ts)
+    static decoration = []; //List of all the decoration (do not sort, positions must be the same as in extension.ts)
     static enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
-    static decoration = []; //List of all the decoration
 
-    static sortObjects(objects) {
-        //Fix objects array
-        if (!Array.isArray(objects)) objects = Game.objects;
-
+    static sortObjects() {
         //Sort objects for rendering
-        objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
+        Game.objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
     }
 
     //Money
@@ -585,18 +590,18 @@ class GameObject {
     }
 
     //Clicks
-    checkClick(clickPos) {
+    isValidMousePos(pos) {
         //Not clickable
         if (!this.clickable) return false;
 
         //Check if clicked inside bounding box
-        if (!this.isPosInBounds(clickPos)) return false;
+        if (!this.isPosInBounds(pos)) return false;
 
         //Check if clicked on transparent pixel
-        if (!this.isPosInSprite(clickPos, Game.hiddenCanvas, Game.hiddenCtx)) return false;
-        
-        //Click object
-        return this.click();
+        if (!this.isPosInSprite(pos, Game.hiddenCanvas, Game.hiddenCtx)) return false;
+
+        //Valid 
+        return true;
     }
 
     isPosInBounds(pos) {
@@ -620,9 +625,30 @@ class GameObject {
         const pixelData = ctx.getImageData(relPos.x, relPos.y, 1, 1).data;
         return pixelData[3] !== 0;
     }
+
+    checkMouseDown(clickPos) {
+        //Check if mouse pos is valid
+        if (!this.isValidMousePos(clickPos)) return false;
+        
+        //Mouse down event
+        return this.mouseDown(clickPos);
+    }
+
+    checkMouseUp(clickPos) {
+        //Check if mouse pos is valid
+        if (!this.isValidMousePos(clickPos)) return false;
+        
+        //Click event
+        return this.mouseUp(clickPos);
+    }
     
-    click() {
-        //Click was consumed
+    mouseDown(pos) {
+        //Mouse down was consumed
+        return true;
+    }
+
+    mouseUp(pos) {
+        //Mouse up was consumed
         return true;
     }
 
@@ -679,14 +705,16 @@ class GameObject {
     }
 
     //Movement
-    get maxPosX() { return Math.floor((Game.size.x / Game.scale) - this.size.x); }
-    get maxPosY() { return Math.floor((Game.size.y / Game.scale) - this.size.y); }
+    get maxPosX() { return Math.floor(Game.scaledSize.x - this.size.x); }
+    get maxPosY() { return Math.floor(Game.scaledSize.y - this.size.y); }
     get randomPoint() { return new Vec2(Util.randomInclusive(this.maxPosX), Util.randomInclusive(this.maxPosY)); }
 
-    moveTo(pos) {
+    moveTo(pos, ignoreWalls = false) {
         //Clamp new position
-        pos.x = Util.clamp(pos.x, 0, this.maxPosX);
-        pos.y = Util.clamp(pos.y, 0, this.maxPosY);
+        if (!ignoreWalls) {
+            pos.x = Util.clamp(pos.x, 0, this.maxPosX);
+            pos.y = Util.clamp(pos.y, 0, this.maxPosY);
+        }
 
         //Update position
         this.#pos = pos;

@@ -932,11 +932,15 @@ class DecorationPreset {
 //Decoration object
 class Decoration extends GameObject {
 
+    //Moving
+    #snap = 16;
+    #moving = false;
+    get moving() { return this.#moving; }
+    #movingOffset = new Vec2();
+
+
     //Constructor
     constructor(preset = {}, config = {}) {
-        //Disable clicks on decoration
-        config.clickable = false;
-
         //Add image to config
         config.image = `decoration/decoration.png`;
 
@@ -952,6 +956,45 @@ class Decoration extends GameObject {
 
         //Remove from decoration list
         Game.decoration.removeItem(this);
+    }
+
+    //Update
+    update() {
+        //Update game object
+        super.update();
+
+        //Check if moving
+        if (!this.#moving) return;
+
+        //Calculate new snapped position
+        const mousePos = Cursor.scaledPos.sub(this.#movingOffset);
+        const mousePosCentedInSnapGrid = mousePos.add(this.#snap / 2);
+        const snappedPos = mousePosCentedInSnapGrid.div(this.#snap).toInt().mult(this.#snap);
+
+        //Fix bounds
+        snappedPos.x = Util.clamp(snappedPos.x, 0, Math.floor((Game.scaledSize.x - this.size.x + this.#snap) / this.#snap) * this.#snap);
+        snappedPos.y = Util.clamp(snappedPos.y, 0, Math.floor((Game.scaledSize.y - this.size.y + this.#snap) / this.#snap) * this.#snap);
+
+        //Move to new pos
+        this.moveTo(snappedPos, true);
+    }
+
+    //Click
+    mouseDown(pos) {
+        //Start moving
+        this.#moving = true;
+        this.#movingOffset = pos.sub(this.pos);
+
+        //Consume event
+        return true;
+    }
+
+    mouseUp(pos) {
+        //Stop moving
+        this.#moving = false;
+
+        //Consume event
+        return true;
     }
 
 }

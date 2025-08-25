@@ -151,6 +151,9 @@ function initGame() {
     //Load pets
     for (const pet of save.pets)
         loadPet(pet);
+    //Load decor
+    for (const decor of save.decoration)
+        loadDecor(decor);
     //Finish
     webview.postMessage({ type: 'init' });
 }
@@ -221,6 +224,17 @@ function removePet(index, saveFile) {
     //Save pets
     if (saveFile)
         saveGame();
+}
+//Decoration
+function loadDecor(decor) {
+    //Sends a decoration to the webview
+    webview.postMessage({
+        type: 'spawn_decor',
+        x: decor.x,
+        y: decor.y,
+        category: decor.category,
+        name: decor.name,
+    });
 }
 /*$$$$$              /$$     /$$                       /$$
 /$$__  $$            | $$    |__/                      | $$

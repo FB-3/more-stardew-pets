@@ -148,7 +148,7 @@ window.addEventListener('message', event => {
 
     //Check message type
     switch (message.type.toLowerCase()) {
-        //Spawn a pet/enemy
+        //Spawn a pet/enemy/decor
         case 'spawn_pet': {
             const name = message.name;
             const specie = message.specie.toLowerCase();
@@ -219,6 +219,14 @@ window.addEventListener('message', event => {
             }
             break;
         }
+        
+        case 'spawn_decor': {
+            const pos = new Vec2(message.x, message.y)
+            const category = message.category.toUpperCase().replaceAll(' ', '_');
+            const name = message.name.toUpperCase().replaceAll(' ', '_');
+            new Decoration(DecorationPreset[category][name], { pos: pos });
+            break;
+        }
 
         //Remove a pet
         case 'remove_pet':
@@ -269,12 +277,46 @@ window.addEventListener('message', event => {
 })
 
 //Cursor events
-document.onclick = event => {
+document.onmousedown = event => {
     //Get scaled mouse position
-    const pos = Cursor.pos.div(Game.scale).toInt()
+    const pos = Cursor.scaledPos;
 
     //Perform action
     switch (Game.action) {
+        //Decor mode
+        case Action.DECOR: {
+            //Sort objects
+            Game.sortObjects();
+
+            //Check for clicks from nearest to farthest object
+            for (let i = Game.objects.length - 1; i >= 0; i--) {
+                //Get object
+                const obj = Game.objects[i];
+
+                //Check if its decoration
+                if (!(obj instanceof Decoration)) continue;
+
+                //Check click
+                if (obj.checkMouseDown(pos)) break;
+            }
+            break;
+        }
+    }
+}
+
+document.onmouseup = event => {
+    //Get scaled mouse position
+    const pos = Cursor.scaledPos;
+
+    //Perform action
+    switch (Game.action) {
+        //Decor mode
+        case Action.DECOR: {
+            //Stop moving all
+            Game.decoration.forEach(obj => obj.mouseUp(pos));
+            break;
+        }
+
         //Place ball
         case Action.BALL: {
             //Move ball
@@ -283,12 +325,10 @@ document.onclick = event => {
 
             //Move all pets towards ball
             Game.pets.forEach(pet => pet.moveTowardsBall(pos));
-            break;
-        }
 
-        //Decor mode
-        case Action.DECOR: {
-            return;
+            //Clear current action
+            Game.setAction(Action.NONE);
+            break;
         }
 
         //Other
@@ -297,14 +337,18 @@ document.onclick = event => {
             Game.sortObjects();
 
             //Check for clicks from nearest to farthest object
-            for (let i = Game.objects.length - 1; i >= 0; i--)
-                if (Game.objects[i].checkClick(pos)) 
-                    break;
+            for (let i = Game.objects.length - 1; i >= 0; i--) {
+                //Get object
+                const obj = Game.objects[i];
+
+                //Check click
+                if (obj.checkMouseUp(pos)) break;
+            }
+            
+            //Clear current action
+            Game.setAction(Action.NONE);
             break;
     }
-
-    //Clear current action
-    Game.setAction(Action.NONE)
 }
 
 document.onmousemove = event => {
@@ -340,15 +384,3 @@ const timer = setInterval(Game.update, 1000 / Game.fps)
 
 //Tell VSCode the game was loaded
 vscode.postMessage({ type: 'init' })
-
-//Decoration testing
-/*
-const max = 5
-const size = new Vec2(32, 48)
-const category = DecorationPreset.HOUSE_PLANTS
-const items = Object.keys(category);
-for (let i = 0; i < items.length; i++) {
-    const preset = category[items[i]];
-    new Decoration({ pos: new Vec2(i % max * size.x, Math.floor(i / max) * size.y) }, preset);
-}
-*/

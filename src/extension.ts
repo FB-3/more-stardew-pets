@@ -57,6 +57,8 @@ type Pet = {
 }
 
 type Decoration = {
+    x: 0,
+    y: 0,
     category: string;
     name: string;
 }
@@ -160,6 +162,9 @@ function initGame() {
     //Load pets
     for (const pet of save.pets) loadPet(pet);
 
+    //Load decor
+    for (const decor of save.decoration) loadDecor(decor);
+
     //Finish
     webview.postMessage({ type: 'init' })
 }
@@ -239,6 +244,18 @@ function removePet(index: number, saveFile: boolean) {
 
     //Save pets
     if (saveFile) saveGame();
+}
+
+//Decoration
+function loadDecor(decor: Decoration) {
+    //Sends a decoration to the webview
+    webview.postMessage({
+        type: 'spawn_decor',
+        x: decor.x,
+        y: decor.y,
+        category: decor.category,
+        name: decor.name,
+    })
 }
 
 

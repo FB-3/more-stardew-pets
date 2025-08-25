@@ -397,7 +397,7 @@ class PetAnimations {
             ),
             'sleep': new Animation(
                 [[0, 4], [1, 4], [2, 4], [3, 4], [0, 5]],
-                30,
+                5,
                 { loop: false }
             )
         };
@@ -835,7 +835,7 @@ class PetCharacter extends Character {
     }
 
     //Clicks
-    click() {
+    mouseUp(pos) {
         //Notify AI pet was clicked
         this.ai.click();
 
@@ -1522,7 +1522,7 @@ class EnemyCharacter extends Character {
     }
 
     //Clicks
-    click() {
+    mouseUp(pos) {
         //Notify AI emeny was clicked
         this.ai.click();
 
