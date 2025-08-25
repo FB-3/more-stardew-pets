@@ -26,7 +26,7 @@
         <div id="messages"></div>
 
         <!-- Menus -->
-        <div id="menus" onclick="Menus.toggle(Menus.current, false)">
+        <div id="menus" onclick="Menus.close()">
             <!-- Actions menu -->
             <div id="actions" class="menu" onclick="event.stopPropagation()">
                 <div class="menuContent">
@@ -64,8 +64,15 @@
         </div>
 
         <!-- Decor mode -->
-        <div id="decorExit" class="menu" button onclick="toggleDecorMode()">
-            <span>Exit</span>
+        <div id="decor">
+            <!-- Controls -->
+            <span>Drag to move</span>
+            <!--<span>RMB to Sell</span>-->
+
+            <!-- Exit button -->
+            <div id="decorExit" class="menu" button show onclick="toggleDecorMode()">
+                <span>Exit</span>
+            </div>
         </div>
 
         <!-- Cursor -->

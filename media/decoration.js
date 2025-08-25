@@ -932,6 +932,10 @@ class DecorationPreset {
 //Decoration object
 class Decoration extends GameObject {
 
+    //Info
+    #price = 0;
+    get price() { return this.#price; }
+
     //Moving
     #snap = 16;
     #moving = false;
@@ -946,6 +950,9 @@ class Decoration extends GameObject {
 
         //Create game object
         super({ ...preset, ...config });
+
+        //Save price
+        if (typeof preset.price === 'number') this.#price = preset.price;
 
         //Add to decoration list
         Game.decoration.push(this);
@@ -968,22 +975,31 @@ class Decoration extends GameObject {
 
         //Calculate new snapped position
         const mousePos = Cursor.scaledPos.sub(this.#movingOffset);
-        const mousePosCentedInSnapGrid = mousePos.add(this.#snap / 2);
-        const snappedPos = mousePosCentedInSnapGrid.div(this.#snap).toInt().mult(this.#snap);
+        const snappedPos = this.snapPos(mousePos);
 
         //Fix bounds
         snappedPos.x = Util.clamp(snappedPos.x, 0, Math.floor((Game.scaledSize.x - this.size.x + this.#snap) / this.#snap) * this.#snap);
         snappedPos.y = Util.clamp(snappedPos.y, 0, Math.floor((Game.scaledSize.y - this.size.y + this.#snap) / this.#snap) * this.#snap);
 
+        //Position didnt change
+        if (snappedPos.equals(this.pos)) return;
+
         //Move to new pos
         this.moveTo(snappedPos, true);
+
+        //Notify position changed
+        vscode.postMessage({
+            type: 'move_decor',
+            index: Game.decoration.indexOf(this),
+            x: snappedPos.x,
+            y: snappedPos.y
+        });
     }
 
     //Click
     mouseDown(pos) {
         //Start moving
-        this.#moving = true;
-        this.#movingOffset = pos.sub(this.pos);
+        this.startDragging(pos.sub(this.pos));
 
         //Consume event
         return true;
@@ -991,10 +1007,26 @@ class Decoration extends GameObject {
 
     mouseUp(pos) {
         //Stop moving
-        this.#moving = false;
+        this.stopDragging();
 
         //Consume event
         return true;
+    }
+
+    //Movement
+    startDragging(moveOffset) {
+        //Start moving
+        this.#moving = true;
+        this.#movingOffset = moveOffset;
+    }
+
+    stopDragging() {
+        //Stop moving
+        this.#moving = false;
+    }
+
+    snapPos(pos) {
+        return pos.div(this.#snap).toIntRound().mult(this.#snap);
     }
 
 }

@@ -32,6 +32,10 @@ class Vec2 {
         return new Vec2(this.x, this.y);
     }
 
+    equals(v) {
+        return this.x == v.x && this.y == v.y;
+    }
+
     add(n) {
         if (typeof n === 'object')
             return new Vec2(this.x + n.x, this.y + n.y);
@@ -69,6 +73,14 @@ class Vec2 {
 
     toInt() {
         return new Vec2(Math.floor(this.x), Math.floor(this.y));
+    }
+
+    toIntRound() {
+        return new Vec2(Math.round(this.x), Math.round(this.y));
+    }
+
+    toIntCeil() {
+        return new Vec2(Math.ceil(this.x), Math.ceil(this.y));
     }
 
     toString() {
@@ -263,7 +275,7 @@ class Menus {
         //Toggle menu
         if (show) {
             //Close currently open menu
-            Menus.toggle(Menus.current, false);
+            Menus.close();
 
             //Show menu
             menu.setAttribute('show', '');
@@ -275,6 +287,10 @@ class Menus {
             Menus.current = undefined;
             Menus.backdrop.removeAttribute('show');
         }
+    }
+
+    static close() {
+        Menus.toggle(Menus.current, false);
     }
 
 }
@@ -408,17 +424,17 @@ class Game {
     }
 
     //Decor mode
-    static decorExit = document.getElementById('decorExit');
+    static decorUI = document.getElementById('decor');
 
-    static toggleDecorExit(show) {
+    static toggleDecorUI(show) {
         //Fix args
-        if (typeof show !== 'boolean') show = !Game.decorExit.hasAttribute('show');
+        if (typeof show !== 'boolean') show = !Game.decorUI.hasAttribute('show');
 
         //Toggle
         if (show)
-            Game.decorExit.setAttribute('show', '');
+            Game.decorUI.setAttribute('show', '');
         else
-            Game.decorExit.removeAttribute('show');
+            Game.decorUI.removeAttribute('show');
     }
 
     //Current action being performed
@@ -434,15 +450,16 @@ class Game {
     }
 
     //Messages
-    static showMessage(content) {
+    static showMessage(content, isLong = false) {
         //Create message element
         const message = document.createElement('span');
         message.classList.add('message');
         message.innerText = content;
+        if (isLong) message.setAttribute('long', '');
         document.getElementById('messages').appendChild(message);
 
-        //Set timeout to remove message element after 2s
-        setTimeout(() => message.remove(), 2000);
+        //Set timeout to remove message element
+        setTimeout(() => message.remove(), isLong ? 3000 : 2000);
     }
 
 }

@@ -471,6 +471,40 @@ class WebViewProvider {
                     });
                     break;
                 }
+                //Decoration
+                case 'move_decor': {
+                    //Get decoration
+                    const index = message.index;
+                    const decoration = save.decoration[index];
+                    //Update position
+                    decoration.x = message.x;
+                    decoration.y = message.y;
+                    //Save game
+                    saveGame();
+                    break;
+                }
+                case 'add_decor': {
+                    //Create decoration
+                    const decoration = {
+                        x: message.x,
+                        y: message.y,
+                        category: message.category,
+                        name: message.name
+                    };
+                    //Add decoration to list
+                    save.decoration.push(decoration);
+                    //Save game
+                    saveGame();
+                    break;
+                }
+                case 'remove_decor': {
+                    //Get decoration
+                    const index = message.index;
+                    save.decoration.splice(index, 1);
+                    //Save game
+                    saveGame();
+                    break;
+                }
             }
         });
     }

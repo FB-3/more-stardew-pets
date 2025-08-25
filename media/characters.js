@@ -839,7 +839,7 @@ class PetCharacter extends Character {
         //Notify AI pet was clicked
         this.ai.click();
 
-        //Click performed
+        //Consume event
         return true;
     }
 
@@ -1526,7 +1526,7 @@ class EnemyCharacter extends Character {
         //Notify AI emeny was clicked
         this.ai.click();
 
-        //Click performed
+        //Consume event
         return true;
     }
 

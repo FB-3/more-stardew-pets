@@ -14,7 +14,7 @@ const vscode = acquireVsCodeApi()
 //Actions menu
 function toggleActionBall() {
     //Hide actions menu
-    Menus.toggle('actions', false);
+    Menus.close();
 
     //Ball is visible -> Remove it
     if (Ball.isVisible) Ball.onReached()
@@ -25,7 +25,7 @@ function toggleActionBall() {
 
 function toggleActionGift() {
     //Hide actions menu
-    Menus.toggle('actions', false);
+    Menus.close();
 
     //Toggle gift action
     Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT)
@@ -33,24 +33,25 @@ function toggleActionGift() {
 
 function toggleDecorMode() {
     //Hide actions menu
-    Menus.toggle('actions', false);
+    Menus.close();
 
     //Exit decor mode
     if (Game.isAction(Action.DECOR)) {
         Game.setAction(Action.NONE);
-        Game.toggleDecorExit(false);
+        Game.toggleDecorUI(false);
         return;
     }
 
     //No decoration
     if (Game.decoration.length <= 0) {
-        Game.showMessage('Buy decoration first');
+        Game.showMessage('Buy decoration first', true);
         return;
     }
 
     //Enter decor mode
     Game.setAction(Action.DECOR);
-    Game.toggleDecorExit(true);
+    Game.toggleDecorUI(true);
+    //Game.showMessage('Drag: Move\nRight Click: Sell', true);
 }
 
 //Store menu
@@ -91,23 +92,58 @@ function selectStoreCategory(category) {
 
     //Create category items
     for (const name of Object.keys(DecorationPreset[category])) {
-        //Get item
-        const item = DecorationPreset[category][name];
+        //Get decoration preset
+        const preset = DecorationPreset[category][name];
 
         //Create item element
-        const element = createStoreItem(name, item.price);
+        const element = createStoreItem(name, preset.price);
         content.appendChild(element);
         
         //Add image to element
         const imgBox = document.createElement('div');
         const img = document.createElement('div');
         img.style.setProperty('--image', `url('./sprites/decoration/decoration.png')`)
-        img.style.setProperty('--width', `${item.size.x}px`)
-        img.style.setProperty('--height', `${item.size.y}px`)
-        img.style.setProperty('--scale', `${50 / Math.max(item.size.x, item.size.y)}`)
-        img.style.setProperty('--spriteOffset', `${-item.spriteOffset.x}px ${-item.spriteOffset.y}px`)
+        img.style.setProperty('--width', `${preset.size.x}px`)
+        img.style.setProperty('--height', `${preset.size.y}px`)
+        img.style.setProperty('--scale', `${50 / Math.max(preset.size.x, preset.size.y)}`)
+        img.style.setProperty('--spriteOffset', `${-preset.spriteOffset.x}px ${-preset.spriteOffset.y}px`)
         imgBox.prepend(img);
         element.prepend(imgBox);
+
+        //Add buy function
+        element.onclick = () => {
+            //Check if decoration price is valid
+            if (typeof preset.price !== 'number') return;
+
+            //Check if player has enough money
+            if (Game.money < preset.price) return;
+
+            //Consume money
+            Game.addMoney(-preset.price);
+
+            //Enter decor mode / close menu
+            if (!Game.isAction(Action.DECOR)) 
+                toggleDecorMode();  //Closes the menu too
+            else 
+                Menus.close();
+
+            //Create decoration
+            const decor = new Decoration(preset);
+
+            //Center with mouse & start dragging
+            const decorCenterRelativePos = decor.size.mult(0.5);
+            decor.moveTo(decor.snapPos(Cursor.scaledPos.sub(decorCenterRelativePos)));
+            decor.startDragging(decorCenterRelativePos);
+
+            //Notify decor added
+            vscode.postMessage({
+                type: 'add_decor',
+                x: decor.pos.x,
+                y: decor.pos.y,
+                category: category,
+                name: name
+            });
+        }
     }
 
     //Scroll to top
@@ -236,7 +272,7 @@ window.addEventListener('message', event => {
         //Toggle actions menu
         case 'actions':
             Game.setAction(Action.NONE);
-            Game.toggleDecorExit(false);
+            Game.toggleDecorUI(false);
             Menus.toggle('actions');
             break;
 
@@ -288,7 +324,7 @@ document.onmousedown = event => {
             //Sort objects
             Game.sortObjects();
 
-            //Check for clicks from nearest to farthest object
+            //Check to drag decoration from nearest to farthest object
             for (let i = Game.objects.length - 1; i >= 0; i--) {
                 //Get object
                 const obj = Game.objects[i];
@@ -296,7 +332,7 @@ document.onmousedown = event => {
                 //Check if its decoration
                 if (!(obj instanceof Decoration)) continue;
 
-                //Check click
+                //Check event
                 if (obj.checkMouseDown(pos)) break;
             }
             break;
@@ -313,7 +349,7 @@ document.onmouseup = event => {
         //Decor mode
         case Action.DECOR: {
             //Stop moving all
-            Game.decoration.forEach(obj => obj.mouseUp(pos));
+            Game.decoration.forEach(obj => obj.stopDragging());
             break;
         }
 
@@ -341,7 +377,7 @@ document.onmouseup = event => {
                 //Get object
                 const obj = Game.objects[i];
 
-                //Check click
+                //Check event
                 if (obj.checkMouseUp(pos)) break;
             }
             
