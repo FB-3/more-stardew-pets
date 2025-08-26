@@ -331,63 +331,61 @@ class Cursor {
 
 }
 
-//Decor Mode
+//Decor mode
 class DecorMode {
 
     //Actions
-    static get MOVE() { return 'move'; }
-    static get SELL() { return 'sell'; }
+    static get ACTION_MOVE() { return 'move'; }
+    static get ACTION_SELL() { return 'sell'; }
 
-    static action = DecorMode.MOVE;
+    static action = DecorMode.ACTION_MOVE;
 
     static isAction(action) { 
         return DecorMode.action == action;
     }
 
-    static toggleAction() {
-        if (DecorMode.isAction(DecorMode.MOVE))
-            DecorMode.setAction(DecorMode.SELL);
-        else
-            DecorMode.setAction(DecorMode.MOVE);
-    }
-
     static setAction(action) {
         switch (action) {
-            case DecorMode.MOVE:
-                DecorMode.actionText.innerText = 'Sell';
+            case DecorMode.ACTION_MOVE:
+                DecorMode.actionButton.innerText = 'Sell';
                 DecorMode.helpText.innerText = 'Drag to move';
                 break;
-            case DecorMode.SELL:
-                DecorMode.actionText.innerText = 'Move';
+            case DecorMode.ACTION_SELL:
+                DecorMode.actionButton.innerText = 'Move';
                 DecorMode.helpText.innerText = 'Click to sell';
                 break;
         }
         DecorMode.action = action;
     }
 
-    //Menu
-    static menu = document.getElementById('decor');
-    static helpText = document.getElementById('decorHelp');
-    static actionText = document.getElementById('decorAction');
+    static toggleAction() {
+        if (DecorMode.isAction(DecorMode.ACTION_MOVE))
+            DecorMode.setAction(DecorMode.ACTION_SELL);
+        else
+            DecorMode.setAction(DecorMode.ACTION_MOVE);
+    }
 
-    static toggleUI(show) {
+    //UI
+    static overlay = document.getElementById('decor');
+    static helpText = document.getElementById('decorHelp');
+    static actionButton = document.getElementById('decorAction');
+    static actionsToggleButton = document.getElementById('actionsDecor');
+
+    static showOverlay(show) {
         //Fix args
-        if (typeof show !== 'boolean') show = !DecorMode.menu.hasAttribute('show');
+        if (typeof show !== 'boolean') show = !DecorMode.overlay.hasAttribute('show');
 
         //Toggle
         if (show) {
-            DecorMode.actionsDecorText.innerText = 'Exit Decor Mode';
-            DecorMode.menu.setAttribute('show', '');
-            DecorMode.setAction(DecorMode.MOVE);
+            DecorMode.actionsToggleButton.innerText = 'Exit Decor Mode';
+            DecorMode.overlay.setAttribute('show', '');
         } else {
-            DecorMode.actionsDecorText.innerText = 'Enter Decor Mode';
-            DecorMode.menu.removeAttribute('show');
+            DecorMode.actionsToggleButton.innerText = 'Enter Decor Mode';
+            DecorMode.overlay.removeAttribute('show');
         }
     }
 
     //Mode
-    static actionsDecorText = document.getElementById('actionsDecor');
-
     static toggle(show) {
         //Fix args
         if (typeof show !== 'boolean') show = !Game.isAction(Action.DECOR);
@@ -402,11 +400,10 @@ class DecorMode {
 
             //Enter decor mode
             Game.setAction(Action.DECOR);
-            DecorMode.toggleUI(true);
+            DecorMode.setAction(DecorMode.ACTION_MOVE);
         } else {
             //Exit decor mode
             Game.setAction(Action.NONE);
-            DecorMode.toggleUI(false);
         }
     }
 
@@ -482,14 +479,14 @@ class Game {
     }
 
     //Game objects
-    static objects = [];    //List of all the game objects
-    static enemies = [];    //List of all the enemies
+    static objects = [];    //List of all the game objects (gets sorted every frame to check clicks and render back-to-front)
     static pets = [];       //List of all the pets       (do not sort, positions must be the same as in extension.ts)
     static decoration = []; //List of all the decoration (do not sort, positions must be the same as in extension.ts)
+    static enemies = [];    //List of all the enemies
     static enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
 
     static sortObjects() {
-        //Sort objects for rendering
+        //Sort objects back-to-front
         Game.objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
     }
 
@@ -516,9 +513,13 @@ class Game {
     }
 
     static setAction(action) {
+        //Update action & cursor
         Game.action = action;
         Cursor.setIcon(action);
+
+        //Close menus & toggle decor mode overlay
         Menus.close();
+        DecorMode.showOverlay(Game.isAction(Action.DECOR));
     }
 
     //Messages

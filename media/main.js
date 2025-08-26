@@ -16,9 +16,6 @@ function toggleActionBall() {
     //Close actions menu & decor mode UI
     Menus.close();
 
-    //Hide decor mode UI
-    DecorMode.toggleUI(false);
-
     //Ball is visible -> Remove it
     if (Ball.isVisible) Ball.onReached();
     
@@ -29,9 +26,6 @@ function toggleActionBall() {
 function toggleActionGift() {
     //Close actions menu
     Menus.close();
-
-    //Hide decor mode UI
-    DecorMode.toggleUI(false);
 
     //Toggle gift action
     Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT);
@@ -284,6 +278,8 @@ window.addEventListener('message', event => {
         case 'actions':
             //Stop ball/gift action
             if (Game.isAction(Action.BALL) || Game.isAction(Action.GIFT)) Game.setAction(Action.NONE);
+
+            //Show actions menu
             Menus.toggle('actions');
             break;
 
@@ -363,13 +359,13 @@ document.onmouseup = event => {
             //Check decor action
             switch (DecorMode.action) {
                 //Move
-                case DecorMode.MOVE:
+                case DecorMode.ACTION_MOVE:
                     //Stop moving all
                     Game.decoration.forEach(obj => obj.stopDragging());
                     break;
 
                 //Sell
-                case DecorMode.SELL:
+                case DecorMode.ACTION_SELL:
                     //Sort objects
                     Game.sortObjects();
 

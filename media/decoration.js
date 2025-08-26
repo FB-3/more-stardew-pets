@@ -980,7 +980,7 @@ class Decoration extends GameObject {
         super.update();
 
         //Check if moving
-        if (!this.#moving || !DecorMode.isAction(DecorMode.MOVE)) return;
+        if (!this.#moving || !DecorMode.isAction(DecorMode.ACTION_MOVE)) return;
 
         //Calculate new snapped position
         const mousePos = Cursor.scaledPos.sub(this.#movingOffset);
@@ -1013,13 +1013,13 @@ class Decoration extends GameObject {
         //Check decor action
         switch (DecorMode.action) {
             //Move
-            case DecorMode.MOVE:
+            case DecorMode.ACTION_MOVE:
                 //Start moving
                 this.startDragging(pos.sub(this.pos));
                 break;
 
             //Sell
-            case DecorMode.SELL:
+            case DecorMode.ACTION_SELL:
                 //Do nothing
                 break;
         }
@@ -1035,13 +1035,13 @@ class Decoration extends GameObject {
         //Check decor action
         switch (DecorMode.action) {
             //Move
-            case DecorMode.MOVE:
+            case DecorMode.ACTION_MOVE:
                 //Stop moving
                 this.stopDragging();
                 break;
 
             //Sell
-            case DecorMode.SELL:
+            case DecorMode.ACTION_SELL:
                 //Give money to player
                 if (typeof this.price === 'number') Game.addMoney(this.price);
 
