@@ -145,19 +145,19 @@ function initGame() {
     webview.postMessage({
         type: 'background',
         value: config.get('background')
-    })
+    });
 
     //Send scale
     webview.postMessage({
         type: 'scale',
         value: config.get('scale')
-    })
+    });
 
     //Send money
     webview.postMessage({
         type: 'money',
         value: save.money
-    })
+    });
 
     //Load pets
     for (const pet of save.pets) loadPet(pet);
@@ -166,7 +166,7 @@ function initGame() {
     for (const decor of save.decoration) loadDecor(decor);
 
     //Finish
-    webview.postMessage({ type: 'init' })
+    webview.postMessage({ type: 'init' });
 }
 
 function loadPetsFile() {
@@ -220,7 +220,7 @@ function loadPet(pet: Pet) {
         name: pet.name,
         specie: pet.specie,
         color: pet.color,
-    })
+    });
 }
 
 function addPet(pet: Pet) {
@@ -240,7 +240,7 @@ function removePet(index: number, saveFile: boolean) {
     webview.postMessage({
         type: 'remove_pet',
         index: index,
-    })
+    });
 
     //Save pets
     if (saveFile) saveGame();
@@ -255,7 +255,7 @@ function loadDecor(decor: Decoration) {
         y: decor.y,
         category: decor.category,
         name: decor.name,
-    })
+    });
 }
 
 
@@ -418,7 +418,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Actions
     const commandAction = vscode.commands.registerCommand('stardew-pets.actions', async () => {
-        webview.postMessage({ type: 'actions' })
+        webview.postMessage({ type: 'actions' });
     });
 
     //Open settings
@@ -434,12 +434,13 @@ export function activate(context: vscode.ExtensionContext) {
 
     //Reload save file
     const commandReloadSaveFile = vscode.commands.registerCommand('stardew-pets.reloadSaveFile', async () => {
-        //Remove all pets
-        const petsLength = save.pets.length;
-        for (let i = 0; i < petsLength; i++) removePet(0, false);
+        //Reset extension
+        webview.postMessage({ type: 'reset' });
 
-        //Reload save file & init game again
+        //Reload save file
         loadGame();
+
+        //Init game again
         initGame();
     });
 

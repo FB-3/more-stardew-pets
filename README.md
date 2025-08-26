@@ -2,30 +2,46 @@
 
 # Stardew Pets
 
-Keep your favourite stardew pets with you while coding.
+Keep your favourite ***Stardew Valley*** pets with you while coding.
 
 ![alt text](https://raw.githubusercontent.com/BOTPanzer/Stardew-Pets/main/pets.png)
 
-## How to use
+## Contents
 
-Stardew Pets can be found at the explorer panel.  
-In case it does not appear, try right clicking in the **EXPLORER** title on top and see if it is disabled.
+### Pets
 
-## Pets
+You can add or remove pets to keep you company while coding.  
+**Current pets:** cats, dogs, dinos, turtles, raccoons, ducks, goats, sheeps, ostrichs, pigs, rabbits, chicken, cows and junimos!
 
-Stardew Pets currently has cats, dogs, dinos, turtles, raccoons, ducks, goats, sheeps, ostrichs, pigs, rabbits, chicken, cows and junimos!
+### Enemies
 
-## Store
+Enemies will sometimes appear in your farm.  
+Clicking on one of them kills it and gives you money to buy decoration.  
+**Current enemies:** bugs, crabs, golems and slimes!
 
-Now available on the [VSCode Store](https://marketplace.visualstudio.com/items?itemName=botpa.stardew-pets)!
+### Decoration
 
-## Dev
+You can use the money obtained by enemies to buy new decoration in the **General Store**.  
+Aditionally, you can rearange or sell your current decoration by entering **Decor Mode**.
 
-If you have time, you can also check my [portfolio](https://botpa.vercel.app) out :)
+## Credits
+
+**Stardew Pets** was done by a single person in their free time.  
+Since it's free, I'd appreciate you taking a look at my [portfolio](https://botpa.vercel.app) as a thanks :D
+
+## Where to Find it
+
+**Stardew Pets** can be found in the **Explorer** panel.  
+If its missing, try searching ***"Focus on Stardew Pets View"*** in the **Command Palette** (Ctrl+Shift+P on Windows/Linux).
+
+## VSCode Store
+
+**Stardew Pets** is available on the [VSCode Store](https://marketplace.visualstudio.com/items?itemName=botpa.stardew-pets)!
 
 ## Contributing
 
-**For people who want to contribute:**  
-If you want to do a pull request, I'm only taking bug fixes, other requests will most likely be discarded.
+For the people who want to contribute, please ask if your change would be accepted before making it.  
+I mainly take bug fixes, but you can ask for new features too.  
+Just keep in mind I won't add things that aren't in ***Stardew Valley***, like recolours or new original pets.
 
 </div>

@@ -22,6 +22,25 @@
             <canvas id="hiddenCanvas"></canvas>
         </div>
 
+        <!-- Decor mode -->
+        <div id="decor">
+            <!-- Controls -->
+            <span id="decorHelp">Drag to move</span>
+            
+            <!-- Toggle action & exit buttons -->
+            <div class="decorButtons">
+                <!-- Toggle action -->
+                <div class="menu" button show onclick="DecorMode.toggleAction();">
+                    <span id="decorAction">Action</span>
+                </div>
+
+                <!-- Exit decor mode -->
+                <div class="menu" button show onclick="DecorMode.toggle(false)">
+                    <span>Exit</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Messages -->
         <div id="messages"></div>
 
@@ -45,7 +64,7 @@
                     </div>
                     <div class="menuButton" onclick="toggleActionDecor()">
                         <img src="{media}sprites/ui/axe.png">
-                        <span>Enter Decor Mode</span>
+                        <span id="actionsDecor">Enter Decor Mode</span>
                     </div>
                 </div>
             </div>
@@ -60,25 +79,6 @@
             <!-- Money menu -->
             <div id="money" class="menu" button show>
                 <span id="moneyText">0G</span>
-            </div>
-        </div>
-
-        <!-- Decor mode -->
-        <div id="decor">
-            <!-- Controls -->
-            <span id="decorHelp">Drag to move</span>
-            
-            <!-- Toggle action & exit buttons -->
-            <div class="decorButtons">
-                <!-- Toggle action -->
-                <div class="menu" button show onclick="DecorMode.toggleAction();">
-                    <span id="decorAction">Action</span>
-                </div>
-
-                <!-- Exit decor mode -->
-                <div class="menu" button show onclick="DecorMode.toggle()">
-                    <span>Exit</span>
-                </div>
             </div>
         </div>
 

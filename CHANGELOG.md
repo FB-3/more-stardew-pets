@@ -3,20 +3,23 @@
 ## [v2.0.0]
 
 **New**
-- Added enemies that die and give you money when clicked
+- Added ***enemies*** that die and give you money when clicked
+- Added ***decoration*** that can be bought in the ***General Store*** with the money obtained by enemies
+- Added ***Decor Mode*** to move & sell decoration
 - Added snowy background
 
 **Engine**
 - Remade the engine to use a canvas instead of HTML & CSS for objects like pets
+- Changed save file from ***pets.json*** to a new ***save.json*** with support for money, pets & decoration
 - Clicking a pet behind another pet should now be easier, the game checks if a click was performed on a transparent pixel
 
 **Tweaks**
-- Updated menus UI to look closer to ***Stardew Valley***
-- Cursor now gets hidden when using the ball or gift
+- Updated the UI all menus to look closer to ***Stardew Valley***
+- The cursor now gets hidden when using the ball or gift
 
 ## [v1.2.3]
 
-- Moved "Play with Ball" and "Give a Gift" buttons into a new "Actions" menu
+- Moved ***Play with Ball*** and ***Give a Gift*** buttons into a new ***Actions*** menu
 - Changed how actions are handled internally
 
 ## [v1.2.1]
@@ -36,7 +39,7 @@
 - Fixed purple turtles
 - Added ducks
 - Updated moods system to reset heart after 10 minutes
-- Changed where "pets.json" is stored to prevent deleting it with updates
+- Changed where ***pets.json*** is stored to prevent deleting it with updates
 
 ## [v1.0.0]
 

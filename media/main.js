@@ -13,33 +13,56 @@ const vscode = acquireVsCodeApi()
 
 //Actions menu
 function toggleActionBall() {
-    //Hide actions menu
+    //Close actions menu & decor mode UI
     Menus.close();
 
+    //Hide decor mode UI
+    DecorMode.toggleUI(false);
+
     //Ball is visible -> Remove it
-    if (Ball.isVisible) Ball.onReached()
+    if (Ball.isVisible) Ball.onReached();
     
     //Toggle ball action
-    Game.setAction(Game.isAction(Action.BALL) ? Action.NONE : Action.BALL)
+    Game.setAction(Game.isAction(Action.BALL) ? Action.NONE : Action.BALL);
 }
 
 function toggleActionGift() {
-    //Hide actions menu
+    //Close actions menu
     Menus.close();
 
+    //Hide decor mode UI
+    DecorMode.toggleUI(false);
+
     //Toggle gift action
-    Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT)
+    Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT);
 }
 
 function toggleActionDecor() {
-    //Hide actions menu
+    //Close actions menu
     Menus.close(); 
     
-    //Try to enter decor mode
+    //Toggle decor mode
     DecorMode.toggle();
 }
 
 //Store menu
+function createStoreItem(name, price) {
+    //Item element
+    const element = document.createElement('div');
+    element.classList.add('menuButton', 'storeButton');
+
+    //Name text element
+    const text = document.createElement('span');
+    text.innerText = Util.titleCase(name.toLowerCase().replaceAll('_', ' '));
+    element.append(text);
+
+    //Add price to text
+    if (typeof price === 'number') text.innerHTML += `<br><span class="storeButtonMoney">${price}G</span>`;
+
+    //Return element
+    return element;
+}
+
 function openStoreMenu() {
     //Empty list
     const content = document.getElementById('storeContent');
@@ -54,7 +77,7 @@ function openStoreMenu() {
     for (const category of Object.keys(DecorationPreset)) {
         //Create item element
         const element = createStoreItem(category);
-        element.onclick = () => selectStoreCategory(category);
+        element.onclick = () => openStoreCategoryMenu(category);
         content.appendChild(element);
     }
 
@@ -65,7 +88,7 @@ function openStoreMenu() {
     Menus.toggle('store', true);
 }
 
-function selectStoreCategory(category) {
+function openStoreCategoryMenu(category) {
     //Empty list
     const content = document.getElementById('storeContent');
     content.innerHTML = '';
@@ -87,7 +110,7 @@ function selectStoreCategory(category) {
         //Add image to element
         const imgBox = document.createElement('div');
         const img = document.createElement('div');
-        img.style.setProperty('--image', `url('./sprites/decoration/decoration.png')`)
+        img.style.setProperty('--image', `url('./sprites/decoration.png')`)
         img.style.setProperty('--width', `${preset.size.x}px`)
         img.style.setProperty('--height', `${preset.size.y}px`)
         img.style.setProperty('--scale', `${50 / Math.max(preset.size.x, preset.size.y)}`)
@@ -103,13 +126,19 @@ function selectStoreCategory(category) {
             //Check if player has enough money
             if (Game.money < preset.price) return;
 
+            //Close actions menu
+            Menus.close();
+
+            //Enter decor mode
+            DecorMode.toggle(true);
+
             //Consume money
             Game.addMoney(-preset.price);
 
             //Create decoration
             const decor = new Decoration(preset);
 
-            //Center with mouse & start dragging
+            //Center decoration with mouse & start dragging it
             const decorCenterRelativePos = decor.size.mult(0.5);
             decor.moveTo(decor.snapPos(Cursor.scaledPos.sub(decorCenterRelativePos)));
             decor.startDragging(decorCenterRelativePos);
@@ -122,31 +151,11 @@ function selectStoreCategory(category) {
                 category: category,
                 name: name
             });
-
-            //Enter decor mode
-            if (!Game.isAction(Action.DECOR)) DecorMode.toggle();
         }
     }
 
     //Scroll to top
     content.scrollTop = 0;
-}
-
-function createStoreItem(name, price) {
-    //Item element
-    const element = document.createElement('div');
-    element.classList.add('menuButton', 'storeButton');
-
-    //Name text element
-    const text = document.createElement('span');
-    text.innerText = Util.titleCase(name.toLowerCase().replaceAll('_', ' '));
-    element.append(text);
-
-    //Add price to text
-    if (typeof price === 'number') text.innerHTML += `<br><span class="storeButtonMoney">${price}G</span>`;
-
-    //Return element
-    return element;
 }
 
 
@@ -166,6 +175,26 @@ window.addEventListener('message', event => {
 
     //Check message type
     switch (message.type.toLowerCase()) {
+        //Init
+        case 'init':
+            document.body.removeAttribute('hide');
+            break;
+    
+        //Reset
+        case 'reset':
+            //Remove pets
+            for (const pet of Game.pets) Game.objects.removeItem(pet);
+            Game.pets = [];
+
+            //Remove decor
+            for (const decor of Game.decoration) Game.objects.removeItem(decor);
+            Game.decoration = [];
+
+            //Close menus & exit decor mode
+            Menus.close();
+            DecorMode.toggle(false);
+            break;
+    
         //Spawn a pet/enemy/decor
         case 'spawn_pet': {
             const name = message.name;
@@ -253,8 +282,8 @@ window.addEventListener('message', event => {
 
         //Toggle actions menu
         case 'actions':
-            Game.setAction(Action.NONE);
-            DecorMode.toggleUI(false);
+            //Stop ball/gift action
+            if (Game.isAction(Action.BALL) || Game.isAction(Action.GIFT)) Game.setAction(Action.NONE);
             Menus.toggle('actions');
             break;
 
@@ -285,11 +314,6 @@ window.addEventListener('message', event => {
         //Update money
         case 'money': 
             Game.setMoney(message.value);
-            break;
-
-        //Init
-        case 'init':
-            document.body.removeAttribute('hide');
             break;
     }
 })

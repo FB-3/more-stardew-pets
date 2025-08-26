@@ -361,7 +361,7 @@ body[cursor="none"] {
 }
 
 .storeButton > div > div {
-    --image: url('./sprites/decoration/decoration.png');
+    --image: url('./sprites/decoration.png');
     --width: 30px;
     --height: 30px;
     --scale: 1;

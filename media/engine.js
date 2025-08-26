@@ -346,13 +346,13 @@ class DecorMode {
 
     static toggleAction() {
         if (DecorMode.isAction(DecorMode.MOVE))
-            DecorMode.setMode(DecorMode.SELL);
+            DecorMode.setAction(DecorMode.SELL);
         else
-            DecorMode.setMode(DecorMode.MOVE);
+            DecorMode.setAction(DecorMode.MOVE);
     }
 
-    static setMode(mode) {
-        switch (mode) {
+    static setAction(action) {
+        switch (action) {
             case DecorMode.MOVE:
                 DecorMode.actionText.innerText = 'Sell';
                 DecorMode.helpText.innerText = 'Drag to move';
@@ -362,7 +362,7 @@ class DecorMode {
                 DecorMode.helpText.innerText = 'Click to sell';
                 break;
         }
-        DecorMode.action = mode;
+        DecorMode.action = action;
     }
 
     //Menu
@@ -376,31 +376,38 @@ class DecorMode {
 
         //Toggle
         if (show) {
+            DecorMode.actionsDecorText.innerText = 'Exit Decor Mode';
             DecorMode.menu.setAttribute('show', '');
-            DecorMode.setMode(DecorMode.MOVE);
+            DecorMode.setAction(DecorMode.MOVE);
         } else {
+            DecorMode.actionsDecorText.innerText = 'Enter Decor Mode';
             DecorMode.menu.removeAttribute('show');
         }
     }
 
     //Mode
-    static toggle() {
-        //Exit decor mode
-        if (Game.isAction(Action.DECOR)) {
+    static actionsDecorText = document.getElementById('actionsDecor');
+
+    static toggle(show) {
+        //Fix args
+        if (typeof show !== 'boolean') show = !Game.isAction(Action.DECOR);
+
+        //Toggle
+        if (show) {
+            //No decoration
+            if (Game.decoration.isEmpty()) {
+                Game.showMessage('Buy decoration first', true);
+                return;
+            }
+
+            //Enter decor mode
+            Game.setAction(Action.DECOR);
+            DecorMode.toggleUI(true);
+        } else {
+            //Exit decor mode
             Game.setAction(Action.NONE);
             DecorMode.toggleUI(false);
-            return;
         }
-
-        //No decoration
-        if (Game.decoration.isEmpty()) {
-            Game.showMessage('Buy decoration first', true);
-            return;
-        }
-
-        //Enter decor mode
-        Game.setAction(Action.DECOR);
-        DecorMode.toggleUI(true);
     }
 
 }

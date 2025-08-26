@@ -124,37 +124,37 @@ class DecorationPreset {
         TROPICAL_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(96, 64),
-            //price: 0,
+            price: 2500, //Invented price
         },
         DESERT_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(544, 80),
-            //price: 0,
+            price: 1000, //Invented price
         },
         JOJA_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(896, 432),
-            //price: 0,
+            price: 1000, //Invented price
         },
         WIZARD_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(592, 1152),
-            //price: 0,
+            price: 1000, //Invented price
         },
         JUNIMO_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(848, 80),
-            //price: 0,
+            price: 1000, //Invented price
         },
         RETRO_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(672, 848),
-            //price: 0,
+            price: 1000, //Invented price
         },
         PLASTIC_LAWN_CHAIR: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(640, 608),
-            //price: 0,
+            price: 350, //Invented price
         },
     }
 
@@ -182,22 +182,22 @@ class DecorationPreset {
         JOJA_STOOL: { 
             size: new Vec2(16),
             spriteOffset: new Vec2(896, 736),
-            //price: 0,
+            price: 500, //Invented price
         },
         WIZARD_STOOL: { 
             size: new Vec2(16),
             spriteOffset: new Vec2(688, 1088),
-            //price: 0,
+            price: 500, //Invented price
         },
         JUNIMO_STOOL: { 
             size: new Vec2(16),
             spriteOffset: new Vec2(880, 64),
-            //price: 0,
+            price: 500, //Invented price
         },
         RETRO_STOOL: { 
             size: new Vec2(16),
             spriteOffset: new Vec2(640, 848),
-            //price: 0,
+            price: 500, //Invented price
         },
     }
 
@@ -314,37 +314,37 @@ class DecorationPreset {
         WINE_TABLE: { 
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(672, 448),
-            //price: 0,
+            price: 2000, //Invented price
         },
         SPIRITS_TABLE: { 
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(672, 480),
-            //price: 0,
+            price: 2000, //Invented price
         },
         DESERT_TABLE: { 
             size: new Vec2(32, 48),
             spriteOffset: new Vec2(512, 80),
-            //price: 0,
+            price: 1500, //Invented price
         },
         JOJA_TABLE: { 
             size: new Vec2(32, 48),
             spriteOffset: new Vec2(896, 464),
-            //price: 0,
+            price: 1500, //Invented price
         },
         WIZARD_TABLE: { 
             size: new Vec2(32, 48),
             spriteOffset: new Vec2(640, 1152),
-            //price: 0,
+            price: 1500, //Invented price
         },
         JUNIMO_TABLE: { 
             size: new Vec2(32, 48),
             spriteOffset: new Vec2(896, 64),
-            //price: 0,
+            price: 1500, //Invented price
         },
         RETRO_TABLE: { 
             size: new Vec2(32, 48),
             spriteOffset: new Vec2(672, 880),
-            //price: 0,
+            price: 1500, //Invented price
         },
     }
     
@@ -377,22 +377,22 @@ class DecorationPreset {
         JOJA_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(864, 464),
-            //price: 0,
+            price: 1500, //Invented price
         },
         WIZARD_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(688, 1168),
-            //price: 0,
+            price: 1500, //Invented price
         },
         JUNIMO_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(864, 112),
-            //price: 0,
+            price: 1500, //Invented price
         },
         RETRO_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(576, 912),
-            //price: 0,
+            price: 1500, //Invented price
         },
     }
 
@@ -435,32 +435,32 @@ class DecorationPreset {
         DESERT_END_TABLE: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(544, 112),
-            //price: 0,
+            price: 1000, //Invented price
         },
         JOJA_END_TABLE: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(912, 720),
-            //price: 0,
+            price: 1000, //Invented price
         },
         GRAY_JOJA_END_TABLE: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(944, 720),
-            //price: 0,
+            price: 1000, //Invented price
         },
         WIZARD_END_TABLE: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(672, 1104),
-            //price: 0,
+            price: 1000, //Invented price
         },
         JUNIMO_END_TABLE: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(816, 112),
-            //price: 0,
+            price: 1000, //Invented price
         },
         RETRO_END_TABLE: { 
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(544, 912),
-            //price: 0,
+            price: 1000, //Invented price
         },
     }
 
@@ -478,17 +478,17 @@ class DecorationPreset {
         JOJA_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(848, 672),
-            //price: 0,
+            price: 1250, //Invented price
         },
         GRAY_JOJA_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(896, 672),
-            //price: 0,
+            price: 1250, //Invented price
         },
         ELIXIR_TABLE: { 
             size: new Vec2(32),
             spriteOffset: new Vec2(656, 1200),
-            //price: 0,
+            price: 1250, //Invented price
         },
     }
 
@@ -516,7 +516,7 @@ class DecorationPreset {
             size: new Vec2(32),
             spriteOffset: new Vec2(448, 800),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 800, //Invented price
         },
         OCEANIC_RUG: {
             size: new Vec2(48, 32),
@@ -546,19 +546,19 @@ class DecorationPreset {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(288, 800),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         GREEN_COTTAGE_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(368, 800),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         MYSTIC_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(0, 832),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         NAUTICAL_RUG: {
             size: new Vec2(48, 32),
@@ -570,31 +570,31 @@ class DecorationPreset {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(224, 944),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         FRUIT_SALAD_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(336, 944),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         BONE_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(192, 976),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         SNOWY_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(416, 976),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         LIGHT_GREEN_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(385, 1232),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         LARGE_GREEN_RUG: {
             size: new Vec2(64, 48),
@@ -642,121 +642,121 @@ class DecorationPreset {
             size: new Vec2(96, 64),
             spriteOffset: new Vec2(352, 1360),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 3500, //Invented price
         },
         SANDY_RUG: {
             size: new Vec2(48),
             spriteOffset: new Vec2(624, 80),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         DESERT_RUG: {
             size: new Vec2(64, 48),
             spriteOffset: new Vec2(512, 192),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 2000, //Invented price
         },
         LARGE_JOJA_RUG: {
             size: new Vec2(80, 48),
             spriteOffset: new Vec2(768, 608),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 3000, //Invented price
         },
         SQUARE_JOJA_RUG: {
             size: new Vec2(32),
             spriteOffset: new Vec2(848, 624),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 800, //Invented price
         },
         SMALL_JOJA_RUG: {
             size: new Vec2(32, 16),
             spriteOffset: new Vec2(848, 608),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 500, //Invented price
         },
         JOJA_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(768, 656),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         RUNE_RUG: {
             size: new Vec2(32),
             spriteOffset: new Vec2(576, 1248),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 800, //Invented price
         },
         SWIRL_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(512, 1280),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         STARRY_MOON_RUG: {
             size: new Vec2(80, 48),
             spriteOffset: new Vec2(512, 1329),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 3000, //Invented price
         },
         STONE_FLOORING: {
             size: new Vec2(64),
             spriteOffset: new Vec2(512, 1216),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 2000, //Invented price
         },
         SQUARE_JUNIMO_RUG: {
             size: new Vec2(32),
             spriteOffset: new Vec2(769, 192),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 800, //Invented price
         },
         CIRCULAR_JUNIMO_RUG: {
             size: new Vec2(48),
             spriteOffset: new Vec2(768, 336),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         JUNIMO_RUG: {
             size: new Vec2(64, 48),
             spriteOffset: new Vec2(768, 224),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 2000, //Invented price
         },
         JUNIMO_MAT: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(832, 224),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         SMALL_JUNIMO_MAT: {
             size: new Vec2(32, 16),
             spriteOffset: new Vec2(928, 368),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 500, //Invented price
         },
         LARGE_RETRO_RUG: {
             size: new Vec2(64, 48),
             spriteOffset: new Vec2(656, 960),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 2000, //Invented price
         },
         RETRO_RUG: {
             size: new Vec2(48, 32),
             spriteOffset: new Vec2(544, 944),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 1250, //Invented price
         },
         RETRO_SQUARE_RUG: {
             size: new Vec2(32),
             spriteOffset: new Vec2(624, 944),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 800, //Invented price
         },
         RETRO_MAT: {
             size: new Vec2(32, 16),
             spriteOffset: new Vec2(624, 976),
             sortingLayer: DecorationLayer.RUGS,
-            //price: 0,
+            price: 500, //Invented price
         },
     }
 
@@ -766,85 +766,85 @@ class DecorationPreset {
             size: new Vec2(16),
             spriteOffset: new Vec2(544, 464),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 350, //Invented price
         },
         YELLOW_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(560, 464),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 350, //Invented price
         },
         GREEN_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(576, 464),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 350, //Invented price
         },
         RED_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(592, 464),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 350, //Invented price
         },
         BROWN_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(608, 464),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 350, //Invented price
         },
         BLACK_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(624, 464),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 350, //Invented price
         },
         JOJA_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(880, 496),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         GRAY_JOJA_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(864, 496),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         WIZARD_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(672, 1168),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         DARK_WIZARD_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(672, 1184),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         JUNIMO_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(864, 144),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         DARK_JUNIMO_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(880, 144),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         RETRO_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(624, 848),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
         DARK_RETRO_CUSHION: {
             size: new Vec2(16),
             spriteOffset: new Vec2(608, 848),
             sortingLayer: DecorationLayer.CUSHIONS,
-            //price: 0,
+            price: 500, //Invented price
         },
     }
 
@@ -946,7 +946,7 @@ class Decoration extends GameObject {
     //Constructor
     constructor(preset = {}, config = {}) {
         //Add image to config
-        config.image = `decoration/decoration.png`;
+        config.image = `decoration.png`;
 
         //Create game object
         super({ ...preset, ...config });
@@ -971,9 +971,7 @@ class Decoration extends GameObject {
         });
 
         //Exit decor mode if no decor left
-        if (Game.decoration.isEmpty() && Game.isAction(Action.DECOR)) {
-            DecorMode.toggle();
-        }
+        if (Game.decoration.isEmpty() && Game.isAction(Action.DECOR)) DecorMode.toggle(false);
     }
 
     //Update

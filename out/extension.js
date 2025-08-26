@@ -384,12 +384,11 @@ function activate(context) {
     });
     //Reload save file
     const commandReloadSaveFile = vscode.commands.registerCommand('stardew-pets.reloadSaveFile', async () => {
-        //Remove all pets
-        const petsLength = save.pets.length;
-        for (let i = 0; i < petsLength; i++)
-            removePet(0, false);
-        //Reload save file & init game again
+        //Reset extension
+        webview.postMessage({ type: 'reset' });
+        //Reload save file
         loadGame();
+        //Init game again
         initGame();
     });
     //Add commands
