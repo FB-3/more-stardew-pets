@@ -94,7 +94,7 @@ body[cursor="none"] {
     top: calc(var(--position-y));
 
     /* Visuals */
-    background-image: url(./sprites/emotes/emotes.png);
+    background-image: url(./sprites/emotes.png);
     background-position-x: calc(-3 * var(--size));
     background-position-y: calc(-9 * var(--size));
     transform: translateX(calc(-0.5 * var(--size))) translateY(calc(-0.5 * var(--size)));
@@ -275,8 +275,19 @@ body[cursor="none"] {
 }
 
 .menu[button] {
+    /* Size */
+    width: max-content;
+    height: max-content;
+    max-width: unset;
+    max-height: unset;
+
     /* Other */
     cursor: pointer;
+}
+
+.menu[button] > span {
+    /* Spacing */
+    margin: -8px -4px;
 }
 
 .menuContent {
@@ -383,14 +394,21 @@ body[cursor="none"] {
     position: absolute;
     top: 0;
     right: 0;
+
+    /* Other */
+    cursor: unset;
 }
 
-#money > span {
-    /* Spacing */
-    margin: -8px -4px;
-}
 
-/* Decor mode */
+ /*$$$$$$                                                     /$$     /$$
+| $$__  $$                                                   | $$    |__/
+| $$  \ $$  /$$$$$$   /$$$$$$$  /$$$$$$   /$$$$$$  /$$$$$$  /$$$$$$   /$$  /$$$$$$  /$$$$$$$
+| $$  | $$ /$$__  $$ /$$_____/ /$$__  $$ /$$__  $$|____  $$|_  $$_/  | $$ /$$__  $$| $$__  $$
+| $$  | $$| $$$$$$$$| $$      | $$  \ $$| $$  \__/ /$$$$$$$  | $$    | $$| $$  \ $$| $$  \ $$
+| $$  | $$| $$_____/| $$      | $$  | $$| $$      /$$__  $$  | $$ /$$| $$| $$  | $$| $$  | $$
+| $$$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$/| $$     |  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$
+|_______/  \_______/ \_______/ \______/ |__/      \_______/   \___/  |__/ \______/ |__/  |_*/
+
 #decor {
     /* Size */
     width: 100%;
@@ -417,21 +435,20 @@ body[cursor="none"] {
 
 #decor > span {
     /* Layout */
-    margin: 0 5px;
+    margin: 0 10px;
 
     /* Text */
     --border: #ffd889bd;
     text-shadow: -1px -1px 1px var(--border), 1px -1px 1px var(--border), -1px 1px 1px var(--border), 1px 1px 1px var(--border);
 }
 
-#decorExit {
+.decorButtons {
+    /* Layout */
+    display: flex;
+    gap: 5px;
+
     /* Other */
     pointer-events: auto;
-}
-
-#decorExit > span {
-    /* Spacing */
-    margin: -8px -4px;
 }
 
 

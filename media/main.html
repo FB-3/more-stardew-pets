@@ -26,7 +26,7 @@
         <div id="messages"></div>
 
         <!-- Menus -->
-        <div id="menus" onclick="Menus.close()">
+        <div id="menus" onclick="Menus.close();">
             <!-- Actions menu -->
             <div id="actions" class="menu" onclick="event.stopPropagation()">
                 <div class="menuContent">
@@ -43,7 +43,7 @@
                         <img src="{media}sprites/ui/house.png">
                         <span>General Store</span>
                     </div>
-                    <div class="menuButton" onclick="toggleDecorMode()">
+                    <div class="menuButton" onclick="toggleActionDecor()">
                         <img src="{media}sprites/ui/axe.png">
                         <span>Enter Decor Mode</span>
                     </div>
@@ -58,7 +58,7 @@
             </div>
 
             <!-- Money menu -->
-            <div id="money" class="menu" show>
+            <div id="money" class="menu" button show>
                 <span id="moneyText">0G</span>
             </div>
         </div>
@@ -66,12 +66,19 @@
         <!-- Decor mode -->
         <div id="decor">
             <!-- Controls -->
-            <span>Drag to move</span>
-            <!--<span>RMB to Sell</span>-->
+            <span id="decorHelp">Drag to move</span>
+            
+            <!-- Toggle action & exit buttons -->
+            <div class="decorButtons">
+                <!-- Toggle action -->
+                <div class="menu" button show onclick="DecorMode.toggleAction();">
+                    <span id="decorAction">Action</span>
+                </div>
 
-            <!-- Exit button -->
-            <div id="decorExit" class="menu" button show onclick="toggleDecorMode()">
-                <span>Exit</span>
+                <!-- Exit decor mode -->
+                <div class="menu" button show onclick="DecorMode.toggle()">
+                    <span>Exit</span>
+                </div>
             </div>
         </div>
 

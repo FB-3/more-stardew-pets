@@ -180,6 +180,10 @@ Array.prototype.removeItem = function(elem) {
     return index;
 }
 
+Array.prototype.isEmpty = function(elem) {
+    return this.length == 0;
+}
+
 
  /*$$$$$$$                     /$$
 | $$_____/                    |__/
@@ -327,6 +331,80 @@ class Cursor {
 
 }
 
+//Decor Mode
+class DecorMode {
+
+    //Actions
+    static get MOVE() { return 'move'; }
+    static get SELL() { return 'sell'; }
+
+    static action = DecorMode.MOVE;
+
+    static isAction(action) { 
+        return DecorMode.action == action;
+    }
+
+    static toggleAction() {
+        if (DecorMode.isAction(DecorMode.MOVE))
+            DecorMode.setMode(DecorMode.SELL);
+        else
+            DecorMode.setMode(DecorMode.MOVE);
+    }
+
+    static setMode(mode) {
+        switch (mode) {
+            case DecorMode.MOVE:
+                DecorMode.actionText.innerText = 'Sell';
+                DecorMode.helpText.innerText = 'Drag to move';
+                break;
+            case DecorMode.SELL:
+                DecorMode.actionText.innerText = 'Move';
+                DecorMode.helpText.innerText = 'Click to sell';
+                break;
+        }
+        DecorMode.action = mode;
+    }
+
+    //Menu
+    static menu = document.getElementById('decor');
+    static helpText = document.getElementById('decorHelp');
+    static actionText = document.getElementById('decorAction');
+
+    static toggleUI(show) {
+        //Fix args
+        if (typeof show !== 'boolean') show = !DecorMode.menu.hasAttribute('show');
+
+        //Toggle
+        if (show) {
+            DecorMode.menu.setAttribute('show', '');
+            DecorMode.setMode(DecorMode.MOVE);
+        } else {
+            DecorMode.menu.removeAttribute('show');
+        }
+    }
+
+    //Mode
+    static toggle() {
+        //Exit decor mode
+        if (Game.isAction(Action.DECOR)) {
+            Game.setAction(Action.NONE);
+            DecorMode.toggleUI(false);
+            return;
+        }
+
+        //No decoration
+        if (Game.decoration.isEmpty()) {
+            Game.showMessage('Buy decoration first', true);
+            return;
+        }
+
+        //Enter decor mode
+        Game.setAction(Action.DECOR);
+        DecorMode.toggleUI(true);
+    }
+
+}
+
 //Game
 class Game {
     
@@ -365,7 +443,7 @@ class Game {
         //Update game objects
         Game.objects.forEach(obj => obj.update());
 
-        //Draw
+        //Draw objects
         requestAnimationFrame(Game.draw);
     }
 
@@ -423,20 +501,6 @@ class Game {
         vscode.postMessage({ type: 'money', value: Game.money });
     }
 
-    //Decor mode
-    static decorUI = document.getElementById('decor');
-
-    static toggleDecorUI(show) {
-        //Fix args
-        if (typeof show !== 'boolean') show = !Game.decorUI.hasAttribute('show');
-
-        //Toggle
-        if (show)
-            Game.decorUI.setAttribute('show', '');
-        else
-            Game.decorUI.removeAttribute('show');
-    }
-
     //Current action being performed
     static action = Action.NONE;
 
@@ -447,6 +511,7 @@ class Game {
     static setAction(action) {
         Game.action = action;
         Cursor.setIcon(action);
+        Menus.close();
     }
 
     //Messages

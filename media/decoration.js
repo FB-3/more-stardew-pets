@@ -962,7 +962,18 @@ class Decoration extends GameObject {
         super.remove();
 
         //Remove from decoration list
-        Game.decoration.removeItem(this);
+        const index = Game.decoration.removeItem(this);
+
+        //Notify decor removed
+        vscode.postMessage({
+            type: 'remove_decor',
+            index: index,
+        });
+
+        //Exit decor mode if no decor left
+        if (Game.decoration.isEmpty() && Game.isAction(Action.DECOR)) {
+            DecorMode.toggle();
+        }
     }
 
     //Update
@@ -971,7 +982,7 @@ class Decoration extends GameObject {
         super.update();
 
         //Check if moving
-        if (!this.#moving) return;
+        if (!this.#moving || !DecorMode.isAction(DecorMode.MOVE)) return;
 
         //Calculate new snapped position
         const mousePos = Cursor.scaledPos.sub(this.#movingOffset);
@@ -998,16 +1009,48 @@ class Decoration extends GameObject {
 
     //Click
     mouseDown(pos) {
-        //Start moving
-        this.startDragging(pos.sub(this.pos));
+        //Check game action
+        if (!Game.isAction(Action.DECOR)) return false;
+
+        //Check decor action
+        switch (DecorMode.action) {
+            //Move
+            case DecorMode.MOVE:
+                //Start moving
+                this.startDragging(pos.sub(this.pos));
+                break;
+
+            //Sell
+            case DecorMode.SELL:
+                //Do nothing
+                break;
+        }
 
         //Consume event
         return true;
     }
 
     mouseUp(pos) {
-        //Stop moving
-        this.stopDragging();
+        //Check game action
+        if (!Game.isAction(Action.DECOR)) return false;
+
+        //Check decor action
+        switch (DecorMode.action) {
+            //Move
+            case DecorMode.MOVE:
+                //Stop moving
+                this.stopDragging();
+                break;
+
+            //Sell
+            case DecorMode.SELL:
+                //Give money to player
+                if (typeof this.price === 'number') Game.addMoney(this.price);
+
+                //Remove decor
+                this.remove();
+                break;
+        }
 
         //Consume event
         return true;

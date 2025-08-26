@@ -31,27 +31,12 @@ function toggleActionGift() {
     Game.setAction(Game.isAction(Action.GIFT) ? Action.NONE : Action.GIFT)
 }
 
-function toggleDecorMode() {
+function toggleActionDecor() {
     //Hide actions menu
-    Menus.close();
-
-    //Exit decor mode
-    if (Game.isAction(Action.DECOR)) {
-        Game.setAction(Action.NONE);
-        Game.toggleDecorUI(false);
-        return;
-    }
-
-    //No decoration
-    if (Game.decoration.length <= 0) {
-        Game.showMessage('Buy decoration first', true);
-        return;
-    }
-
-    //Enter decor mode
-    Game.setAction(Action.DECOR);
-    Game.toggleDecorUI(true);
-    //Game.showMessage('Drag: Move\nRight Click: Sell', true);
+    Menus.close(); 
+    
+    //Try to enter decor mode
+    DecorMode.toggle();
 }
 
 //Store menu
@@ -121,12 +106,6 @@ function selectStoreCategory(category) {
             //Consume money
             Game.addMoney(-preset.price);
 
-            //Enter decor mode / close menu
-            if (!Game.isAction(Action.DECOR)) 
-                toggleDecorMode();  //Closes the menu too
-            else 
-                Menus.close();
-
             //Create decoration
             const decor = new Decoration(preset);
 
@@ -143,6 +122,9 @@ function selectStoreCategory(category) {
                 category: category,
                 name: name
             });
+
+            //Enter decor mode
+            if (!Game.isAction(Action.DECOR)) DecorMode.toggle();
         }
     }
 
@@ -272,7 +254,7 @@ window.addEventListener('message', event => {
         //Toggle actions menu
         case 'actions':
             Game.setAction(Action.NONE);
-            Game.toggleDecorUI(false);
+            DecorMode.toggleUI(false);
             Menus.toggle('actions');
             break;
 
@@ -314,6 +296,9 @@ window.addEventListener('message', event => {
 
 //Cursor events
 document.onmousedown = event => {
+    //Menu open -> Ignore click
+    if (Menus.current) return;
+
     //Get scaled mouse position
     const pos = Cursor.scaledPos;
 
@@ -341,6 +326,9 @@ document.onmousedown = event => {
 }
 
 document.onmouseup = event => {
+    //Menu open -> Ignore click
+    if (Menus.current) return;
+
     //Get scaled mouse position
     const pos = Cursor.scaledPos;
 
@@ -348,8 +336,32 @@ document.onmouseup = event => {
     switch (Game.action) {
         //Decor mode
         case Action.DECOR: {
-            //Stop moving all
-            Game.decoration.forEach(obj => obj.stopDragging());
+            //Check decor action
+            switch (DecorMode.action) {
+                //Move
+                case DecorMode.MOVE:
+                    //Stop moving all
+                    Game.decoration.forEach(obj => obj.stopDragging());
+                    break;
+
+                //Sell
+                case DecorMode.SELL:
+                    //Sort objects
+                    Game.sortObjects();
+
+                    //Check to click decoration from nearest to farthest object
+                    for (let i = Game.objects.length - 1; i >= 0; i--) {
+                        //Get object
+                        const obj = Game.objects[i];
+
+                        //Check if its decoration
+                        if (!(obj instanceof Decoration)) continue;
+
+                        //Check event
+                        if (obj.checkMouseUp(pos)) break;
+                    }
+                    break;
+            }
             break;
         }
 
