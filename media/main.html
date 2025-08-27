@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-    <!-- Styling -->
+    <!-- Info -->
     <head>
+        <title>Stardew Pets 😸</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="{media}main.css" rel="stylesheet">
-        <title>Stardew Pets 😸</title>
+
+        <!-- Preload font & menus image -->
+        <link rel="preload" href="{media}fonts/StardewValley.ttf" as="font" type="font/ttf">
+        <link rel="preload" href="{media}sprites/ui/menu.png" as="image" type="image/png">
+        
+        <!-- Styling -->
+        <link rel="stylesheet" href="{media}main.css">
     </head>
 
     <!-- Content -->
     <body media="{media}" hide>
         <!-- Game -->
         <div id="background">
-            <!-- Ball -->
-            <div id="ball"></div>
-
             <!-- Game canvas -->
             <canvas id="canvas"></canvas>
 
             <!-- Hidden canvas -->
-            <canvas id="hiddenCanvas"></canvas>
+            <canvas id="canvasHidden"></canvas>
         </div>
 
         <!-- Decor mode -->
@@ -28,14 +31,14 @@
             <span id="decorHelp">Drag to move</span>
             
             <!-- Toggle action & exit buttons -->
-            <div class="decorButtons">
+            <div class="decorButtons" onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();">
                 <!-- Toggle action -->
                 <div class="menu" button show onclick="DecorMode.toggleAction();">
                     <span id="decorAction">Action</span>
                 </div>
 
                 <!-- Exit decor mode -->
-                <div class="menu" button show onclick="DecorMode.toggle(false)">
+                <div class="menu" button show onclick="DecorMode.toggle(false);">
                     <span>Exit</span>
                 </div>
             </div>
@@ -45,24 +48,24 @@
         <div id="messages"></div>
 
         <!-- Menus -->
-        <div id="menus" onclick="Menus.close();">
+        <div id="menus" onclick="Menus.close();" onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();">
             <!-- Actions menu -->
-            <div id="actions" class="menu" onclick="event.stopPropagation()">
+            <div id="actions" class="menu" onclick="event.stopPropagation();">
                 <div class="menuContent">
                     <!-- Buttons -->
-                    <div class="menuButton" onclick="toggleActionBall()">
+                    <div class="menuButton" onclick="toggleActionBall();">
                         <img src="{media}sprites/ui/ball.png">
                         <span>Play with Ball</span>
                     </div>
-                    <div class="menuButton" onclick="toggleActionGift()">
+                    <div class="menuButton" onclick="toggleActionGift();">
                         <img src="{media}sprites/ui/gift.png">
                         <span>Give a Gift</span>
                     </div>
-                    <div class="menuButton" onclick="openStoreMenu()">
+                    <div class="menuButton" onclick="openStoreMenu();">
                         <img src="{media}sprites/ui/house.png">
                         <span>General Store</span>
                     </div>
-                    <div class="menuButton" onclick="toggleActionDecor()">
+                    <div class="menuButton" onclick="toggleActionDecor();">
                         <img src="{media}sprites/ui/axe.png">
                         <span id="actionsDecor">Enter Decor Mode</span>
                     </div>
@@ -70,14 +73,14 @@
             </div>
 
             <!-- Store menu -->
-            <div id="store" class="menu" onclick="event.stopPropagation()">
-                <div id="storeContent" scrollable class="menuContent">
+            <div id="store" class="menu" onclick="event.stopPropagation();">
+                <div id="storeContent" class="menuContent" scrollable>
                     <!-- Items -->
                 </div>
             </div>
 
             <!-- Money menu -->
-            <div id="money" class="menu" button show>
+            <div id="money" class="menu" button show onclick="event.stopPropagation();">
                 <span id="moneyText">0G</span>
             </div>
         </div>

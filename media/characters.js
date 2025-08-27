@@ -8,16 +8,18 @@ class AI {
 
     //AI info
     #character;
-    get character() { return this.#character; }
     #state = AI.IDLE;
-    get state() { return this.#state; }
     #timer = new Timer();
-    get timer() { return this.#timer; }
     #movePos = new Vec2();
+    
+    get character() { return this.#character; }
+    get state() { return this.#state; }
+    get timer() { return this.#timer; }
 
     //Config (idle)
     #idleDurationBase = 2 * Game.fps;       //Minimum duration of idle (in frames)
     #idleDurationVariation = 2 * Game.fps;  //Variation of duration for idle (in frames)
+
     get idleDuration() { return this.#idleDurationBase + Util.randomInclusive(this.#idleDurationVariation); }
 
     //Config (sleep)
@@ -25,10 +27,12 @@ class AI {
     #isSleeping = false;
     #sleepDurationBase = 10 * Game.fps;     //Minimum duration of sleep (in frames)
     #sleepDurationVariation = 5 * Game.fps; //Variation of duration for sleep (in frames)
+
     get sleepDuration() { return this.#sleepDurationBase + Util.randomInclusive(this.#sleepDurationVariation); }
 
     //Config (special)
     #specialDuration = 2 * Game.fps;        //Duration of special (in frames)
+
     get specialDuration() { return this.#specialDuration; }
 
 
@@ -207,8 +211,12 @@ class AI {
 //Characters
 class Character extends GameObject {
 
+    //Object
+    get isCharacter() { return true; }
+
     //AI
     #ai;
+
     get ai() { return this.#ai; }
 
 
@@ -663,10 +671,11 @@ class PetMoods {
 
     //Special moods
     static get HEART() { return new Vec2(1, 3); }
-    static get RANDOM() { return PetMoods[PetMoods.moods[Util.randomExclusive(PetMoods.moods.length)]]; }
+    static get RANDOM() { return PetMoods[PetMoods.#moods[Util.randomExclusive(PetMoods.#moods.length)]]; }
 
     //Normal moods
-    static moods = ['GIGACHAD', 'HAPPY', 'MAD', 'ALIEN', 'PLEDGE', 'BLUSH'];
+    static #moods = ['GIGACHAD', 'HAPPY', 'MAD', 'ALIEN', 'PLEDGE', 'BLUSH'];
+
     static get GIGACHAD() { return new Vec2(11, 1); }
     static get HAPPY() { return new Vec2(0, 0); }
     static get MAD() { return new Vec2(2, 1); }
@@ -783,7 +792,7 @@ class PetAI extends AI {
         if (this._moveTowardsMovePos()) return;
 
         //Didn't move -> Point reached, notify game that the ball was reached
-        Ball.onReached()
+        Game.ball.onReached()
 
         //Set mood to heart & show mood
         this.#setHeartMood()
@@ -799,24 +808,23 @@ class PetAI extends AI {
 class PetCharacter extends Character {
 
     //Pet info
-    #name = 'Pet';
-    get name() { return this.#name; }
     #specie = '';
-    get specie() { return this.#specie; }
     #color = 'Color';
+
+    get specie() { return this.#specie; }
     get color() { return this.#color; }
     
 
     //Constructor
     constructor(name, specie, color, config = {}, config_ai = {}) {
-        //Add image to config
+        //Add name & image to config
+        config.name = name;
         config.image = `pets/${specie.toLowerCase()}.png`;
 
         //Create character
         super(config, new PetAI(config_ai));
         
-        //Save info
-        this.#name = name;
+        //Save pet info
         this.#specie = specie;
         this.#color = color;
 
@@ -1490,14 +1498,16 @@ class EnemyCharacter extends Character {
 
     //Enemy info
     #specie = '';
-    get specie() { return this.#specie; }
     #color = 'Color';
+
+    get specie() { return this.#specie; }
     get color() { return this.#color; }
 
 
     //Constructor
     constructor(specie, color, config = {}, config_ai = {}) {
-        //Add image to config
+        //Add name & image to config
+        config.name = Util.titleCase(specie);
         config.image = `enemies/${specie.toLowerCase()}.png`;
         
         //Create character

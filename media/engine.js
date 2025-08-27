@@ -180,22 +180,19 @@ Array.prototype.removeItem = function(elem) {
     return index;
 }
 
-Array.prototype.isEmpty = function(elem) {
+Array.prototype.isEmpty = function() {
     return this.length == 0;
 }
 
 
- /*$$$$$$$                     /$$
-| $$_____/                    |__/
-| $$       /$$$$$$$   /$$$$$$  /$$ /$$$$$$$   /$$$$$$
-| $$$$$   | $$__  $$ /$$__  $$| $$| $$__  $$ /$$__  $$
-| $$__/   | $$  \ $$| $$  \ $$| $$| $$  \ $$| $$$$$$$$
-| $$      | $$  | $$| $$  | $$| $$| $$  | $$| $$_____/
-| $$$$$$$$| $$  | $$|  $$$$$$$| $$| $$  | $$|  $$$$$$$
-|________/|__/  |__/ \____  $$|__/|__/  |__/ \_______/
-                     /$$  \ $$
-                    |  $$$$$$/
-                     \_____*/
+  /*$$$$$              /$$     /$$
+ /$$__  $$            | $$    |__/
+| $$  \ $$  /$$$$$$$ /$$$$$$   /$$  /$$$$$$  /$$$$$$$   /$$$$$$$
+| $$$$$$$$ /$$_____/|_  $$_/  | $$ /$$__  $$| $$__  $$ /$$_____/
+| $$__  $$| $$        | $$    | $$| $$  \ $$| $$  \ $$|  $$$$$$
+| $$  | $$| $$        | $$ /$$| $$| $$  | $$| $$  | $$ \____  $$
+| $$  | $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/
+|__/  |__/ \_______/   \___/  |__/ \______/ |__/  |__/|______*/
 
 //Actions
 class Action {
@@ -207,56 +204,60 @@ class Action {
 
 }
 
-//Ball
-class Ball {
+//Cursor
+class Cursor {
 
-    //Ball HTML element
-    static element = document.getElementById('ball');
+    //Cursor HTML element
+    static #element = document.getElementById('cursor');
 
     //Position
-    static pos = new Vec2();
+    static #pos = new Vec2();
+
+    static get pos() { return this.#pos; }
+    static get posScaled() { return Cursor.pos.div(Game.scale).toInt(); }
 
     static moveTo(pos) {
-        Ball.pos = pos;
-        Ball.element.style.setProperty('--position-x', `${pos.x}px`);
-        Ball.element.style.setProperty('--position-y', `${pos.y}px`);
+        this.#pos = pos;
+        this.#element.style.left = `${pos.x}px`;
+        this.#element.style.top =  `${pos.y}px`;
     }
 
-    //Visibility
-    static isVisible = false;
+    //Icon
+    static #icons = [Action.BALL, Action.GIFT];
 
-    static setVisible(visible) {
-        //Fix args
-        if (typeof visible !== 'boolean') visible = true;
+    static setIcon(icon) {
+        //Valid icons
+        icon = this.#icons.includes(icon) ? icon : Action.NONE;
 
-        //Toggle visibility
-        if (visible) {
-            Ball.element.setAttribute('visible', '');
-        } else {
-            Ball.element.removeAttribute('visible');
-        }
-        Ball.isVisible = visible;
+        //Change cursor icon
+        this.#element.setAttribute('icon', icon);
+
+        //Toggle real cursor
+        document.body.setAttribute('cursor', icon != Action.NONE ? 'none' : '');
     }
 
-    //Pets
-    static onReached() {
-        //Tell pets to stop moving towards the ball
-        Game.pets.forEach(pet => { if (pet.ai.state == PetAI.MOVE_BALL) pet.ai.setState(AI.IDLE) })
-
-        //Hide ball
-        Ball.setVisible(false);
-    }
-    
 }
+
+
+ /*$      /$$
+| $$$    /$$$
+| $$$$  /$$$$  /$$$$$$  /$$$$$$$  /$$   /$$  /$$$$$$$
+| $$ $$/$$ $$ /$$__  $$| $$__  $$| $$  | $$ /$$_____/
+| $$  $$$| $$| $$$$$$$$| $$  \ $$| $$  | $$|  $$$$$$
+| $$\  $ | $$| $$_____/| $$  | $$| $$  | $$ \____  $$
+| $$ \/  | $$|  $$$$$$$| $$  | $$|  $$$$$$/ /$$$$$$$/
+|__/     |__/ \_______/|__/  |__/ \______/ |______*/
 
 //Menus
 class Menus {
 
     //Black semitransparent menus backdrop
-    static backdrop = document.getElementById('menus');
+    static #backdrop = document.getElementById('menus');
 
     //Toggle menus
-    static current;     //Name of the currently open menu
+    static #current; //Name of the currently open menu
+
+    static get current() { return this.#current; }
 
     static toggle(name, show) {
         //Invalid name
@@ -279,54 +280,22 @@ class Menus {
         //Toggle menu
         if (show) {
             //Close currently open menu
-            Menus.close();
+            this.close();
 
             //Show menu
             menu.setAttribute('show', '');
-            Menus.current = name;
-            Menus.backdrop.setAttribute('show', '');
+            this.#current = name;
+            this.#backdrop.setAttribute('show', '');
         } else {
             //Hide menu
             menu.removeAttribute('show');
-            Menus.current = undefined;
-            Menus.backdrop.removeAttribute('show');
+            this.#current = undefined;
+            this.#backdrop.removeAttribute('show');
         }
     }
 
     static close() {
-        Menus.toggle(Menus.current, false);
-    }
-
-}
-
-//Cursor
-class Cursor {
-
-    //Cursor HTML element
-    static element = document.getElementById('cursor');
-
-    //Position
-    static pos = new Vec2();
-    static get scaledPos() { return Cursor.pos.div(Game.scale).toInt(); }
-
-    static moveTo(pos) {
-        Cursor.pos = pos;
-        Cursor.element.style.left = `${pos.x}px`;
-        Cursor.element.style.top = `${pos.y}px`;
-    }
-
-    //Icon
-    static icons = [Action.BALL, Action.GIFT];
-
-    static setIcon(icon) {
-        //Valid icons
-        icon = Cursor.icons.includes(icon) ? icon : Action.NONE;
-
-        //Change cursor icon
-        Cursor.element.setAttribute('icon', icon);
-
-        //Toggle real cursor
-        document.body.setAttribute('cursor', icon != Action.NONE ? 'none' : '');
+        this.toggle(this.current, false);
     }
 
 }
@@ -338,50 +307,52 @@ class DecorMode {
     static get ACTION_MOVE() { return 'move'; }
     static get ACTION_SELL() { return 'sell'; }
 
-    static action = DecorMode.ACTION_MOVE;
+    static #action = DecorMode.ACTION_MOVE;
+
+    static get action() { return this.#action; }
 
     static isAction(action) { 
-        return DecorMode.action == action;
+        return this.action == action;
     }
 
     static setAction(action) {
         switch (action) {
             case DecorMode.ACTION_MOVE:
-                DecorMode.actionButton.innerText = 'Sell';
-                DecorMode.helpText.innerText = 'Drag to move';
+                this.#actionButton.innerText = 'Sell';
+                this.#helpText.innerText = 'Drag to move';
                 break;
             case DecorMode.ACTION_SELL:
-                DecorMode.actionButton.innerText = 'Move';
-                DecorMode.helpText.innerText = 'Click to sell';
+                this.#actionButton.innerText = 'Move';
+                this.#helpText.innerText = 'Click to sell';
                 break;
         }
-        DecorMode.action = action;
+        this.#action = action;
     }
 
     static toggleAction() {
-        if (DecorMode.isAction(DecorMode.ACTION_MOVE))
-            DecorMode.setAction(DecorMode.ACTION_SELL);
+        if (this.isAction(DecorMode.ACTION_MOVE))
+            this.setAction(DecorMode.ACTION_SELL);
         else
-            DecorMode.setAction(DecorMode.ACTION_MOVE);
+            this.setAction(DecorMode.ACTION_MOVE);
     }
 
     //UI
-    static overlay = document.getElementById('decor');
-    static helpText = document.getElementById('decorHelp');
-    static actionButton = document.getElementById('decorAction');
-    static actionsToggleButton = document.getElementById('actionsDecor');
+    static #overlay = document.getElementById('decor');
+    static #helpText = document.getElementById('decorHelp');
+    static #actionButton = document.getElementById('decorAction');
+    static #actionsToggleButton = document.getElementById('actionsDecor');
 
     static showOverlay(show) {
         //Fix args
-        if (typeof show !== 'boolean') show = !DecorMode.overlay.hasAttribute('show');
+        if (typeof show !== 'boolean') show = !this.#overlay.hasAttribute('show');
 
         //Toggle
         if (show) {
-            DecorMode.actionsToggleButton.innerText = 'Exit Decor Mode';
-            DecorMode.overlay.setAttribute('show', '');
+            this.#actionsToggleButton.innerText = 'Exit Decor Mode';
+            this.#overlay.setAttribute('show', '');
         } else {
-            DecorMode.actionsToggleButton.innerText = 'Enter Decor Mode';
-            DecorMode.overlay.removeAttribute('show');
+            this.#actionsToggleButton.innerText = 'Enter Decor Mode';
+            this.#overlay.removeAttribute('show');
         }
     }
 
@@ -398,10 +369,15 @@ class DecorMode {
                 return;
             }
 
+            //Set action to move decor
+            this.setAction(DecorMode.ACTION_MOVE);
+
             //Enter decor mode
             Game.setAction(Action.DECOR);
-            DecorMode.setAction(DecorMode.ACTION_MOVE);
         } else {
+            //Stop dragging all
+            for (const decoration of Game.decoration) decoration.stopDragging();
+
             //Exit decor mode
             Game.setAction(Action.NONE);
         }
@@ -409,133 +385,18 @@ class DecorMode {
 
 }
 
-//Game
-class Game {
-    
-    //Media folder URI
-    static mediaURI = document.body.getAttribute('media');
 
-    //Window
-    static size = new Vec2(window.innerWidth, window.innerHeight);
-    static scale = 2;
-    static scaledSize = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
-
-    static onResize() {
-        //Update game window size
-        Game.size = new Vec2(window.innerWidth, window.innerHeight);
-        Game.scaledSize = Game.size.div(Game.scale);
-
-        //Update game canvas size
-        Game.canvas.width = Game.size.x;
-        Game.canvas.height = Game.size.y;
-
-        //Fit all pets on screen
-        Game.pets.forEach(pet => pet.moveTo(pet.pos))
-    }
-
-    //Update
-    static frames = 0;  //Frames since game start
-    static fps = 30;    //Game framerate
-
-    static update() {
-        //Check if window size changed
-        if (Game.size.x != window.innerWidth || Game.size.y != window.innerHeight) Game.onResize();
-
-        //Next frame
-        Game.frames++;
-
-        //Update game objects
-        Game.objects.forEach(obj => obj.update());
-
-        //Draw objects
-        requestAnimationFrame(Game.draw);
-    }
-
-    //Rendering
-    static background = document.getElementById('background');
-    static canvas = document.getElementById('canvas');
-    static ctx = document.getElementById('canvas').getContext('2d');
-    static hiddenCanvas = document.getElementById('hiddenCanvas');
-    static hiddenCtx = document.getElementById('hiddenCanvas').getContext('2d');
-
-    static draw() {
-        //Clear canvas
-        Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
-
-        //Sort objects
-        Game.sortObjects();
-
-        //Check if in decor mode
-        const inDecorMode = Game.isAction(Action.DECOR);
-
-        //Draw objects
-        for (const obj of Game.objects) {
-            //Check if in decor mode and object is not decor
-            if (inDecorMode && !(obj instanceof Decoration)) continue;
-
-            //Draw object
-            obj.draw(Game.ctx)
-        }
-    }
-
-    //Game objects
-    static objects = [];    //List of all the game objects (gets sorted every frame to check clicks and render back-to-front)
-    static pets = [];       //List of all the pets       (do not sort, positions must be the same as in extension.ts)
-    static decoration = []; //List of all the decoration (do not sort, positions must be the same as in extension.ts)
-    static enemies = [];    //List of all the enemies
-    static enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
-
-    static sortObjects() {
-        //Sort objects back-to-front
-        Game.objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
-    }
-
-    //Money
-    static money = 0;
-    static moneyText = document.getElementById('moneyText');
-
-    static setMoney(amount) {
-        Game.money = amount;
-        Game.moneyText.innerText = `${amount}G`;
-    }
-
-    static addMoney(amount) {
-        Game.setMoney(Game.money + amount);
-        Game.showMessage(`${amount >= 0 ? '+' : '-'}${Math.abs(amount)}G`);
-        vscode.postMessage({ type: 'money', value: Game.money });
-    }
-
-    //Current action being performed
-    static action = Action.NONE;
-
-    static isAction(action) { 
-        return Game.action == action;
-    }
-
-    static setAction(action) {
-        //Update action & cursor
-        Game.action = action;
-        Cursor.setIcon(action);
-
-        //Close menus & toggle decor mode overlay
-        Menus.close();
-        DecorMode.showOverlay(Game.isAction(Action.DECOR));
-    }
-
-    //Messages
-    static showMessage(content, isLong = false) {
-        //Create message element
-        const message = document.createElement('span');
-        message.classList.add('message');
-        message.innerText = content;
-        if (isLong) message.setAttribute('long', '');
-        document.getElementById('messages').appendChild(message);
-
-        //Set timeout to remove message element
-        setTimeout(() => message.remove(), isLong ? 3000 : 2000);
-    }
-
-}
+  /*$$$$$                                     /$$$$$$  /$$                                 /$$
+ /$$__  $$                                   /$$__  $$| $$                                | $$
+| $$  \__/  /$$$$$$  /$$$$$$/$$$$   /$$$$$$ | $$  \ $$| $$$$$$$  /$$  /$$$$$$   /$$$$$$$ /$$$$$$   /$$$$$$$
+| $$ /$$$$ |____  $$| $$_  $$_  $$ /$$__  $$| $$  | $$| $$__  $$|__/ /$$__  $$ /$$_____/|_  $$_/  /$$_____/
+| $$|_  $$  /$$$$$$$| $$ \ $$ \ $$| $$$$$$$$| $$  | $$| $$  \ $$ /$$| $$$$$$$$| $$        | $$   |  $$$$$$
+| $$  \ $$ /$$__  $$| $$ | $$ | $$| $$_____/| $$  | $$| $$  | $$| $$| $$_____/| $$        | $$ /$$\____  $$
+|  $$$$$$/|  $$$$$$$| $$ | $$ | $$|  $$$$$$$|  $$$$$$/| $$$$$$$/| $$|  $$$$$$$|  $$$$$$$  |  $$$$//$$$$$$$/
+ \______/  \_______/|__/ |__/ |__/ \_______/ \______/ |_______/ | $$ \_______/ \_______/   \___/ |_______/
+                                                           /$$  | $$
+                                                          |  $$$$$$/
+                                                           \_____*/
 
 //Animations
 class Animation {
@@ -544,15 +405,21 @@ class Animation {
     #frame = 0;
     #counter = 0;
     #finished = false;
+
     get finished() { return this.#finished; };
 
     //Animation info (permanent)
     #frames = [];
     #speed = 5;   //Duration of each frame
-    #loop = true;
+
+    //Animation options
+    #loop = true;           //Loop animation
+    #flip = false;          //Flip sprite
+    #pixelOffset = false;   //Use pixels instead of object size for the offset
+
     get loop() { return this.#loop; };
-    #flip = false;
     get flip() { return this.#flip; };
+    get pixelOffset() { return this.#pixelOffset; };
 
 
     //State
@@ -565,6 +432,7 @@ class Animation {
         if (typeof config === 'object') {
             if (typeof config.loop === 'boolean') this.#loop = config.loop;
             if (typeof config.flip === 'boolean') this.#flip = config.flip;
+            if (typeof config.pixelOffset === 'boolean') this.#pixelOffset = config.pixelOffset;
         }
 
         //Reset current info
@@ -611,61 +479,77 @@ class Animation {
 //Game objects
 class GameObject {
 
+    //Object
+    #active = true;
+    #name = 'GameObject';
+
+    get active() { return this.#active; }
+    get name() { return this.#name; }
+
     //Position & Size
     #pos = new Vec2();
-    get pos() { return this.#pos; }
     #size = new Vec2(16);
+
+    get pos() { return this.#pos; }
     get size() { return this.#size; }
 
     //Clicks
     #clickable = true;
+
     get clickable() { return this.#clickable; }
 
     //Rendering (sorting)
     #sortingLayer = 0;
+
     get sortingLayer() { return this.#sortingLayer; }
     get sortingOrder() { return this.pos.y + this.size.y; }
 
     //Rendering (sprite sheet)
     #image = new Image();               //Image containing the sprite sheet
-    get image() { return this.#image; }
     #spriteOffset = new Vec2();         //Offset for sprites inside a sprite sheet
-    get spriteOffset() { return this.#spriteOffset; }
     #spriteSheetOffset = new Vec2();    //Offset for images with multiple sprite sheets
+
+    get image() { return this.#image; }
+    get spriteOffset() { return this.#spriteOffset; }
     get spriteSheetOffset() { return this.#spriteSheetOffset; }
 
     //Animations
     #animations = {};                   //Object of animations with their names as keys
-    get animations() { return this.#animations; }
     #animation;                         //Currently selected animation
+
+    get animations() { return this.#animations; }
     get animation() { return this.#animation; }
 
 
     //Constructor
     constructor(config = {}) {
+        //Check config
+        if (typeof config === 'object') {
+            //Object
+            if (typeof config.active === 'boolean') this.#active = config.active;
+            if (typeof config.name === 'string') this.#name = config.name;
+
+            //Position & size
+            if (typeof config.pos === 'object') this.#pos = config.pos;
+            if (typeof config.size === 'object') this.#size = config.size;
+
+            //Clicks
+            if (typeof config.clickable === 'boolean') this.#clickable = config.clickable;
+
+            //Rendering (sorting)
+            if (typeof config.sortingLayer === 'number') this.#sortingLayer = config.sortingLayer;
+
+            //Rendering (sprite sheet)
+            if (typeof config.image === 'string') this.#image.src = `${Game.mediaURI}sprites/${config.image}`;
+            if (typeof config.spriteOffset === 'object') this.#spriteOffset = config.spriteOffset;
+            if (typeof config.spriteSheetOffset === 'object') this.#spriteSheetOffset = config.spriteSheetOffset;
+
+            //Animation
+            if (typeof config.animations === 'object') this.#animations = config.animations;
+        }
+
         //Add to game objects list
         Game.objects.push(this);
-
-        //No config
-        if (typeof config !== 'object') return;
-
-        //Position & size
-        if (typeof config.pos === 'object') this.#pos = config.pos;
-        if (typeof config.size === 'object') this.#size = config.size;
-
-        //Clicks
-        if (typeof config.clickable === 'boolean') this.#clickable = config.clickable;
-
-        //Rendering (sorting)
-        if (typeof config.sortingLayer === 'number') this.#sortingLayer = config.sortingLayer;
-
-        //Rendering (sprite sheet)
-        if (typeof config.image === 'string') this.#image.src = `${Game.mediaURI}sprites/${config.image}`;
-        if (typeof config.spriteOffset === 'object') this.#spriteOffset = config.spriteOffset;
-        if (typeof config.spriteSheetOffset === 'object') this.#spriteSheetOffset = config.spriteSheetOffset;
-
-        //Animation
-        if (typeof config.animations === 'object') this.#animations = config.animations;
     }
 
     remove() {
@@ -673,10 +557,18 @@ class GameObject {
         Game.objects.removeItem(this);
     }
 
+    setActive(active) {
+        //Invalid value
+        if (typeof active !== 'boolean') return;
+
+        //Set active
+        this.#active = active;
+    }
+
     //Update
     update() {
         //Update animation sprite offset
-        if (this.#animation) this.#spriteOffset = this.#animation.update().mult(this.size);
+        if (this.#animation) this.#spriteOffset = this.#animation.update().mult(this.#animation.pixelOffset ? new Vec2(1) : this.size);
     }
 
     //Clicks
@@ -688,7 +580,7 @@ class GameObject {
         if (!this.isPosInBounds(pos)) return false;
 
         //Check if clicked on transparent pixel
-        if (!this.isPosInSprite(pos, Game.hiddenCanvas, Game.hiddenCtx)) return false;
+        if (!this.isPosInSprite(pos, Game.canvasHidden, Game.ctxHidden)) return false;
 
         //Valid 
         return true;
@@ -743,9 +635,9 @@ class GameObject {
     }
 
     //Rendering
-    draw(ctx, config = {}) {
+    draw(ctx, options = {}) {
         //Get info
-        const pos = (typeof config.pos === 'object' ? config.pos : this.pos);
+        const pos = (typeof options.pos === 'object' ? options.pos : this.pos);
 
         //Save context transform
         ctx.save(); 
@@ -795,13 +687,13 @@ class GameObject {
     }
 
     //Movement
-    get maxPosX() { return Math.floor(Game.scaledSize.x - this.size.x); }
-    get maxPosY() { return Math.floor(Game.scaledSize.y - this.size.y); }
+    get maxPosX() { return Math.floor(Game.windowSizeScaled.x - this.size.x); }
+    get maxPosY() { return Math.floor(Game.windowSizeScaled.y - this.size.y); }
     get randomPoint() { return new Vec2(Util.randomInclusive(this.maxPosX), Util.randomInclusive(this.maxPosY)); }
 
-    moveTo(pos, ignoreWalls = false) {
+    moveTo(pos, options = {}) {
         //Clamp new position
-        if (!ignoreWalls) {
+        if (!options.ignoreWalls) {
             pos.x = Util.clamp(pos.x, 0, this.maxPosX);
             pos.y = Util.clamp(pos.y, 0, this.maxPosY);
         }
@@ -813,6 +705,253 @@ class GameObject {
     respawn() {
         //Move to random point
         this.moveTo(this.randomPoint);
+    }
+
+}
+
+//Ball object
+class Ball extends GameObject {
+
+    //Constructor
+    constructor(config = {}) {
+        //Object
+        config.active = false;
+        config.name = 'Ball';
+
+        //Size, rendering & animations
+        config.size = new Vec2(9, 18);
+        config.image = `ball.png`;
+        config.animations = {
+            'bounce': new Animation(
+                [[0, 0], [0, 2], [0, 4], [0, 6], [0, 9], [0, 6], [0, 4], [0, 2], [0, 0], [0, 2], [0, 4], [0, 2], [0, 0], [0, 2], [0, 0]],
+                1,
+                { loop: false, pixelOffset: true }
+            )
+        };
+        
+        //Create object
+        super(config);
+    }
+
+    setActive(active) {
+        super.setActive(active);
+
+        //Bounce
+        this.animate('bounce', true);
+    }
+
+    //Pets
+    onReached() {
+        //Tell pets to stop moving towards the ball
+        for (const pet of Game.pets) {
+            if (pet.ai.state == PetAI.MOVE_BALL) {
+                pet.ai.setState(AI.IDLE);
+            }
+        }
+
+        //Hide ball
+        this.setActive(false);
+    }
+
+}
+
+
+ /*$$$$$$$                     /$$
+| $$_____/                    |__/
+| $$       /$$$$$$$   /$$$$$$  /$$ /$$$$$$$   /$$$$$$
+| $$$$$   | $$__  $$ /$$__  $$| $$| $$__  $$ /$$__  $$
+| $$__/   | $$  \ $$| $$  \ $$| $$| $$  \ $$| $$$$$$$$
+| $$      | $$  | $$| $$  | $$| $$| $$  | $$| $$_____/
+| $$$$$$$$| $$  | $$|  $$$$$$$| $$| $$  | $$|  $$$$$$$
+|________/|__/  |__/ \____  $$|__/|__/  |__/ \_______/
+                     /$$  \ $$
+                    |  $$$$$$/
+                     \_____*/
+
+class Game {
+    
+    //Media folder URI
+    static #mediaURI = document.body.getAttribute('media');
+
+    static get mediaURI() { return this.#mediaURI; }
+
+    //Window
+    static #scale = 2;
+    static #windowSize = new Vec2(window.innerWidth, window.innerHeight);
+    static #windowSizeScaled = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
+
+    static get scale() { return this.#scale; }
+    static get windowSize() { return this.#windowSize; }
+    static get windowSizeScaled() { return this.#windowSizeScaled; }
+
+    static setScale = (scale) => {
+        //Invalid value
+        if (typeof scale !== 'number') return;
+
+        //Update scale
+        this.#scale = scale;
+        this.onResize();
+    }
+
+    static onResize = () => {
+        //Update game window size
+        this.#windowSize = new Vec2(window.innerWidth, window.innerHeight);
+        this.#windowSizeScaled = this.windowSize.div(this.scale);
+
+        //Update game canvas size
+        this.canvas.width = this.windowSize.x;
+        this.canvas.height = this.windowSize.y;
+
+        //Fit all pets on screen
+        this.pets.forEach(pet => pet.moveTo(pet.pos))
+    }
+
+    //Update
+    static #fps = 30;    //Game framerate
+    static #frames = 0;  //Frames since game start
+
+    static get fps() { return this.#fps }
+    static get frames() { return this.#frames }
+
+    static update = () => {
+        //Check if window size changed
+        if (this.windowSize.x != window.innerWidth || this.windowSize.y != window.innerHeight) this.onResize();
+
+        //Next frame
+        this.#frames++;
+
+        //Update objects
+        for (const obj of this.objects) {
+            //Not active
+            if (!obj.active) continue;
+
+            //Draw object
+            obj.update();
+        }
+
+        //Draw objects
+        requestAnimationFrame(this.draw);
+    }
+
+    //Rendering
+    static #background = document.getElementById('background');
+    static #canvas = document.getElementById('canvas');
+    static #canvasHidden = document.getElementById('canvasHidden');
+    static #ctx;
+    static #ctxHidden;
+
+    static get background() { return this.#background; }
+    static get canvas() { return this.#canvas; }
+    static get canvasHidden() { return this.#canvasHidden; }
+    static get ctx() { return this.#ctx; }
+    static get ctxHidden() { return this.#ctxHidden; }
+
+    static draw = () => {
+        //Clear canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        //Sort objects
+        this.sortObjects();
+
+        //Check if in decor mode
+        const inDecorMode = this.isAction(Action.DECOR);
+
+        //Draw objects
+        for (const obj of this.objects) {
+            //Not active
+            if (!obj.active) continue;
+
+            //Check if in decor mode and object is not decor
+            if (inDecorMode && !obj.isDecoration) continue;
+
+            //Draw object
+            obj.draw(this.ctx);
+        }
+    }
+
+    //Game objects
+    static #objects = [];    //List of all the game objects (gets sorted every frame to check clicks and render back-to-front)
+    static #ball;            //Pets ball object, gets init later
+    static #pets = [];       //List of all the pets       (do not sort, positions must be the same as in extension.ts)
+    static #decoration = []; //List of all the decoration (do not sort, positions must be the same as in extension.ts)
+    static #enemies = [];    //List of all the enemies
+    static #enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
+
+    static get objects() { return this.#objects; }
+    static get ball() { return this.#ball; }
+    static get pets() { return this.#pets; }
+    static get decoration() { return this.#decoration; }
+    static get enemies() { return this.#enemies; }
+    static get enemySpawner() { return this.#enemySpawner; }
+
+    static sortObjects = () => {
+        //Sort objects back-to-front
+        this.objects.sort((a, b) => { return a.sortingLayer != b.sortingLayer ? a.sortingLayer - b.sortingLayer : a.sortingOrder - b.sortingOrder; }); 
+    }
+
+    //Money
+    static #money = 0;
+    static #moneyText = document.getElementById('moneyText');
+
+    static get money() { return this.#money; }
+
+    static setMoney = (amount) => {
+        this.#money = amount;
+        this.#moneyText.innerText = `${amount}G`;
+    }
+
+    static addMoney = (amount) => {
+        this.setMoney(this.money + amount);
+        this.showMessage(`${amount >= 0 ? '+' : '-'}${Math.abs(amount)}G`);
+        vscode.postMessage({ 
+            type: 'money', 
+            value: this.money 
+        });
+    }
+
+    //Current action being performed
+    static #action = Action.NONE;
+
+    static get action() { return this.#action; };
+
+    static isAction = (action) => { 
+        return this.action == action;
+    }
+
+    static setAction = (action) => {
+        //Update action & cursor
+        this.#action = action;
+        Cursor.setIcon(action);
+
+        //Close menus & toggle decor mode overlay
+        Menus.close();
+        DecorMode.showOverlay(this.isAction(Action.DECOR));
+    }
+
+    //Messages
+    static showMessage = (content, isLong = false) => {
+        //Create message element
+        const message = document.createElement('span');
+        message.classList.add('message');
+        message.innerText = content;
+        if (isLong) message.setAttribute('long', '');
+        document.getElementById('messages').appendChild(message);
+
+        //Set timeout to remove message element
+        setTimeout(() => message.remove(), isLong ? 3000 : 2000);
+    }
+
+    //Start
+    static start = () => {
+        //Init canvas contexts
+        this.#ctx = this.canvas.getContext('2d');
+        this.#ctxHidden = this.canvasHidden.getContext('2d', { willReadFrequently: true });
+
+        //Create ball
+        this.#ball = new Ball();
+        
+        //Start game loop
+        return setInterval(this.update, 1000 / this.fps);
     }
 
 }

@@ -78,62 +78,6 @@ body[cursor="none"] {
     background: url(./sprites/backgrounds/snow.png);
 }
 
-/* Ball */
-#ball {
-    --size: 9px;
-    --position-x: 0px;
-    --position-y: 0px;
-
-    /* Width */
-    width: var(--size);
-    height: var(--size);
-
-    /* Layout */
-    position: absolute;
-    left: var(--position-x);
-    top: calc(var(--position-y));
-
-    /* Visuals */
-    background-image: url(./sprites/emotes.png);
-    background-position-x: calc(-3 * var(--size));
-    background-position-y: calc(-9 * var(--size));
-    transform: translateX(calc(-0.5 * var(--size))) translateY(calc(-0.5 * var(--size)));
-
-    /* Other */
-    pointer-events: none;
-    opacity: 0;
-}
-
-#ball[visible] {
-    animation-name: bounce;
-    animation-duration: 0.5s;
-    opacity: 1;
-}
-
-@keyframes bounce {
-    0% {
-        top: calc(var(--position-y) - 0px);
-    }
-    20% {
-        top: calc(var(--position-y) - 10px);
-    }
-    40% {
-        top: calc(var(--position-y) - 0px);
-    }
-    60% {
-        top: calc(var(--position-y) - 5px);
-    }
-    80% {
-        top: calc(var(--position-y) - 0px);
-    }
-    90% {
-        top: calc(var(--position-y) - 2px);
-    }
-    100% {
-        top: calc(var(--position-y) - 0px);
-    }
-}
-
 /* Game canvas */
 #canvas {
     /* Layout */
@@ -146,7 +90,7 @@ body[cursor="none"] {
 }
 
 /* Hidden canvas */
-#hiddenCanvas {
+#canvasHidden {
     /* Layout */
     display: none;
 }
@@ -386,6 +330,11 @@ body[cursor="none"] {
     /* Text */
     font-size: 17px;
     color: #c0640d;
+}
+
+.storeButtonMoney[expensive] {
+    /* Text */
+    color: #c0220d;
 }
 
 /* Money menu */

@@ -17,7 +17,7 @@ function toggleActionBall() {
     Menus.close();
 
     //Ball is visible -> Remove it
-    if (Ball.isVisible) Ball.onReached();
+    if (Game.ball.active) Game.ball.onReached();
     
     //Toggle ball action
     Game.setAction(Game.isAction(Action.BALL) ? Action.NONE : Action.BALL);
@@ -51,7 +51,7 @@ function createStoreItem(name, price) {
     element.append(text);
 
     //Add price to text
-    if (typeof price === 'number') text.innerHTML += `<br><span class="storeButtonMoney">${price}G</span>`;
+    if (typeof price === 'number') text.innerHTML += `<br><span class="storeButtonMoney" ${price > Game.money ? 'expensive' : ''}>${price}G</span>`;
 
     //Return element
     return element;
@@ -77,6 +77,7 @@ function openStoreMenu() {
 
     //Scroll to top
     content.scrollTop = 0;
+    setTimeout(() => { content.scrollTop = 0; }, 0); //Scroll on a timer to wait until elements are rendered
     
     //Show store menu
     Menus.toggle('store', true);
@@ -134,7 +135,7 @@ function openStoreCategoryMenu(category) {
 
             //Center decoration with mouse & start dragging it
             const decorCenterRelativePos = decor.size.mult(0.5);
-            decor.moveTo(decor.snapPos(Cursor.scaledPos.sub(decorCenterRelativePos)));
+            decor.moveTo(decor.snapPos(Cursor.posScaled.sub(decorCenterRelativePos)));
             decor.startDragging(decorCenterRelativePos);
 
             //Notify decor added
@@ -150,6 +151,7 @@ function openStoreCategoryMenu(category) {
 
     //Scroll to top
     content.scrollTop = 0;
+    setTimeout(() => { content.scrollTop = 0; }, 0); //Scroll on a timer to wait until elements are rendered
 }
 
 
@@ -292,19 +294,17 @@ window.addEventListener('message', event => {
         case 'scale':
             switch (message.value.toLowerCase()) {
                 case 'small':
-                    Game.scale = 1;
+                    Game.setScale(1);
                     break;
                 case 'big':
-                    Game.scale = 3;
+                    Game.setScale(3);
                     break;
                 case 'medium':
                 default:
-                    Game.scale = 2;
+                    Game.setScale(2);
                     break;
             }
             document.body.style.setProperty('--scale', Game.scale);
-            Game.ctx.scale(Game.scale, Game.scale);
-            Game.onResize();
             break;
     
         //Update money
@@ -315,12 +315,12 @@ window.addEventListener('message', event => {
 })
 
 //Cursor events
-document.onmousedown = event => {
+document.body.onmousedown = event => {
     //Menu open -> Ignore click
     if (Menus.current) return;
 
     //Get scaled mouse position
-    const pos = Cursor.scaledPos;
+    const pos = Cursor.posScaled;
 
     //Perform action
     switch (Game.action) {
@@ -335,7 +335,7 @@ document.onmousedown = event => {
                 const obj = Game.objects[i];
 
                 //Check if its decoration
-                if (!(obj instanceof Decoration)) continue;
+                if (!obj.isDecoration) continue;
 
                 //Check event
                 if (obj.checkMouseDown(pos)) break;
@@ -345,12 +345,12 @@ document.onmousedown = event => {
     }
 }
 
-document.onmouseup = event => {
+document.body.onmouseup = event => {
     //Menu open -> Ignore click
     if (Menus.current) return;
 
     //Get scaled mouse position
-    const pos = Cursor.scaledPos;
+    const pos = Cursor.posScaled;
 
     //Perform action
     switch (Game.action) {
@@ -361,7 +361,7 @@ document.onmouseup = event => {
                 //Move
                 case DecorMode.ACTION_MOVE:
                     //Stop moving all
-                    Game.decoration.forEach(obj => obj.stopDragging());
+                    for (const decoration of Game.decoration) decoration.stopDragging();
                     break;
 
                 //Sell
@@ -375,7 +375,7 @@ document.onmouseup = event => {
                         const obj = Game.objects[i];
 
                         //Check if its decoration
-                        if (!(obj instanceof Decoration)) continue;
+                        if (!obj.isDecoration) continue;
 
                         //Check event
                         if (obj.checkMouseUp(pos)) break;
@@ -388,11 +388,11 @@ document.onmouseup = event => {
         //Place ball
         case Action.BALL: {
             //Move ball
-            Ball.moveTo(pos);
-            Ball.setVisible(true);
+            Game.ball.moveTo(pos.sub(Game.ball.size.mult(0.5, 1).toInt()));
+            Game.ball.setActive(true);
 
             //Move all pets towards ball
-            Game.pets.forEach(pet => pet.moveTowardsBall(pos));
+            for (const pet of Game.pets) pet.moveTowardsBall(pos);
 
             //Clear current action
             Game.setAction(Action.NONE);
@@ -448,7 +448,7 @@ document.onmouseleave = event => {
                               |_*/
 
 //Start game loop
-const timer = setInterval(Game.update, 1000 / Game.fps)
+const loop = Game.start();
 
 //Tell VSCode the game was loaded
 vscode.postMessage({ type: 'init' })
