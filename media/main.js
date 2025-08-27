@@ -121,17 +121,17 @@ function openStoreCategoryMenu(category) {
             //Check if player has enough money
             if (Game.money < preset.price) return;
 
-            //Close actions menu
-            Menus.close();
-
-            //Enter decor mode
-            DecorMode.toggle(true);
-
             //Consume money
             Game.addMoney(-preset.price);
 
+            //Close actions menu
+            Menus.close();
+
             //Create decoration
             const decor = new Decoration(preset);
+
+            //Enter decor mode (after creating decoration, else it will ask the user to buy one)
+            DecorMode.toggle(true);
 
             //Center decoration with mouse & start dragging it
             const decorCenterRelativePos = decor.size.mult(0.5);
