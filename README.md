@@ -68,24 +68,25 @@ Aditionally, you can rearange or sell your current decoration by entering **Deco
     </ul>
 </details>
 
-<br>
-
-# Credits
+## Credits
 
 **Stardew Pets** was done by a single person in their free time.  
 Since it's free, I'd appreciate you taking a look at my [portfolio](https://botpa.vercel.app) as a thanks :D  
 Aditionally, all sprite assets are from the original [*Stardew Valley*](https://www.stardewvalley.net/) by ConcernedApe!
 
-# Where to Find it
+## Where to Find it
 
 **Stardew Pets** can be found in the **Explorer** panel.  
-If its missing, try searching ***"Focus on Stardew Pets View"*** in the **Command Palette** (```Ctrl+Shift+P``` on Windows/Linux, ```Cmd(⌘)+Shift+P``` on Mac).
+If its missing, try searching ***"Focus on Stardew Pets View"*** in the **Command Palette:**  
 
-# VSCode Store
+- ```Ctrl+Shift+P``` on Windows/Linux
+- ```Cmd(⌘)+Shift+P``` on Mac
+
+## VSCode Store
 
 **Stardew Pets** is available on the [VSCode Store](https://marketplace.visualstudio.com/items?itemName=botpa.stardew-pets)!
 
-# Contributing
+## Contributing
 
 If you find bugs or have new features you want to see added, feel free to tell me via [GitHub issues](https://github.com/BOTPanzer/Stardew-Pets/issues).  
 
