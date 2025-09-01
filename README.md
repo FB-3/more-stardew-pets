@@ -10,10 +10,12 @@ Keep your favourite ***Stardew Valley*** pets with you while coding.
 
 ## Pets
 
-You can add or remove pets to keep you company while coding.  
+You can have pets with custom names to keep you company while coding.  
 
 <details>
-    <summary><b>Current pets:</b></summary>
+    <summary style="cursor: pointer">
+        <b>Current pets:</b>
+    </summary>
     <ul>
         <li>Cats</li>
         <li>Dogs</li>
@@ -34,11 +36,13 @@ You can add or remove pets to keep you company while coding.
 
 ## Enemies
 
-Enemies will sometimes appear in your farm.  
+Enemies will sometimes appear in your farm, with a maximum of 1 at a time.  
 Clicking on one of them kills it and gives you money to buy decoration.  
 
 <details>
-    <summary><b>Current enemies:</b></summary>
+    <summary style="cursor: pointer">
+        <b>Current enemies:</b>
+    </summary>
     <ul>
         <li>Bugs</li>
         <li>Crabs</li>
@@ -53,7 +57,9 @@ You can use the money obtained by enemies to buy new decoration in the **General
 Aditionally, you can rearange or sell your current decoration by entering **Decor Mode**.  
 
 <details>
-    <summary><b>Current decoration:</b></summary>
+    <summary style="cursor: pointer">
+        <b>Current decoration:</b>
+    </summary>
     <ul>
         <li>Chairs</li>
         <li>Stools</li>
@@ -77,7 +83,7 @@ Aditionally, all sprite assets are from the original [*Stardew Valley*](https://
 ## Where to Find it
 
 **Stardew Pets** can be found in the **Explorer** panel.  
-If its missing, try searching ***"Focus on Stardew Pets View"*** in the **Command Palette:**  
+If its missing, try searching **"Focus on Stardew Pets View"** in the **Command Palette:**  
 
 - ```Ctrl+Shift+P``` on Windows/Linux
 - ```Cmd(⌘)+Shift+P``` on Mac
@@ -91,6 +97,6 @@ If its missing, try searching ***"Focus on Stardew Pets View"*** in the **Comman
 If you find bugs or have new features you want to see added, feel free to tell me via [GitHub issues](https://github.com/BOTPanzer/Stardew-Pets/issues).  
 
 It's my personal project so I'd like to keep the code mine, but I also like listening to what the community wants.  
-Just keep in mind I won't add things that aren't in ***Stardew Valley***, like recolours or new original pets.  
+Just keep in mind I won't add things that aren't in **Stardew Valley**, like recolours or new original pets.  
 If you want those, feel free to fork the repo and add me in the credits.
 
