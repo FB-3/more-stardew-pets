@@ -127,8 +127,12 @@ class Timeout {
 
     //Functions
     wait(duration) {
-        clearTimeout(this.#timeout);
+        this.stop();
         this.#timeout = setTimeout(this.#fun, duration);
+    }
+
+    stop() {
+        clearTimeout(this.#timeout);
     }
 
 }
@@ -874,15 +878,15 @@ class Game {
     static #ball;            //Pets ball object, gets init later
     static #pets = [];       //List of all the pets       (do not sort, positions must be the same as in extension.ts)
     static #decoration = []; //List of all the decoration (do not sort, positions must be the same as in extension.ts)
-    static #enemies = [];    //List of all the enemies
-    static #enemySpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_enemy' }), 30 * 1000);
+    static #monsters = [];   //List of all the monsters
+    static #monsterSpawner = new Timeout(() => vscode.postMessage({ type: 'spawn_monster' }));
 
     static get objects() { return this.#objects; }
     static get ball() { return this.#ball; }
     static get pets() { return this.#pets; }
     static get decoration() { return this.#decoration; }
-    static get enemies() { return this.#enemies; }
-    static get enemySpawner() { return this.#enemySpawner; }
+    static get monsters() { return this.#monsters; }
+    static get monsterSpawner() { return this.#monsterSpawner; }
 
     static sortObjects = () => {
         //Sort objects back-to-front

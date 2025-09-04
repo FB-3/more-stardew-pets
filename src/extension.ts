@@ -10,7 +10,7 @@ let extensionStorageFolder: string = '';
 
 
 //Enums
-const EnemySpecies: { [key: string]: string[] } = {
+const MonsterSpecies: { [key: string]: string[] } = {
     Slime:      ['Iron', 'Tiger'],
     Bug:        ['Normal', 'Normal Dangerous', 'Armored', 'Armored Dangerous'],
     Golem:      ['Stone', 'Stone Dangerous', 'Iridium', 'Wilderness'],
@@ -151,6 +151,12 @@ function initGame() {
     webview.postMessage({
         type: 'scale',
         value: config.get('scale')
+    });
+
+    //Send monsters toggle
+    webview.postMessage({
+        type: 'monsters',
+        value: config.get('monsters')
     });
 
     //Send money
@@ -319,6 +325,14 @@ export function activate(context: vscode.ExtensionContext) {
             webview.postMessage({
                 type: 'scale',
                 value: config.get('scale')
+            })
+        }
+
+        //Monsters toggle changed
+        if (event.affectsConfiguration("stardew-pets.monsters")) {
+            webview.postMessage({
+                type: 'monsters',
+                value: config.get('monsters')
             })
         }
     })
@@ -523,19 +537,19 @@ export class WebViewProvider implements vscode.WebviewViewProvider {
                     saveGame();
                     break;
 
-                //Spawn enemy
-                case 'spawn_enemy': {
+                //Spawn monster
+                case 'spawn_monster': {
                     //Get specie
-                    const species = Object.keys(EnemySpecies);
+                    const species = Object.keys(MonsterSpecies);
                     const specie = species[Math.floor(Math.random() * species.length)];
 
                     //Get color
-                    const colors = EnemySpecies[specie]
+                    const colors = MonsterSpecies[specie]
                     const color =  colors[Math.floor(Math.random() * colors.length)];
 
-                    //Spawn enemy
+                    //Spawn monster
                     this.postMessage({
-                        type: 'spawn_enemy',
+                        type: 'spawn_monster',
                         specie: specie,
                         color: color,
                     })

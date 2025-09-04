@@ -2,7 +2,7 @@
     "name": "stardew-pets",
     "displayName": "Stardew Pets",
     "description": "Stardew Valley pets for VSCode 😸",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "publisher": "Botpa",
     "author": {
         "name": "Botpa"
@@ -47,7 +47,7 @@
     "main": "./out/extension.js",
     "contributes": {
         "configuration": {
-            "title": "StardewPets",
+            "title": "Stardew Pets",
             "properties": {
                 "stardew-pets.background": {
                     "type": "string",
@@ -68,7 +68,12 @@
                         "Medium",
                         "Big"
                     ],
-                    "description": "The scale of the pets."
+                    "description": "The size of the pets."
+                },
+                "stardew-pets.monsters": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Toggles if monsters can spawn."
                 }
             }
         },

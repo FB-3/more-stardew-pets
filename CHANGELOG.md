@@ -1,5 +1,13 @@
 # Change Log
 
+## [v2.0.1]
+
+**New**
+- Added a toggle to disable **monsters** spawning
+
+**Tweaks**
+- Renamed **enemies** to **monsters**
+
 ## [v2.0.0]
 
 **New**

@@ -1330,7 +1330,7 @@ class Junimo extends PetCharacter {
 |________/|__/  |__/ \_______/|__/ |__/ |__/|__/ \_______/|______*/
 
 //Animations
-class EnemyAnimations {
+class MonsterAnimations {
 
     static get SLIME() { 
         return {
@@ -1458,7 +1458,7 @@ class EnemyAnimations {
 }
 
 //AI
-class EnemyAI extends AI {
+class MonsterAI extends AI {
 
     //State
     constructor(config) { 
@@ -1475,28 +1475,28 @@ class EnemyAI extends AI {
         //Alredy clicked
         if (this.state == AI.SPECIAL) return;
 
+        //Give money to player
+        Game.addMoney(40 + 5 * Util.randomInclusive(8)); //40 - 80 gold
+
+        //Wait to spawn a new monster
+        Game.monsterSpawner.wait(30 * 1000);
+
         //Play special animation
         this.setState(AI.SPECIAL);
     }
 
     //State: SPECIAL
     onEnd_special() {
-        //Remove enemy from game
+        //Remove monster from game
         this.character.remove();
-
-        //Give money to player
-        Game.addMoney(40 + 5 * Util.randomInclusive(8)); //40 - 80 gold
-
-        //Wait to spawn a new enemy
-        Game.enemySpawner.wait(30 * 1000);
     }
 
 }
 
 //Characters
-class EnemyCharacter extends Character {
+class MonsterCharacter extends Character {
 
-    //Enemy info
+    //Monster info
     #specie = '';
     #color = 'Color';
 
@@ -1508,10 +1508,10 @@ class EnemyCharacter extends Character {
     constructor(specie, color, config = {}, config_ai = {}) {
         //Add name & image to config
         config.name = Util.titleCase(specie);
-        config.image = `enemies/${specie.toLowerCase()}.png`;
+        config.image = `monsters/${specie.toLowerCase()}.png`;
         
         //Create character
-        super(config, new EnemyAI(config_ai));
+        super(config, new MonsterAI(config_ai));
 
         //Save info
         this.#specie = specie;
@@ -1520,15 +1520,15 @@ class EnemyCharacter extends Character {
         //Move towards random point
         this.ai.moveTowardsRandom();
         
-        //Add to enemies list
-        Game.enemies.push(this);
+        //Add to monsters list
+        Game.monsters.push(this);
     }
 
     remove() {
         super.remove();
 
-        //Remove from enemies list
-        Game.enemies.removeItem(this);
+        //Remove from monsters list
+        Game.monsters.removeItem(this);
     }
 
     //Clicks
@@ -1543,13 +1543,13 @@ class EnemyCharacter extends Character {
 }
 
 //Slime
-class Slime extends EnemyCharacter {
+class Slime extends MonsterCharacter {
 
     constructor(color) {
         //Default config
         const config = {
             size: new Vec2(16, 24),
-            animations: EnemyAnimations.SLIME
+            animations: MonsterAnimations.SLIME
         };
 
         //Color sprite sheet offset
@@ -1572,13 +1572,13 @@ class Slime extends EnemyCharacter {
 }
 
 //Bug
-class Bug extends EnemyCharacter {
+class Bug extends MonsterCharacter {
 
     constructor(color) {
         //Default config
         const config = {
             size: new Vec2(16),
-            animations: EnemyAnimations.BUG
+            animations: MonsterAnimations.BUG
         };
 
         //Color sprite sheet offset
@@ -1607,13 +1607,13 @@ class Bug extends EnemyCharacter {
 }
 
 //Golem
-class Golem extends EnemyCharacter {
+class Golem extends MonsterCharacter {
 
     constructor(color) {
         //Default config
         const config = {
             size: new Vec2(16, 24),
-            animations: EnemyAnimations.GOLEM
+            animations: MonsterAnimations.GOLEM
         };
 
         //Color sprite sheet offset
@@ -1642,13 +1642,13 @@ class Golem extends EnemyCharacter {
 }
 
 //Crab
-class Crab extends EnemyCharacter {
+class Crab extends MonsterCharacter {
 
     constructor(color) {
         //Default config
         const config = {
             size: new Vec2(16, 24),
-            animations: EnemyAnimations.CRAB
+            animations: MonsterAnimations.CRAB
         };
 
         //Color sprite sheet offset

@@ -2,7 +2,7 @@
 
 <div align='center'>
 
-Keep your favourite ***Stardew Valley*** pets with you while coding.
+Keep your favourite **Stardew Valley** pets with you while coding.
 
 ![alt text](https://raw.githubusercontent.com/BOTPanzer/Stardew-Pets/main/pets.png)
 
@@ -34,14 +34,15 @@ You can have pets with custom names to keep you company while coding.
     </ul>
 </details>
 
-## Enemies
+## Monsters
 
-Enemies will sometimes appear in your farm, with a maximum of 1 at a time.  
+Monsters will sometimes appear in your farm, with a maximum of 1 at a time.  
 Clicking on one of them kills it and gives you money to buy decoration.  
+You can disable monsters in settings if you don't want them to appear.  
 
 <details>
     <summary style="cursor: pointer">
-        <b>Current enemies:</b>
+        <b>Current monsters:</b>
     </summary>
     <ul>
         <li>Bugs</li>
@@ -53,7 +54,7 @@ Clicking on one of them kills it and gives you money to buy decoration.
   
 ## Decoration
 
-You can use the money obtained by enemies to buy new decoration in the **General Store**.  
+You can use the money obtained by monsters to buy new decoration in the **General Store**.  
 Aditionally, you can rearange or sell your current decoration by entering **Decor Mode**.  
 
 <details>
@@ -78,7 +79,7 @@ Aditionally, you can rearange or sell your current decoration by entering **Deco
 
 **Stardew Pets** was done by a single person in their free time.  
 Since it's free, I'd appreciate you taking a look at my [portfolio](https://botpa.vercel.app) as a thanks :D  
-Aditionally, all sprite assets are from the original [*Stardew Valley*](https://www.stardewvalley.net/) by ConcernedApe!
+Aditionally, all sprite assets are from the original [Stardew Valley](https://www.stardewvalley.net/) by ConcernedApe!
 
 ## Where to Find it
 

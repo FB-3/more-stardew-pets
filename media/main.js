@@ -171,12 +171,16 @@ window.addEventListener('message', event => {
 
     //Check message type
     switch (message.type.toLowerCase()) {
-        //Init
+        //
+        // Game
+        //
+
+        //Init game
         case 'init':
             document.body.removeAttribute('hide');
             break;
     
-        //Reset
+        //Reset game
         case 'reset':
             //Remove pets
             for (const pet of Game.pets) Game.objects.removeItem(pet);
@@ -190,8 +194,58 @@ window.addEventListener('message', event => {
             Menus.close();
             DecorMode.toggle(false);
             break;
+
+        //Init money
+        case 'money': 
+            Game.setMoney(message.value);
+            break;
     
-        //Spawn a pet/enemy/decor
+        //
+        // Settings
+        //
+        
+        //Update background
+        case 'background':
+            Game.background.setAttribute('background', message.value.toLowerCase());
+            break;
+
+        //Update scale
+        case 'scale':
+            switch (message.value.toLowerCase()) {
+                case 'small':
+                    Game.setScale(1);
+                    break;
+                case 'big':
+                    Game.setScale(3);
+                    break;
+                case 'medium':
+                default:
+                    Game.setScale(2);
+                    break;
+            }
+            document.body.style.setProperty('--scale', Game.scale);
+            break;
+    
+        //Update monsters toggle
+        case 'monsters':
+            //Clear monsters
+            for (const monster of Game.monsters) monster.remove();
+            
+            //Toggle spawner
+            if (message.value) {
+                //Toggle on
+                Game.monsterSpawner.wait(30 * 1000);
+            } else {
+                //Toggle off
+                Game.monsterSpawner.stop();
+            }
+            break;
+    
+        //
+        // Game objects
+        //
+        
+        //Spawn a pet/decor/monster
         case 'spawn_pet': {
             const name = message.name;
             const specie = message.specie.toLowerCase();
@@ -243,7 +297,15 @@ window.addEventListener('message', event => {
             break;
         }
         
-        case 'spawn_enemy': {
+        case 'spawn_decor': {
+            const pos = new Vec2(message.x, message.y)
+            const category = message.category.toUpperCase().replaceAll(' ', '_');
+            const name = message.name.toUpperCase().replaceAll(' ', '_');
+            new Decoration(DecorationPreset[category][name], { pos: pos });
+            break;
+        }
+        
+        case 'spawn_monster': {
             const specie = message.specie.toLowerCase();
             const color = message.color.toLowerCase();
             switch (specie) {
@@ -262,20 +324,16 @@ window.addEventListener('message', event => {
             }
             break;
         }
-        
-        case 'spawn_decor': {
-            const pos = new Vec2(message.x, message.y)
-            const category = message.category.toUpperCase().replaceAll(' ', '_');
-            const name = message.name.toUpperCase().replaceAll(' ', '_');
-            new Decoration(DecorationPreset[category][name], { pos: pos });
-            break;
-        }
 
         //Remove a pet
         case 'remove_pet':
             Game.pets[message.index].remove();
             break;
 
+        //
+        // Menus
+        //
+        
         //Toggle actions menu
         case 'actions':
             //Stop ball/gift action
@@ -283,33 +341,6 @@ window.addEventListener('message', event => {
 
             //Show actions menu
             Menus.toggle('actions');
-            break;
-
-        //Update background
-        case 'background':
-            Game.background.setAttribute('background', message.value.toLowerCase());
-            break;
-
-        //Update scale
-        case 'scale':
-            switch (message.value.toLowerCase()) {
-                case 'small':
-                    Game.setScale(1);
-                    break;
-                case 'big':
-                    Game.setScale(3);
-                    break;
-                case 'medium':
-                default:
-                    Game.setScale(2);
-                    break;
-            }
-            document.body.style.setProperty('--scale', Game.scale);
-            break;
-    
-        //Update money
-        case 'money': 
-            Game.setMoney(message.value);
             break;
     }
 })
