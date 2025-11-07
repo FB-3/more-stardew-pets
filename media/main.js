@@ -199,11 +199,11 @@ window.addEventListener('message', event => {
         case 'money': 
             Game.setMoney(message.value);
             break;
-    
+
         //
         // Settings
         //
-        
+
         //Update background
         case 'background':
             Game.background.setAttribute('background', message.value.toLowerCase());
@@ -240,11 +240,11 @@ window.addEventListener('message', event => {
                 Game.monsterSpawner.stop();
             }
             break;
-    
+
         //
         // Game objects
         //
-        
+
         //Spawn a pet/decor/monster
         case 'spawn_pet': {
             const name = message.name;
@@ -290,6 +290,9 @@ window.addEventListener('message', event => {
                 case 'cow':
                     new Cow(name, color);
                     break;
+                case 'parrot':
+                    new Parrot(name, color);
+                    break;
                 case 'junimo':
                     new Junimo(name, color);
                     break;
@@ -333,7 +336,7 @@ window.addEventListener('message', event => {
         //
         // Menus
         //
-        
+
         //Toggle actions menu
         case 'actions':
             //Stop ball/gift action
@@ -341,6 +344,9 @@ window.addEventListener('message', event => {
 
             //Show actions menu
             Menus.toggle('actions');
+
+            //Scroll to the top
+            document.getElementById('actionsContent').scrollTop = 0;
             break;
     }
 })

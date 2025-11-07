@@ -1,5 +1,16 @@
 # Change Log
 
+## [v2.1.0]
+
+**New**
+- Added parrots
+- Added new moods
+
+**Tweaks**
+- Decoration now sells for 80% of it's original price
+- Pet moods now appear at more correct elevations depending on the pet type and color
+- Made actions menu scrollable
+
 ## [v2.0.1]
 
 **New**
@@ -16,36 +27,45 @@
 - Added **Decor Mode** to move & sell decoration
 - Added snowy background
 
+**Tweaks**
+- Updated the UI all menus to look closer to **Stardew Valley**
+- The cursor now gets hidden when using the ball or gift
+
 **Engine**
 - Remade the engine to use a canvas instead of HTML & CSS for objects like pets
 - Changed save file from **pets.json** to a new **save.json** with support for money, pets & decoration
 - Clicking a pet behind another pet should now be easier, the game checks if a click was performed on a transparent pixel
 
-**Tweaks**
-- Updated the UI all menus to look closer to **Stardew Valley**
-- The cursor now gets hidden when using the ball or gift
-
 ## [v1.2.3]
 
+**Tweaks**
 - Moved **Play with Ball** and **Give a Gift** buttons into a new **Actions** menu
+
+**Engine**
 - Changed how actions are handled internally
 
 ## [v1.2.1]
 
+**Tweaks**
 - Updated where pets move when going after the ball so it feels better
 
 ## [v1.2.0]
 
+**New**
 - Added a ball to play with your pets :D
 
 ## [v1.1.1]
 
+**Tweaks**
 - Fixed extension not loading due to a folder not existing (linux only)
 
 ## [v1.1.0]
 
-- Fixed purple turtles
+**New**
 - Added ducks
+
+**Tweaks**
+- Fixed purple turtles
 - Updated moods system to reset heart after 10 minutes
 - Changed where **pets.json** is stored to prevent deleting it with updates
 

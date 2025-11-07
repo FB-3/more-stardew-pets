@@ -1212,8 +1212,8 @@ class Decoration extends GameObject {
 
             //Sell
             case DecorMode.ACTION_SELL:
-                //Give money to player
-                if (typeof this.price === 'number') Game.addMoney(this.price);
+                //Give money to player (80%)
+                if (typeof this.price === 'number') Game.addMoney(Math.floor(this.price * 0.8));
 
                 //Remove decor
                 this.remove();

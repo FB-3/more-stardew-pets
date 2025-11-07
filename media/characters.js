@@ -620,6 +620,38 @@ class PetAnimations {
         };
     }
 
+    static get PARROT() { 
+        return {
+            'idle': new Animation(
+                [[0, 0]],
+                5,
+                { loop: false }
+            ),
+            'moveUp': new Animation(
+                [[8, 0], [9, 0], [10, 0]],
+                5
+            ),
+            'moveRight': new Animation(
+                [[2, 0], [3, 0], [4, 0]],
+                5,
+                { flip: true }
+            ),
+            'moveDown': new Animation(
+                [[5, 0], [6, 0], [7, 0]],
+                5
+            ),
+            'moveLeft': new Animation(
+                [[2, 0], [3, 0], [4, 0]],
+                5
+            ),
+            'special': new Animation(
+                [[0, 0], [1, 0], [0, 0], [1, 0], [0, 0]],
+                5,
+                { loop: false }
+            )
+        };
+    }
+
     static get JUNIMO() { 
         return {
             'idle': new Animation(
@@ -674,14 +706,20 @@ class PetMoods {
     static get RANDOM() { return PetMoods[PetMoods.#moods[Util.randomExclusive(PetMoods.#moods.length)]]; }
 
     //Normal moods
-    static #moods = ['GIGACHAD', 'HAPPY', 'MAD', 'ALIEN', 'PLEDGE', 'BLUSH'];
+    static #moods = ['HAPPY', 'BLUSH', 'ASHAMED', 'CRY', 'MAD', 'IDK', 'PLEDGE', 'GIGACHAD', 'ALIEN', 'DEVIL', 'SHY', 'MUSIC'];
 
-    static get GIGACHAD() { return new Vec2(11, 1); }
     static get HAPPY() { return new Vec2(0, 0); }
-    static get MAD() { return new Vec2(2, 1); }
-    static get ALIEN() { return new Vec2(1, 2); }
-    static get PLEDGE() { return new Vec2(8, 1); }
     static get BLUSH() { return new Vec2(8, 0); }
+    static get ASHAMED() { return new Vec2(9, 0); }
+    static get CRY() { return new Vec2(13, 0); }
+    static get MAD() { return new Vec2(2, 1); }
+    static get IDK() { return new Vec2(5, 1); }
+    static get PLEDGE() { return new Vec2(8, 1); }
+    static get GIGACHAD() { return new Vec2(11, 1); }
+    static get ALIEN() { return new Vec2(1, 2); }
+    static get DEVIL() { return new Vec2(2, 2); }
+    static get SILLY() { return new Vec2(13, 1); }
+    static get MUSIC() { return new Vec2(6, 3); }
 
 }
 
@@ -693,7 +731,7 @@ class PetAI extends AI {
     //Moods
     #moodSprite = new Image();
     #moodOffset = new Vec2();
-    #moodElevation = 0; //Elevation is reversed, positive is down, negative is up
+    #moodElevation = 0; //Elevation is inverted, positive is down, negative is up
     #moodShow = false;
     #moodHideTimeout = new Timeout(() => this.#moodShow = false);
     #moodHeartTimeout = new Timeout(() => this.#setRandomMood());
@@ -706,7 +744,7 @@ class PetAI extends AI {
         //Check config
         if (typeof config === 'object') {
             //Mood elevation
-            if (typeof config.moodElevation === 'number') this.#moodElevation = config.moodElevation;
+            if (typeof config.moodElevation === 'number') this.#moodElevation = -config.moodElevation; //Elevation is inverted
         }
 
         //Init moods sprite
@@ -875,25 +913,19 @@ class PetCharacter extends Character {
 
 }
 
-class PetCharacterBig extends PetCharacter {
-
-    constructor(name, specie, color, config = {}, config_ai = {}) {
-        //Change pet size to big
-        config.size = new Vec2(32);
-
-        //Create pet
-        super(name, specie, color, config, config_ai);
-    }
-
-}
-
 //Cat
-class Cat extends PetCharacterBig {
+class Cat extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.CAT
+        };
+
+        //AI config
+        const config_ai = {
+            moodElevation: -3
         };
 
         //Color sprite sheet offset
@@ -920,60 +952,72 @@ class Cat extends PetCharacterBig {
         }
 
         //Create pet
-        super(name, 'cat', color, config, {
-            moodElevation: 3
-        });
+        super(name, 'cat', color, config, config_ai);
     }
 
 }
 
 //Dog
-class Dog extends PetCharacterBig {
+class Dog extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.DOG
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'blonde':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 4;
                 break;
             case 'gray':
                 config.spriteSheetOffset = new Vec2(128, 0);
+                config_ai.moodElevation = 4;
                 break;
             case 'brown':
                 config.spriteSheetOffset = new Vec2(256, 0);
+                config_ai.moodElevation = 6;
                 break;
             case 'dark brown':
                 config.spriteSheetOffset = new Vec2(384, 0);
+                config_ai.moodElevation = 4;
                 break;
             case 'light brown':
                 config.spriteSheetOffset = new Vec2(512, 0);
+                config_ai.moodElevation = 1;
                 break;
             case 'purple':
                 config.spriteSheetOffset = new Vec2(640, 0);
+                config_ai.moodElevation = 4;
                 break;
         }
 
         //Create pet
-        super(name, 'dog', color, config, {
-            moodElevation: -6
-        });
+        super(name, 'dog', color, config, config_ai);
     }
     
 }
 
 //Tutle
-class Turtle extends PetCharacterBig {
+class Turtle extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.TURTLE
+        };
+
+        //AI config
+        const config_ai = {
+            moodElevation: -2
         };
 
         //Color sprite sheet offset
@@ -988,9 +1032,7 @@ class Turtle extends PetCharacterBig {
         }
 
         //Create pet
-        super(name, 'turtle', color, config, {
-            moodElevation: 2
-        });
+        super(name, 'turtle', color, config, config_ai);
     }
 
 }
@@ -999,15 +1041,19 @@ class Turtle extends PetCharacterBig {
 class Dino extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(16),
             animations: PetAnimations.DINO
         };
 
+        //AI config
+        const config_ai = {
+            moodElevation: 10
+        };
+
         //Create pet
-        super(name, 'dino', color, config, {
-            moodElevation: -11
-        });
+        super(name, 'dino', color, config, config_ai);
     }
 
 }
@@ -1016,78 +1062,95 @@ class Dino extends PetCharacter {
 class Duck extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(16),
             animations: PetAnimations.DUCK
         };
 
+        //AI config
+        const config_ai = {
+            moodElevation: 8
+        };
+
         //Create pet
-        super(name, 'duck', color, config, {
-            moodElevation: -8
-        });
+        super(name, 'duck', color, config, config_ai);
     }
 
 }
 
 //Raccoon
-class Raccoon extends PetCharacterBig {
+class Raccoon extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.RACCOON
         };
 
-        //Create pet
-        super(name, 'raccoon', color, config, {
-            moodElevation: -4,
+        //AI config
+        const config_ai = {
+            moodElevation: 4,
             canSleep: false
-        });
+        };
+
+        //Create pet
+        super(name, 'raccoon', color, config, config_ai);
     }
 
 }
 
 //Goat, sheep, ostrich, pig
-class Goat extends PetCharacterBig {
+class Goat extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.DEFAULT
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 7;
                 break;
             case 'baby':
                 config.spriteSheetOffset = new Vec2(128, 0);
+                config_ai.moodElevation = 3;
                 break;
         }
 
         //Create pet
-        super(name, 'goat', color, config, {
-            moodElevation: (color == 'adult' ? -7 : -3)
-        });
+        super(name, 'goat', color, config, config_ai);
     }
 
 }
 
-class Sheep extends PetCharacterBig {
+class Sheep extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.DEFAULT
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 3;
                 break;
             case 'baby':
                 config.spriteSheetOffset = new Vec2(128, 0);
@@ -1095,63 +1158,69 @@ class Sheep extends PetCharacterBig {
         }
 
         //Create pet
-        super(name, 'sheep', color, config, {
-            moodElevation: (color == 'adult' ? -3 : 0)
-        });
+        super(name, 'sheep', color, config, config_ai);
     }
 
 }
 
-class Ostrich extends PetCharacterBig {
+class Ostrich extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.DEFAULT
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 10;
                 break;
             case 'baby':
                 config.spriteSheetOffset = new Vec2(128, 0);
+                config_ai.moodElevation = -3;
                 break;
         }
 
         //Create pet
-        super(name, 'ostrich', color, config, {
-            moodElevation: (color == 'adult' ? -8 : 2)
-        });
+        super(name, 'ostrich', color, config, config_ai);
     }
 
 }
 
-class Pig extends PetCharacterBig {
+class Pig extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.DEFAULT
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 8;
                 break;
             case 'baby':
                 config.spriteSheetOffset = new Vec2(128, 0);
+                config_ai.moodElevation = 4;
                 break;
         }
 
         //Create pet
-        super(name, 'pig', color, config, {
-            moodElevation: (color == 'adult' ? -8 : -4)
-        });
+        super(name, 'pig', color, config, config_ai);
     }
 
 }
@@ -1160,26 +1229,29 @@ class Pig extends PetCharacterBig {
 class Rabbit extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
             animations: PetAnimations.RABBIT
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 10;
                 break;
             case 'baby':
                 config.spriteSheetOffset = new Vec2(64, 0);
+                config_ai.moodElevation = 8;
                 break;
         }
 
         //Create pet
-        super(name, 'rabbit', color, config, {
-            moodElevation: (color == 'adult' ? -10 : -8)
-        });
+        super(name, 'rabbit', color, config, config_ai);
     }
 
 }
@@ -1188,78 +1260,140 @@ class Rabbit extends PetCharacter {
 class Chicken extends PetCharacter {
     
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(16),
             animations: PetAnimations.CHICKEN
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'white adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 10;
                 break;
             case 'white baby':
                 config.spriteSheetOffset = new Vec2(64, 0);
+                config_ai.moodElevation = 2;
                 break;
             case 'blue adult':
                 config.spriteSheetOffset = new Vec2(128, 0);
+                config_ai.moodElevation = 10;
                 break;
             case 'blue baby':
                 config.spriteSheetOffset = new Vec2(192, 0);
+                config_ai.moodElevation = 4;
                 break;
             case 'brown adult':
                 config.spriteSheetOffset = new Vec2(256, 0);
+                config_ai.moodElevation = 10;
                 break;
             case 'brown baby':
                 config.spriteSheetOffset = new Vec2(320, 0);
+                config_ai.moodElevation = 3;
                 break;
             case 'black adult':
                 config.spriteSheetOffset = new Vec2(384, 0);
+                config_ai.moodElevation = 10;
                 break;
             case 'black baby':
                 config.spriteSheetOffset = new Vec2(448, 0);
+                config_ai.moodElevation = 3;
                 break;
         }
 
         //Create pet
-        super(name, 'chicken', color, config, {
-            moodElevation: (color.includes('adult') ? -10 : -2)
-        });
+        super(name, 'chicken', color, config, config_ai);
     }
 
 }
 
 //Cow
-class Cow extends PetCharacterBig {
+class Cow extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(32),
             animations: PetAnimations.COW
         };
+
+        //AI config
+        const config_ai = {};
 
         //Color sprite sheet offset
         switch (color.toLowerCase()) {
             default:
             case 'white adult':
                 config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 3;
                 break;
             case 'white baby':
                 config.spriteSheetOffset = new Vec2(128, 0);
+                config_ai.moodElevation = 1;
                 break;
             case 'brown adult':
                 config.spriteSheetOffset = new Vec2(256, 0);
+                config_ai.moodElevation = 3;
                 break;
             case 'brown baby':
                 config.spriteSheetOffset = new Vec2(384, 0);
+                config_ai.moodElevation = 2;
                 break;
         }
 
         //Create pet
-        super(name, 'cow', color, config, {
-            moodElevation: (color.includes('adult') ? -3 : -1)
-        });
+        super(name, 'cow', color, config, config_ai);
+    }
+
+}
+
+//Parrot
+class Parrot extends PetCharacter {
+
+    constructor(name, color) {
+        //Object config
+        const config = {
+            size: new Vec2(24),
+            animations: PetAnimations.PARROT
+        };
+
+        //AI config
+        const config_ai = {
+            canSleep: false
+        };
+
+        //Color sprite sheet offset
+        switch (color.toLowerCase()) {
+            default:
+            case 'green adult':
+                config.spriteSheetOffset = new Vec2();
+                config_ai.moodElevation = 7;
+                break;
+            case 'green baby':
+                config.spriteSheetOffset = new Vec2(0, 24);
+                config_ai.moodElevation = 5;
+                break;
+            case 'blue adult':
+                config.spriteSheetOffset = new Vec2(0, 48);
+                config_ai.moodElevation = 6;
+                break;
+            case 'blue baby':
+                config.spriteSheetOffset = new Vec2(0, 72);
+                config_ai.moodElevation = 3;
+                break;
+            case 'golden joja':
+                config.spriteSheetOffset = new Vec2(0, 96);
+                config_ai.moodElevation = 9;
+                break;
+        }
+
+        //Create pet
+        super(name, 'parrot', color, config, config_ai);
     }
 
 }
@@ -1268,9 +1402,15 @@ class Cow extends PetCharacterBig {
 class Junimo extends PetCharacter {
 
     constructor(name, color) {
-        //Default config
+        //Object config
         const config = {
+            size: new Vec2(16),
             animations: PetAnimations.JUNIMO
+        };
+
+        //AI config
+        const config_ai = {
+            moodElevation: 9
         };
 
         //Color sprite sheet offset
@@ -1312,9 +1452,7 @@ class Junimo extends PetCharacter {
         }
 
         //Create pet
-        super(name, 'junimo', color, config, {
-            moodElevation: -9
-        });
+        super(name, 'junimo', color, config, config_ai);
     }
 
 }
