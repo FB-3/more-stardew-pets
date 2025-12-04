@@ -99,7 +99,7 @@ function openStoreCategoryMenu(category) {
         const preset = DecorationPreset[category][name];
 
         //Create item element
-        const element = createStoreItem(name, preset.price);
+        const element = createStoreItem(preset.name, preset.price);
         content.appendChild(element);
         
         //Add image to element

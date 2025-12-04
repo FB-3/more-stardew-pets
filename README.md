@@ -72,6 +72,8 @@ Aditionally, you can rearange or sell your current decoration by entering **Deco
         <li>Rugs</li>
         <li>Cushions</li>
         <li>House Plants</li>
+        <li>Large Decoration</li>
+        <li>Small Decoration</li>
     </ul>
 </details>
 

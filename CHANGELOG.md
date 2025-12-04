@@ -1,5 +1,11 @@
 # Change Log
 
+## [v2.2.0]
+
+**New**
+- Added new *Large Decoration* decoration category
+- Added new *Small Decoration* decoration category
+
 ## [v2.1.0]
 
 **New**

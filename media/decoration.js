@@ -184,7 +184,7 @@ class DecorationPreset {
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(640, 608),
             price: 350, //Invented price
-        },
+        }
     }
 
     static STOOLS = {
@@ -235,7 +235,7 @@ class DecorationPreset {
             size: new Vec2(16),
             spriteOffset: new Vec2(640, 848),
             price: 500, //Invented price
-        },
+        }
     }
 
     static BENCHES = {
@@ -268,7 +268,7 @@ class DecorationPreset {
             size: new Vec2(32, 32),
             spriteOffset: new Vec2(320, 96),
             price: 2000,
-        },
+        }
     }
 
     //Tables
@@ -410,7 +410,7 @@ class DecorationPreset {
             size: new Vec2(32, 48),
             spriteOffset: new Vec2(672, 880),
             price: 1500, //Invented price
-        },
+        }
     }
     
     static TEA_TABLES = {
@@ -467,7 +467,7 @@ class DecorationPreset {
             size: new Vec2(32),
             spriteOffset: new Vec2(576, 912),
             price: 1500, //Invented price
-        },
+        }
     }
 
     static END_TABLES = {
@@ -548,7 +548,7 @@ class DecorationPreset {
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(544, 912),
             price: 1000, //Invented price
-        },
+        }
     }
 
     static COFFE_TABLES = {
@@ -581,7 +581,7 @@ class DecorationPreset {
             size: new Vec2(32),
             spriteOffset: new Vec2(656, 1200),
             price: 1250, //Invented price
-        },
+        }
     }
 
     //Rugs
@@ -893,7 +893,7 @@ class DecorationPreset {
             spriteOffset: new Vec2(624, 976),
             sortingLayer: DecorationLayer.RUGS,
             price: 500, //Invented price
-        },
+        }
     }
 
     //Cushions
@@ -995,7 +995,7 @@ class DecorationPreset {
             spriteOffset: new Vec2(608, 848),
             sortingLayer: DecorationLayer.CUSHIONS,
             price: 500, //Invented price
-        },
+        }
     }
 
     //Plants
@@ -1089,7 +1089,200 @@ class DecorationPreset {
             size: new Vec2(16, 32),
             spriteOffset: new Vec2(112, 688),
             price: 250,
+        }
+    }
+
+    //Decoration
+    static LARGE_DECORATION = {
+        STANDING_GEODE: {
+            name: 'Standing Geode',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(288, 640),
+            price: 400, //Invented price
         },
+        OBSIDIAN_VASE: {
+            name: 'Obsidian Vase',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(304, 640),
+            price: 400, //Invented price
+        },
+        SKELETON_STATUE: {
+            name: 'Skeleton Statue',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(384, 640),
+            price: 400, //Invented price
+        },
+        CHICKEN_STATUE: {
+            name: 'Chicken Statue',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(400, 640),
+            price: 400, //Invented price
+        },
+        LEAHS_STATUE: {
+            name: "Leah's Statue",
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(416, 640),
+            price: 400, //Invented price
+        },
+        SAMS_BOOMBOX: {
+            name: "Sam's Boombox",
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(464, 640),
+            price: 400, //Invented price
+        },
+        LARGE_FUTAN_BEAR: {
+            name: 'Large Futan Bear',
+            size: new Vec2(32),
+            spriteOffset: new Vec2(80, 832),
+            price: 500,
+        },
+        BEAR_STATUE: {
+            name: 'Bear Statue',
+            size: new Vec2(32, 64),
+            spriteOffset: new Vec2(112, 832),
+            price: 500, //Invented price
+        },
+        JUNIMO_PLUSH: {
+            name: 'Junimo Plush',
+            size: new Vec2(32),
+            spriteOffset: new Vec2(80, 864),
+            price: 500, //Invented price
+        },
+        GOURMAND_STATUE: {
+            name: 'Gourmand Statue',
+            size: new Vec2(32),
+            spriteOffset: new Vec2(448, 1152),
+            price: 500, //Invented price
+        },
+        TRASH_CAN: {
+            name: 'Trash Can',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(432, 1200),
+            price: 250,
+        },
+        COAT_STAND: {
+            name: 'Coat Stand',
+            size: new Vec2(16, 48),
+            spriteOffset: new Vec2(608, 416),
+            price: 2000,
+        },
+        BIRD_HOUSE: {
+            name: 'Bird House',
+            size: new Vec2(16, 48),
+            spriteOffset: new Vec2(624, 416),
+            price: 5000,
+        },
+        ELEGANT_VASE: {
+            name: 'Elegant Vase',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(608, 512),
+            price: 400, //Invented price
+        },
+        CAT_TREE: {
+            name: 'Cat Tree',
+            size: new Vec2(32, 48),
+            spriteOffset: new Vec2(624, 512),
+            price: 10000,
+        },
+        DARK_CAT_TREE: {
+            name: 'Dark Cat Tree',
+            size: new Vec2(32, 48),
+            spriteOffset: new Vec2(656, 512),
+            price: 10000,
+        },
+        BARREL: {
+            name: 'Barrel',
+            size: new Vec2(16, 32),
+            spriteOffset: new Vec2(592, 160),
+            price: 400, //Invented price
+        }
+    }
+
+    static SMALL_DECORATION = {
+        BOWL_EMPTY: {
+            name: 'Empty Bowl',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(640, 464),
+            price: 100, //Invented price
+        },
+        BOWL_WATER: {
+            name: 'Water Bowl',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(656, 464),
+            price: 100, //Invented price
+        },
+        FUTAN_BEAR: {
+            name: 'Futan Bear',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(336, 672),
+            price: 1500,
+        },
+        GLOBE: {
+            name: 'Globe',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(352, 672),
+            price: 750,
+        },
+        MODEL_SHIP: {
+            name: 'Model Ship',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(368, 672),
+            price: 750,
+        },
+        SMALL_CRYSTAL: {
+            name: 'Small Crystal',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(384, 672),
+            price: 750,
+        },
+        SMALL_GREEN_JUNIMO_PLUSH: {
+            name: 'Small Green Junimo Plush',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(0, 880),
+            price: 500,
+        },
+        SMALL_BLUE_JUNIMO_PLUSH: {
+            name: 'Small Blue Junimo Plush',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(16, 880),
+            price: 500,
+        },
+        SMALL_YELLOW_JUNIMO_PLUSH: {
+            name: 'Small Yellow Junimo Plush',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(32, 880),
+            price: 500,
+        },
+        SMALL_PINK_JUNIMO_PLUSH: {
+            name: 'Small Pink Junimo Plush',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(48, 880),
+            price: 500,
+        },
+        FUTAN_RABBIT: {
+            name: 'Futan Rabbit',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(64, 880),
+            price: 500,
+        },
+        SQUIRREL_FIGURINE: {
+            name: 'Squirrel Figurine',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(480, 1392),
+            price: 500, //Invented price
+        },
+        RETRO_RADIO: {
+            name: 'Retro Radio',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(656, 912),
+            price: 500, //Invented price
+        },
+        HATCH: {
+            name: 'Hatch',
+            size: new Vec2(16),
+            spriteOffset: new Vec2(704, 400),
+            price: 250, //Invented price
+        }
     }
 
 }
