@@ -3,8 +3,15 @@
 ## [v2.2.0]
 
 **New**
-- Added new *Large Decoration* decoration category
-- Added new *Small Decoration* decoration category
+- Added new **decoration categories**
+  - Large Misc
+  - Small Misc
+- Added new **backgrounds**:
+  - Grass (Fall)
+  - Light Wood
+  - Dark Wood
+  - Orange Wood
+  - Broken Wood
 
 ## [v2.1.0]
 

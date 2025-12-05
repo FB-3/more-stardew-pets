@@ -54,9 +54,14 @@
                     "default": "Grass",
                     "enum": [
                         "Grass",
+                        "Grass (Fall)",
                         "Dirt",
                         "Sand",
-                        "Snow"
+                        "Snow",
+                        "Light Wood",
+                        "Dark Wood",
+                        "Orange Wood",
+                        "Broken Wood"
                     ],
                     "description": "The background theme for the window."
                 },

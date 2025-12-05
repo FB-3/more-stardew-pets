@@ -1092,8 +1092,8 @@ class DecorationPreset {
         }
     }
 
-    //Decoration
-    static LARGE_DECORATION = {
+    //Misc
+    static LARGE_MISC = {
         STANDING_GEODE: {
             name: 'Standing Geode',
             size: new Vec2(16, 32),
@@ -1198,7 +1198,7 @@ class DecorationPreset {
         }
     }
 
-    static SMALL_DECORATION = {
+    static SMALL_MISC = {
         BOWL_EMPTY: {
             name: 'Empty Bowl',
             size: new Vec2(16),
