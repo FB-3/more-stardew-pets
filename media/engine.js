@@ -584,7 +584,7 @@ class GameObject {
         if (!this.isPosInBounds(pos)) return false;
 
         //Check if clicked on transparent pixel
-        if (!this.isPosInSprite(pos, Game.canvasHidden, Game.ctxHidden)) return false;
+        if (!this.isPosInSprite(pos, Game.canvasAlphaTest, Game.contextAlphaTest)) return false;
 
         //Valid 
         return true;
@@ -702,8 +702,14 @@ class GameObject {
             pos.y = Util.clamp(pos.y, 0, this.maxPosY);
         }
 
+        //Check if moved
+        const moved = this.#pos.equals(pos);
+
         //Update position
         this.#pos = pos;
+
+        //Return if moved
+        return !moved;
     }
 
     respawn() {
@@ -773,7 +779,7 @@ class Ball extends GameObject {
                      \_____*/
 
 class Game {
-    
+
     //Media folder URI
     static #mediaURI = document.body.getAttribute('media');
 
@@ -802,12 +808,13 @@ class Game {
         this.#windowSize = new Vec2(window.innerWidth, window.innerHeight);
         this.#windowSizeScaled = this.windowSize.div(this.scale);
 
-        //Update game canvas size
-        this.canvas.width = this.windowSize.x;
-        this.canvas.height = this.windowSize.y;
+        //Update buffer canvas size
+        this.canvasBuffer.width = this.windowSize.x;
+        this.canvasBuffer.height = this.windowSize.y;
 
-        //Fit all pets on screen
+        //Fit all pets & monsters on screen
         this.pets.forEach(pet => pet.moveTo(pet.pos))
+        this.monsters.forEach(monster => monster.moveTo(monster.pos))
     }
 
     //Update
@@ -839,20 +846,24 @@ class Game {
 
     //Rendering
     static #background = document.getElementById('background');
-    static #canvas = document.getElementById('canvas');
-    static #canvasHidden = document.getElementById('canvasHidden');
-    static #ctx;
-    static #ctxHidden;
+    static #canvas = document.getElementById('canvas');         //Real canvas
+    static #canvasBuffer = document.createElement('canvas');    //Double buffer rendering (to prevent flickers after resizing the screen)
+    static #canvasAlphaTest = document.createElement('canvas'); //Used to check for clicks in transparent pixels
+    static #context;
+    static #contextBuffer;
+    static #contextAlphaTest;
 
     static get background() { return this.#background; }
     static get canvas() { return this.#canvas; }
-    static get canvasHidden() { return this.#canvasHidden; }
-    static get ctx() { return this.#ctx; }
-    static get ctxHidden() { return this.#ctxHidden; }
+    static get canvasBuffer() { return this.#canvasBuffer; }
+    static get canvasAlphaTest() { return this.#canvasAlphaTest; }
+    static get context() { return this.#context; }
+    static get contextBuffer() { return this.#contextBuffer; }
+    static get contextAlphaTest() { return this.#contextAlphaTest; }
 
     static draw = () => {
         //Clear canvas
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.contextBuffer.clearRect(0, 0, this.canvasBuffer.width, this.canvasBuffer.height);
 
         //Sort objects
         this.sortObjects();
@@ -869,8 +880,13 @@ class Game {
             if (inDecorMode && !obj.isDecoration) continue;
 
             //Draw object
-            obj.draw(this.ctx);
+            obj.draw(this.contextBuffer);
         }
+
+        //Draw double bufffer into real canvas
+        this.canvas.width = this.canvasBuffer.width;
+        this.canvas.height = this.canvasBuffer.height;
+        this.context.drawImage(this.canvasBuffer, 0, 0);
     }
 
     //Game objects
@@ -945,17 +961,45 @@ class Game {
         setTimeout(() => message.remove(), isLong ? 3000 : 2000);
     }
 
-    //Start
+    //Game loop
+    static #deltaAccumulation = 0;
+    static #lastFrameTimestamp;
+    static #animationFrame;
+
+    static gameLoop = (timestamp) => {
+        //Check if last frame timestamp is init
+        if (!this.#lastFrameTimestamp) this.#lastFrameTimestamp = timestamp;
+
+        //Calculate delta accumulation
+        this.#deltaAccumulation += timestamp - this.#lastFrameTimestamp;
+        this.#lastFrameTimestamp = timestamp;
+
+        //Calculate the amount of updates needed to perform
+        const interval = (1000 / this.fps);
+        const updates = Math.floor(this.#deltaAccumulation / interval);
+
+        //Perform updates
+        for (let update = 0; update < updates; update++) this.update();
+
+        //Update delta accumulation
+        this.#deltaAccumulation = this.#deltaAccumulation - (updates * interval);
+
+        //Keep the loop going
+        this.#animationFrame = requestAnimationFrame(this.gameLoop);
+    }
+
     static start = () => {
         //Init canvas contexts
-        this.#ctx = this.canvas.getContext('2d');
-        this.#ctxHidden = this.canvasHidden.getContext('2d', { willReadFrequently: true });
+        this.#context = this.canvas.getContext('2d');
+        this.#contextBuffer = this.canvasBuffer.getContext('2d', { willReadFrequently: true });
+        this.#contextAlphaTest = this.canvasAlphaTest.getContext('2d', { willReadFrequently: true });
 
         //Create ball
         this.#ball = new Ball();
-        
+
         //Start game loop
-        return setInterval(this.update, 1000 / this.fps);
+        cancelAnimationFrame(this.#animationFrame);
+        this.#animationFrame = requestAnimationFrame(this.gameLoop);
     }
 
 }

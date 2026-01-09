@@ -1,5 +1,15 @@
 # Change Log
 
+## [v2.2.4]
+
+**Tweaks**
+- Fixed bug where pets were getting stuck walking up
+- Fixed bug where pets were updating super slow
+- Fixed 'silly' pet mood not working
+
+**Engine**
+- Added double buffer rendering
+
 ## [v2.2.0]
 
 **New**

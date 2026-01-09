@@ -72,18 +72,15 @@ class AI {
 
         //Try to move
         if (this.#movePos.x < this.character.pos.x)
-            this.moveLeft();
+            return this.moveLeft();
         else if (this.#movePos.x > this.character.pos.x)
-            this.moveRight();
+            return this.moveRight();
         else if (this.#movePos.y < this.character.pos.y)
-            this.moveUp();
+            return this.moveUp();
         else if (this.#movePos.y > this.character.pos.y)
-            this.moveDown();
+            return this.moveDown();
         else
             return false
-
-        //Moved
-        return true
     }
 
     moveTowards(point) {
@@ -100,23 +97,23 @@ class AI {
     }
 
     moveLeft() {
-        this.character.moveTo(new Vec2(this.character.pos.x - 1, this.character.pos.y));
         this.character.animate('moveLeft');
+        return this.character.moveTo(new Vec2(this.character.pos.x - 1, this.character.pos.y));
     }
 
     moveRight() {
-        this.character.moveTo(new Vec2(this.character.pos.x + 1, this.character.pos.y));
         this.character.animate('moveRight');
+        return this.character.moveTo(new Vec2(this.character.pos.x + 1, this.character.pos.y));
     }
 
     moveUp() {
-        this.character.moveTo(new Vec2(this.character.pos.x, this.character.pos.y - 1));
         this.character.animate('moveUp');
+        return this.character.moveTo(new Vec2(this.character.pos.x, this.character.pos.y - 1));
     }
 
     moveDown() {
-        this.character.moveTo(new Vec2(this.character.pos.x, this.character.pos.y + 1));
         this.character.animate('moveDown');
+        return this.character.moveTo(new Vec2(this.character.pos.x, this.character.pos.y + 1));
     }
 
     //State
@@ -181,7 +178,7 @@ class AI {
     onUpdate_move() {
         //Try to move
         if (this._moveTowardsMovePos()) return;
-        
+
         //Didn't move -> Point reached, animate idle
         this.setState(AI.IDLE);
     }
@@ -240,7 +237,7 @@ class Character extends GameObject {
         //Update game object
         super.update();
     }
-    
+
     //Click
     onclick() {
         //Notify AI a click happened
@@ -706,7 +703,7 @@ class PetMoods {
     static get RANDOM() { return PetMoods[PetMoods.#moods[Util.randomExclusive(PetMoods.#moods.length)]]; }
 
     //Normal moods
-    static #moods = ['HAPPY', 'BLUSH', 'ASHAMED', 'CRY', 'MAD', 'IDK', 'PLEDGE', 'GIGACHAD', 'ALIEN', 'DEVIL', 'SHY', 'MUSIC'];
+    static #moods = ['HAPPY', 'BLUSH', 'ASHAMED', 'CRY', 'MAD', 'IDK', 'PLEDGE', 'GIGACHAD', 'ALIEN', 'DEVIL', 'SILLY', 'MUSIC'];
 
     static get HAPPY() { return new Vec2(0, 0); }
     static get BLUSH() { return new Vec2(8, 0); }

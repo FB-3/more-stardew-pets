@@ -485,7 +485,7 @@ document.onmouseleave = event => {
                               |_*/
 
 //Start game loop
-const loop = Game.start();
+Game.start();
 
 //Tell VSCode the game was loaded
 vscode.postMessage({ type: 'init' })
